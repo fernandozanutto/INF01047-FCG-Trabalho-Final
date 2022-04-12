@@ -677,7 +677,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1649722745 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\main.cpp
+1649726908 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -699,6 +699,7 @@
 	<stb_image.h>
 	"utils.h"
 	"matrices.h"
+	"ObjModel.cpp"
 
 1649722744 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\include\glfw\glfw3.h
 	<stddef.h>
@@ -1593,4 +1594,37 @@
 
 1649722744 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
+
+1649726896 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\objmodel.cpp
+	<tiny_obj_loader.h>
+
+1649726896 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\objmodel.cpp
+	<tiny_obj_loader.h>
+
+1649725430 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\textrender.h
+	<cmath>
+	<cstdio>
+	<cstdlib>
+	<map>
+	<stack>
+	<string>
+	<vector>
+	<limits>
+	<fstream>
+	<sstream>
+	<stdexcept>
+	<algorithm>
+	<glad/glad.h>
+	<GLFW/glfw3.h>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<tiny_obj_loader.h>
+	<stb_image.h>
+
+1649726556 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\objmodel.h
+	<tiny_obj_loader.h>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	"matrices.h"
 
