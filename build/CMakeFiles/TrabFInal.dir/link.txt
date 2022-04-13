@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\TrabFinal.dir/objects.a
+C:\PROGRA~1\CODEBL~1\MinGW\bin\ar.exe qc CMakeFiles\TrabFinal.dir/objects.a @CMakeFiles\TrabFinal.dir\objects1.rsp
+C:\PROGRA~1\CODEBL~1\MinGW\bin\X86_64~2.EXE -g -g -Wl,--whole-archive CMakeFiles\TrabFinal.dir/objects.a -Wl,--no-whole-archive -o TrabFinal.exe -Wl,--out-implib,libTrabFinal.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\TrabFinal.dir\linklibs.rsp

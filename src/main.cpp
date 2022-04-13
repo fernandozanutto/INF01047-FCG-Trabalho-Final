@@ -98,6 +98,7 @@ struct SceneObject
     glm::vec3    bbox_max;
 };
 
+
 // Abaixo definimos variáveis globais utilizadas em várias funções do código.
 
 // A cena virtual é uma lista de objetos nomeados, guardados em um dicionário

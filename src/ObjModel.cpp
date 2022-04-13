@@ -15,6 +15,9 @@ struct ObjModel
     {
         printf("Carregando modelo \"%s\"... ", filename);
 
+
+
+
         std::string err;
         bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filename, basepath, triangulate);
 

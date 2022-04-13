@@ -677,7 +677,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1649726908 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\main.cpp
+1649807354 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -1595,10 +1595,10 @@
 1649722744 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
 
-1649726896 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\objmodel.cpp
+1649807068 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\objmodel.cpp
 	<tiny_obj_loader.h>
 
-1649726896 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\objmodel.cpp
+1649807068 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\objmodel.cpp
 	<tiny_obj_loader.h>
 
 1649725430 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\textrender.h
