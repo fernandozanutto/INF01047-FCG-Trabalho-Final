@@ -1,1 +1,0 @@
- lib/libLibs.a ../lib/glfw3.dll ../lib/libglfw3.a ../lib/libglfw3dll.a -lgdi32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
