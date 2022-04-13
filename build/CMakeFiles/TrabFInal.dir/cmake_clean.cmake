@@ -1,10 +1,10 @@
 file(REMOVE_RECURSE
+  "../output/TrabFinal.exe"
+  "../output/TrabFinal.exe.manifest"
+  "../output/TrabFinal.pdb"
   "CMakeFiles/TrabFinal.dir/src/main.cpp.obj"
   "CMakeFiles/TrabFinal.dir/src/main.cpp.obj.d"
-  "TrabFinal.exe"
-  "TrabFinal.exe.manifest"
-  "TrabFinal.pdb"
-  "libTrabFinal.dll.a"
+  "lib/libTrabFinal.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.

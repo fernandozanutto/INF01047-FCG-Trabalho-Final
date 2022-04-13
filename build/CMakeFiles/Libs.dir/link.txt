@@ -1,2 +1,2 @@
-C:\PROGRA~1\CODEBL~1\MinGW\bin\ar.exe qc libLibs.a CMakeFiles/Libs.dir/src/glad.c.obj CMakeFiles/Libs.dir/src/ObjModel.cpp.obj CMakeFiles/Libs.dir/src/stb_image.cpp.obj CMakeFiles/Libs.dir/src/textrendering.cpp.obj CMakeFiles/Libs.dir/src/tiny_obj_loader.cpp.obj
-C:\PROGRA~1\CODEBL~1\MinGW\bin\ranlib.exe libLibs.a
+C:\PROGRA~1\CODEBL~1\MinGW\bin\ar.exe qc lib\libLibs.a CMakeFiles/Libs.dir/src/glad.c.obj CMakeFiles/Libs.dir/src/ObjModel.cpp.obj CMakeFiles/Libs.dir/src/stb_image.cpp.obj CMakeFiles/Libs.dir/src/textrendering.cpp.obj CMakeFiles/Libs.dir/src/tiny_obj_loader.cpp.obj
+C:\PROGRA~1\CODEBL~1\MinGW\bin\ranlib.exe lib\libLibs.a

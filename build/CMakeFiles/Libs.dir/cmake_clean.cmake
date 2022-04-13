@@ -9,8 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Libs.dir/src/textrendering.cpp.obj.d"
   "CMakeFiles/Libs.dir/src/tiny_obj_loader.cpp.obj"
   "CMakeFiles/Libs.dir/src/tiny_obj_loader.cpp.obj.d"
-  "libLibs.a"
-  "libLibs.pdb"
+  "lib/libLibs.a"
+  "lib/libLibs.pdb"
 )
 
 # Per-language clean rules from dependency scanning.
