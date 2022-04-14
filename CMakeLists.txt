@@ -10,13 +10,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
 
-add_library(Libs
-    src/glad.c
-    src/ObjModel.cpp
-    src/stb_image.cpp
-    src/textrendering.cpp
-    src/tiny_obj_loader.cpp
-)
+
+file(GLOB SOURCES src/*.c src/*.cpp src/*/*.cpp)
+
+add_library(Libs ${SOURCES})
 
 add_executable(TrabFinal src/main.cpp)
 
@@ -27,6 +24,12 @@ file(GLOB libs_user lib/*.dll)
 file(GLOB libs_user2 lib/*.a)
 
 target_link_libraries(TrabFinal Libs ${libs_user} ${libs_user2} -lgdi32 -lopengl32)
+
+
+target_include_directories(TrabFinal
+    PRIVATE
+    src/*/*.h
+)
 
 add_custom_command(TARGET TrabFinal PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
