@@ -39,6 +39,9 @@
 #include "matrices.h"
 #include "utils.h"
 #include "renderer/Window.h"
+#include "input/Command.h"
+#include "input/MoveCommand.h"
+#include "input/InputManager.h"
 
 // Declaração de funções utilizadas para pilha de matrizes de modelagem.
 void PushMatrix(glm::mat4 M);
@@ -166,28 +169,18 @@ GLint bbox_max_uniform;
 GLuint g_NumLoadedTextures = 0;
 
 int main(int argc, char* argv[]) {
-    // Inicializamos a biblioteca GLFW, utilizada para criar uma janela do
-    // sistema operacional, onde poderemos renderizar com OpenGL.
-    int success = glfwInit();
-    if (!success) {
-        fprintf(stderr, "ERROR: glfwInit() failed.\n");
-        std::exit(EXIT_FAILURE);
-    }
+    MoveCommand test2(MoveCommand::BACKWARD);
+    
+    // TODO: pass game to movecommand
+    std::vector<std::tuple<int, Command*>> commandLst = {
+        std::make_tuple(GLFW_KEY_W,     new MoveCommand(MoveCommand::FORWARD)),
+        std::make_tuple(GLFW_KEY_S,     new MoveCommand(MoveCommand::BACKWARD)),
+        std::make_tuple(GLFW_KEY_A,     new MoveCommand(MoveCommand::LEFT)),
+        std::make_tuple(GLFW_KEY_D,     new MoveCommand(MoveCommand::RIGHT))
+    };
 
-    // Definimos o callback para impressão de erros da GLFW no terminal
-    glfwSetErrorCallback(ErrorCallback);
-
-    // Pedimos para utilizar OpenGL versão 3.3 (ou superior)
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-
-    #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
-
-    // Pedimos para utilizar o perfil "core", isto é, utilizaremos somente as
-    // funções modernas de OpenGL.
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // TODO: pass player to inputmanager
+    InputManager input(commandLst);
 
     // Criamos uma janela do sistema operacional, com 800 colunas e 600 linhas
     // de pixels, e com título "INF01047 ...".
