@@ -1,6 +1,3 @@
-#ifndef _MATRICES_H
-#define _MATRICES_H
-
 #include <cstdio>
 #include <cstdlib>
 
@@ -8,32 +5,14 @@
 #include <glm/vec4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-// Esta função Matrix() auxilia na criação de matrizes usando a biblioteca GLM.
-// Note que em OpenGL (e GLM) as matrizes são definidas como "column-major",
-// onde os elementos da matriz são armazenadas percorrendo as COLUNAS da mesma.
-// Por exemplo, seja
-//
-//       [a b c]
-//   M = [d e f]
-//       [g h i]
-//
-// uma matriz 3x3. Em memória, na representação "column-major" de OpenGL, essa
-// matriz é representada pelo seguinte array:
-//
-//   M[] = {  a,d,g,    b,e,h,    c,f,i  };
-//              ^         ^         ^
-//              |         |         |
-//           coluna 1  coluna 2  coluna 3
-//
-// Para conseguirmos definir matrizes através de suas LINHAS, a função Matrix()
-// computa a transposta usando os elementos passados por parâmetros.
+#include "Matrices.h"
+
 glm::mat4 Matrix(
     float m00, float m01, float m02, float m03, // LINHA 1
     float m10, float m11, float m12, float m13, // LINHA 2
     float m20, float m21, float m22, float m23, // LINHA 3
     float m30, float m31, float m32, float m33  // LINHA 4
-)
-{
+) {
     return glm::mat4(
         m00, m10, m20, m30, // COLUNA 1
         m01, m11, m21, m31, // COLUNA 2
@@ -42,9 +21,9 @@ glm::mat4 Matrix(
     );
 }
 
+
 // Matriz identidade.
-glm::mat4 Matrix_Identity()
-{
+glm::mat4 Matrix_Identity() {
     return Matrix(
         1.0f , 0.0f , 0.0f , 0.0f , // LINHA 1
         0.0f , 1.0f , 0.0f , 0.0f , // LINHA 2
@@ -363,7 +342,3 @@ void PrintMatrixVectorProductDivW(glm::mat4 M, glm::vec4 v)
     printf("[ %+0.2f  %+0.2f  %+0.2f  %+0.2f ][ %+0.2f ]   [ %+0.2f ]            [ %+0.2f ]\n", M[0][2], M[1][2], M[2][2], M[3][2], v[2], r[2], r[2]/w);
     printf("[ %+0.2f  %+0.2f  %+0.2f  %+0.2f ][ %+0.2f ]   [ %+0.2f ]            [ %+0.2f ]\n", M[0][3], M[1][3], M[2][3], M[3][3], v[3], r[3], r[3]/w);
 }
-
-
-#endif // _MATRICES_H
-// vim: set spell spelllang=pt_br :

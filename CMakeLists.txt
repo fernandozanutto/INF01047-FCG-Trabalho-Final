@@ -17,8 +17,14 @@ add_library(Libs ${SOURCES})
 
 add_executable(TrabFinal src/main.cpp)
 
-target_include_directories(Libs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(TrabFinal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(Libs 
+    PUBLIC 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_include_directories(TrabFinal 
+    PUBLIC 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
 file(GLOB libs_user lib/*.dll)
 file(GLOB libs_user2 lib/*.a)

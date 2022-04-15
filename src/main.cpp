@@ -36,9 +36,11 @@
 
 // Headers locais, definidos na pasta "include/"
 #include "ObjModel.cpp"
-#include "matrices.h"
+#include "renderer/matrices.h"
 #include "utils.h"
 #include "renderer/Window.h"
+#include "renderer/Renderer.h"
+#include "renderer/SceneObject.h"
 #include "input/Command.h"
 #include "input/MoveCommand.h"
 #include "input/InputManager.h"
@@ -87,18 +89,6 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
-// Definimos uma estrutura que armazenará dados necessários para renderizar
-// cada objeto da cena virtual.
-struct SceneObject {
-    std::string name;               // Nome do objeto
-    size_t first_index;             // Índice do primeiro vértice dentro do vetor indices[] definido em BuildTrianglesAndAddToVirtualScene()
-    size_t num_indices;             // Número de índices do objeto dentro do vetor indices[] definido em BuildTrianglesAndAddToVirtualScene()
-    GLenum rendering_mode;          // Modo de rasterização (GL_TRIANGLES, GL_TRIANGLE_STRIP, etc.)
-    GLuint vertex_array_object_id;  // ID do VAO onde estão armazenados os atributos do modelo
-    glm::vec3 bbox_min;             // Axis-Aligned Bounding Box do objeto
-    glm::vec3 bbox_max;
-};
-
 // Abaixo definimos variáveis globais utilizadas em várias funções do código.
 
 // A cena virtual é uma lista de objetos nomeados, guardados em um dicionário
@@ -131,9 +121,9 @@ float g_CameraTheta = 0.0f;     // Ângulo no plano ZX em relação ao eixo Z
 float g_CameraPhi = 0.0f;       // Ângulo em relação ao eixo Y
 float g_CameraDistance = 3.5f;  // Distância da câmera para a origem
 
-float g_CameraX = 2.5f;
-float g_CameraY = 2.5f;
-float g_CameraZ = 2.5f;
+float g_CameraX = 0.5f;
+float g_CameraY = 0.5f;
+float g_CameraZ = 0.5f;
 
 bool isMovingRight = false;
 bool isMovingForward = false;
@@ -186,6 +176,7 @@ int main(int argc, char* argv[]) {
     // de pixels, e com título "INF01047 ...".
     Window windoww;
     GLFWwindow* window = windoww.window;
+    
 
     // Definimos a função de callback que será chamada sempre que o usuário
     // pressionar alguma tecla do teclado ...
@@ -228,6 +219,8 @@ int main(int argc, char* argv[]) {
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
 
+    Renderer rendererr(windoww.width, windoww.height, g_VirtualScene);
+
     if (argc > 1) {
         ObjModel model(argv[1]);
         BuildTrianglesAndAddToVirtualScene(&model);
@@ -236,40 +229,8 @@ int main(int argc, char* argv[]) {
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
 
-    // Habilitamos o Z-buffer. Veja slides 104-116 do documento Aula_09_Projecoes.pdf.
-    glEnable(GL_DEPTH_TEST);
-
-    // Habilitamos o Backface Culling. Veja slides 23-34 do documento Aula_13_Clipping_and_Culling.pdf.
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-
-    // Variáveis auxiliares utilizadas para chamada à função
-    // TextRendering_ShowModelViewProjection(), armazenando matrizes 4x4.
-    glm::mat4 the_projection;
-    glm::mat4 the_model;
-    glm::mat4 the_view;
-
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window)) {
-        // Aqui executamos as operações de renderização
-
-        // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
-        // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:
-        // Vermelho, Verde, Azul, Alpha (valor de transparência).
-        // Conversaremos sobre sistemas de cores nas aulas de Modelos de Iluminação.
-        //
-        //           R     G     B     A
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-        // "Pintamos" todos os pixels do framebuffer com a cor definida acima,
-        // e também resetamos todos os pixels do Z-buffer (depth buffer).
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
-        // os shaders de vértice e fragmentos).
-        glUseProgram(program_id);
-
         float r = -1.0f;
         float y = r * sin(g_CameraPhi);
         float z = r * cos(g_CameraPhi) * cos(g_CameraTheta);
@@ -280,10 +241,7 @@ int main(int argc, char* argv[]) {
         float z2 = r * cos(g_CameraPhi) * cos(g_CameraTheta2);
         float x2 = r * cos(g_CameraPhi) * sin(g_CameraTheta2);
 
-        glm::vec4 camera_position_c = glm::vec4(g_CameraX, g_CameraY, g_CameraZ, 1.0f);  // Ponto "c", centro da câmera
-        glm::vec4 camera_view_vector = glm::vec4(x, y, z, 0.0f);                         //- camera_position_c; // Vetor "view", sentido para onde a câmera está virada
-        glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);                  // Vetor "up" fixado para apontar para o "céu" (eito Y global)
-
+        glm::vec4 camera_view_vector = glm::vec4(x, y, z, 0.0f);                         
         glm::vec4 camera_forward_vetor = camera_view_vector;
         glm::vec4 camera_left_vetor = glm::vec4(x2, y, z2, 0.0f);
 
@@ -315,104 +273,18 @@ int main(int argc, char* argv[]) {
             g_CameraZ += camera_forward_vetor.z * ellapsed_seconds;
         }
 
+        glm::vec4 camera_position_c = glm::vec4(g_CameraX, g_CameraY, g_CameraZ, 1.0f);  // Ponto "c", centro da câmera
+        glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);                  // Vetor "up" fixado para apontar para o "céu" (eito Y global)
         // Computamos a matriz "View" utilizando os parâmetros da câmera para
         // definir o sistema de coordenadas da câmera.  Veja slides 2-14, 184-190 e 236-242 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
 
-        // Agora computamos a matriz de Projeção.
-        glm::mat4 projection;
-
-        // Note que, no sistema de coordenadas da câmera, os planos near e far
-        // estão no sentido negativo! Veja slides 176-204 do documento Aula_09_Projecoes.pdf.
-        float nearplane = -0.1f;  // Posição do "near plane"
-        float farplane = -10.0f;  // Posição do "far plane"
-
-        if (g_UsePerspectiveProjection) {
-            // Projeção Perspectiva.
-            // Para definição do field of view (FOV), veja slides 205-215 do documento Aula_09_Projecoes.pdf.
-            float field_of_view = 3.141592 / 3.0f;
-            projection = Matrix_Perspective(field_of_view, g_ScreenRatio, nearplane, farplane);
-        } else {
-            // Projeção Ortográfica.
-            // Para definição dos valores l, r, b, t ("left", "right", "bottom", "top"),
-            // PARA PROJEÇÃO ORTOGRÁFICA veja slides 219-224 do documento Aula_09_Projecoes.pdf.
-            // Para simular um "zoom" ortográfico, computamos o valor de "t"
-            // utilizando a variável g_CameraDistance.
-            float t = 1.5f;
-            float b = -t;
-            float r = t * g_ScreenRatio;
-            float l = -r;
-            projection = Matrix_Orthographic(l, r, b, t, nearplane, farplane);
-        }
-
-        glm::mat4 model = Matrix_Identity();  // Transformação identidade de modelagem
-
-        // Enviamos as matrizes "view" e "projection" para a placa de vídeo
-        // (GPU). Veja o arquivo "shader_vertex.glsl", onde estas são
-        // efetivamente aplicadas em todos os pontos.
-        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
-
-#define SPHERE 0
-#define BUNNY 1
-#define PLANE 2
-#define SMALL_BUNNY 3
-
-        // Desenhamos o modelo da esfera
-        model = Matrix_Translate(-1.0f, 0.0f, 0.0f) * Matrix_Rotate_Z(0.6f) * Matrix_Rotate_X(0.2f) * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
-        glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-        glUniform1i(object_id_uniform, SPHERE);
-        DrawVirtualObject("sphere");
-
-        // Desenhamos o modelo do coelho
-        model = Matrix_Translate(1.0f, 0.0f, 0.0f) * Matrix_Rotate_X(g_AngleX + (float)glfwGetTime() * 0.1f);
-        glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-        glUniform1i(object_id_uniform, BUNNY);
-        DrawVirtualObject("bunny");
-
-        // Desenhamos o plano do chão
-        model = Matrix_Translate(0.0f, -1.1f, 0.0f) * Matrix_Scale(2.0f, 1.0f, 2.0f);
-        glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-        glUniform1i(object_id_uniform, PLANE);
-        DrawVirtualObject("plane");
-
-        // Desenhamos o modelo de um coelho pequeno
-        model = Matrix_Translate(0.0f, 2.0f, 0.0f) * Matrix_Scale(0.5f, 0.5f, 0.5f);
-        glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-        glUniform1i(object_id_uniform, 10);
-        DrawVirtualObject("bunny");
-
-        // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
-        // passamos por todos os sistemas de coordenadas armazenados nas
-        // matrizes the_model, the_view, e the_projection; e escrevemos na tela
-        // as matrizes e pontos resultantes dessas transformações.
-        // glm::vec4 p_model(0.5f, 0.5f, 0.5f, 1.0f);
-        // TextRendering_ShowModelViewProjection(window, projection, view, model, p_model);
-
-        // Imprimimos na tela os ângulos de Euler que controlam a rotação do
-        // terceiro cubo.
+        rendererr.draw(view, view_uniform, projection_uniform, model_uniform, object_id_uniform);
         TextRendering_ShowEulerAngles(window);
-
-        // Imprimimos na informação sobre a matriz de projeção sendo utilizada.
         TextRendering_ShowProjection(window);
-
-        // Imprimimos na tela informação sobre o número de quadros renderizados
-        // por segundo (frames per second).
         TextRendering_ShowFramesPerSecond(window);
-
-        // O framebuffer onde OpenGL executa as operações de renderização não
-        // é o mesmo que está sendo mostrado para o usuário, caso contrário
-        // seria possível ver artefatos conhecidos como "screen tearing". A
-        // chamada abaixo faz a troca dos buffers, mostrando para o usuário
-        // tudo que foi renderizado pelas funções acima.
-        // Veja o link: Veja o link: https://en.wikipedia.org/w/index.php?title=Multiple_buffering&oldid=793452829#Double_buffering_in_computer_graphics
-        glfwSwapBuffers(window);
-
-        // Verificamos com o sistema operacional se houve alguma interação do
-        // usuário (teclado, mouse, ...). Caso positivo, as funções de callback
-        // definidas anteriormente usando glfwSet*Callback() serão chamadas
-        // pela biblioteca GLFW.
-        glfwPollEvents();
+        windoww.swapBuffers();
+        windoww.pollEvents();
     }
 
     // Finalizamos o uso dos recursos do sistema operacional
@@ -1193,8 +1065,8 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window) {
 
     float pad = TextRendering_LineHeight(window);
 
-    char buffer[80];
-    snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+    char buffer[120];
+    snprintf(buffer, 120, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f) - Theta:(%.2f) Phi:(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX, g_CameraTheta, g_CameraPhi);
 
     TextRendering_PrintString(window, buffer, -1.0f + pad / 10, -1.0f + 2 * pad / 10, 1.0f);
 }

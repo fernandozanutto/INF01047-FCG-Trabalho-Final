@@ -8,13 +8,12 @@
 #include "Window.h"
 
 Window::Window() {
-    if (!glfwInit())
-    {
+    if (!glfwInit()) {
         fprintf(stderr, "ERROR: glfwInit() failed.\n");
         std::exit(EXIT_FAILURE);
     }
-    glfwSetErrorCallback([](int error, const char* description) // lambda function
-    {
+    
+    glfwSetErrorCallback([](int error, const char* description) {
         fprintf(stderr, "ERROR: GLFW: %s\n", description);
     });
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -26,23 +25,18 @@ Window::Window() {
 
     GLFWmonitor* monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode* screen = glfwGetVideoMode(monitor);
-    this->window = glfwCreateWindow(screen->width, screen->height, "window", monitor, NULL);
+    this->window = glfwCreateWindow(screen->width, screen->height, "Super Game", monitor, NULL);
     this->width = screen->width;
     this->height = screen->height;
 
-    //gets screen configuration and creates fullscreen window
-    if (!this->window)
-    {
+    if (!this->window) {
         glfwTerminate();
         fprintf(stderr, "ERROR: glfwCreateWindow() failed.\n");
         std::exit(EXIT_FAILURE);
     }
     glfwMakeContextCurrent(this->window);
-    //creates glfw context
 
-
-    glfwSetFramebufferSizeCallback(this->window, [](GLFWwindow* window, int width, int height)
-    {
+    glfwSetFramebufferSizeCallback(this->window, [](GLFWwindow* window, int width, int height) {
         glViewport(0, 0, width, height);
     });
 
@@ -75,8 +69,7 @@ void Window::setShouldClose()
     glfwSetWindowShouldClose(this->window, GL_TRUE);
 }
 
-void Window::swapBuffers()
-{
+void Window::swapBuffers() {
     glfwSwapBuffers(this->window);
 }
 

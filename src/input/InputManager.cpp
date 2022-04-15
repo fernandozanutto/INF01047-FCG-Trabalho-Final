@@ -8,7 +8,7 @@
 #include <iostream>
 
 InputManager::InputManager(std::vector<std::tuple<int,Command*>> cList) {
-    for(unsigned int i=0; i<cList.size(); i++) {
+    for(unsigned int i=0; i < cList.size(); i++) {
         int key          = std::get<0>(cList[i]);
         Command* command = std::get<1>(cList[i]);
         heldKeys[key] = false;
@@ -16,8 +16,7 @@ InputManager::InputManager(std::vector<std::tuple<int,Command*>> cList) {
     }
 }
 
-void InputManager::keyCallback(int key, int action, int mods)
-{
+void InputManager::keyCallback(int key, int action, int mods) {
     bool keyState;
     if(action == GLFW_PRESS || action == GLFW_REPEAT){
         keyState = true;
@@ -31,25 +30,22 @@ void InputManager::keyCallback(int key, int action, int mods)
         it->second = keyState; 
 }
 
-void InputManager::mouseButtonCallback(int button, int action, int mods)
-{
+void InputManager::mouseButtonCallback(int button, int action, int mods) {
     bool keyState;
-    if(action == GLFW_PRESS){
-        keyState = true;
-    }
-    else if(action == GLFW_RELEASE)
-        keyState = false;
-    else{
-    }
 
+    if(action == GLFW_PRESS) {
+        keyState = true;
+    } else if(action == GLFW_RELEASE) {
+        keyState = false;
+    }
+    
     std::map<int, bool>::iterator it = heldKeys.find(button); 
-    if (it != heldKeys.end())
-        it->second = keyState; 
+    if (it != heldKeys.end()) {
+        it->second = keyState;
+    }
 }
     
-
-void InputManager::cursorCallback(double xpos, double ypos)
-{
+void InputManager::cursorCallback(double xpos, double ypos) {
     float dx = xpos - lastCursorPosX;
     float dy = ypos - lastCursorPosY;
     // player.moveView(dx, dy);
@@ -57,16 +53,13 @@ void InputManager::cursorCallback(double xpos, double ypos)
     lastCursorPosY = ypos;
 }
 
-void InputManager::setInitialCursorPos(double xpos, double ypos)
-{
+void InputManager::setInitialCursorPos(double xpos, double ypos) {
     lastCursorPosX = xpos;
     lastCursorPosY = ypos;
 }
 
-void InputManager::handleInput()
-{
-    for(auto& k : heldKeys)
-    {
+void InputManager::handleInput() {
+    for(auto& k : heldKeys) {
         if(k.second == true){               //if key is held
             Command* targetCommand = commands[k.first];
             targetCommand->execute();       //execute key's command
