@@ -1,7 +1,7 @@
 #pragma once 
 
 /**
- * @brief Verter Buffer Object
+ * @brief Vertex Buffer Object
  * 
  */
 class VBO {

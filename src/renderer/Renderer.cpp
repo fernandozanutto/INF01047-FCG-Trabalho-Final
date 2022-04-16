@@ -4,6 +4,7 @@
 #include <sstream>
 #include <fstream>
 #include <map>
+#include <iostream>
 
 #include <glad/glad.h>
 #include <glm/vec4.hpp>
@@ -22,7 +23,9 @@
 #define NEARPLANE -0.1f
 #define FARPLANE -400.0f
 
-Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight, std::map<std::string, SceneObject> g_VirtualScene)
+GameObject bunny, plane, sphere, smallBunny;
+
+Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight, std::map<std::string, SceneObject> g_VirtualScene, Model* sphereModel, Model* bunnyModel, Model* planeModel)
 : g_VirtualScene(g_VirtualScene) {
     unsigned int vertexShader3dId     = LoadVertexShader("shader_vertex.glsl");
     unsigned int fragmentShader3dId   = LoadFragmentShader("shader_fragment.glsl");
@@ -47,6 +50,11 @@ Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight, std::map
     this->modelUniform2dId      = glGetUniformLocation(this->shader2dId, "model"); 
     this->bbox_min_uniform = glGetUniformLocation(this->shader3dId, "bbox_min");
     this->bbox_max_uniform = glGetUniformLocation(this->shader3dId, "bbox_max");
+
+    bunny = GameObject(bunnyModel);
+    sphere = GameObject(sphereModel);
+    plane = GameObject(planeModel);
+    smallBunny = GameObject(bunnyModel);
 }
 
 Renderer::~Renderer() {
@@ -95,53 +103,54 @@ void Renderer::draw(glm::mat4 cameraView, GLint object_id_uniform) {
     #define SMALL_BUNNY 3
 
     // Desenhamos o modelo de um coelho pequeno
-    GameObject coelhoPequeno;
-    coelhoPequeno.scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 2.0f, 0.0f);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(coelhoPequeno.modelMatrix));
+    smallBunny.resetMatrix();
+    smallBunny.scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 2.0f, 0.0f);
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(smallBunny.modelMatrix));
+    
     glUniform1i(object_id_uniform, 10);
-    DrawVirtualObject("bunny");
+    DrawVirtualObject(smallBunny.model);
 
     // Desenhamos o modelo da esfera
-    GameObject sphere;
+    sphere.resetMatrix();
     sphere.rotateY(glfwGetTime() * 0.1f)->rotateX(0.2f)->rotateZ(0.6f)->translate(-1.0f, 0, 0);
     glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(sphere.modelMatrix));
     glUniform1i(object_id_uniform, SPHERE);
-    DrawVirtualObject("sphere");
+    DrawVirtualObject(sphere.model);
 
     // Desenhamos o modelo do coelho
-    GameObject coelho;
-    coelho.rotateX(glfwGetTime() * 0.1f)->translate(1,0,0);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(coelho.modelMatrix));
+    bunny.resetMatrix();
+    bunny.rotateX(glfwGetTime() * 0.1f)->translate(1,0,0);
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(bunny.modelMatrix));
     glUniform1i(object_id_uniform, BUNNY);
-    DrawVirtualObject("bunny");
+    DrawVirtualObject(bunny.model);
 
     // Desenhamos o plano do chão
-    GameObject floor;
-    floor.scale(2.0f, 1.0f, 2.0f)->translate(0, -1.1f, 0);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(floor.modelMatrix));
+    plane.resetMatrix();
+    plane.scale(2.0f, 1.0f, 2.0f)->translate(0, -1.1f, 0);
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(plane.modelMatrix));
     glUniform1i(object_id_uniform, PLANE);
-    DrawVirtualObject("plane");
+    DrawVirtualObject(plane.model);
 }
 
-void Renderer::DrawVirtualObject(const char* object_name) {
+void Renderer::DrawVirtualObject(Model* model) {
     // "Ligamos" o VAO. Informamos que queremos utilizar os atributos de
     // vértices apontados pelo VAO criado pela função BuildTrianglesAndAddToVirtualScene(). Veja
     // comentários detalhados dentro da definição de BuildTrianglesAndAddToVirtualScene().
-    glBindVertexArray(this->g_VirtualScene[object_name].vertex_array_object_id);
 
+    glBindVertexArray(model->vaoId[0]);
     // Setamos as variáveis "bbox_min" e "bbox_max" do fragment shader
     // com os parâmetros da axis-aligned bounding box (AABB) do modelo.
-    glm::vec3 bbox_min = g_VirtualScene[object_name].bbox_min;
-    glm::vec3 bbox_max = g_VirtualScene[object_name].bbox_max;
+    glm::vec3 bbox_min = model->bbox_min[0];
+    glm::vec3 bbox_max = model->bbox_max[0];
     glUniform4f(this->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
     glUniform4f(this->bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
 
     
     glDrawElements(
-        this->g_VirtualScene[object_name].rendering_mode,
-        this->g_VirtualScene[object_name].num_indices,
+        model->renderingMode[0],
+        model->numIndexes[0],
         GL_UNSIGNED_INT,
-        (void*)(this->g_VirtualScene[object_name].first_index * sizeof(GLuint)));
+        (void*)(model->firstIndex[0] * sizeof(GLuint)));
 
     glBindVertexArray(0);
 }

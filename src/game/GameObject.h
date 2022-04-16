@@ -11,6 +11,7 @@ public:
     Model* model;
     glm::mat4 modelMatrix;
 
+    GameObject* resetMatrix();
     GameObject* translate(float x, float y, float z);
     GameObject* scale(float x, float y, float z);
     GameObject* rotateX(float angle);

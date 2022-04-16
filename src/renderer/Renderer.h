@@ -6,10 +6,11 @@
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 #include "SceneObject.h"
+#include "Model.h"
 
 class Renderer {
 public: 
-    Renderer(unsigned int screenWidth, unsigned int screenHeight, std::map<std::string, SceneObject> g_VirtualScene);
+    Renderer(unsigned int screenWidth, unsigned int screenHeight, std::map<std::string, SceneObject> g_VirtualScene, Model*, Model*, Model*);
     ~Renderer();
     void draw(glm::mat4 cameraView, GLint objectUniform);
 
@@ -44,5 +45,5 @@ private:
     unsigned int LoadFragmentShader(std::string name);
     void LoadShader(const char* filename, unsigned int shader_id);
     unsigned int CreateGpuProgram(unsigned int vertexId, unsigned int fragmentId); 
-    void DrawVirtualObject(const char* object_name);
+    void DrawVirtualObject(Model* model);
 };

@@ -10,6 +10,11 @@ GameObject::GameObject(Model* model): model(model) {
     this->modelMatrix = Matrix_Identity();
 }
 
+GameObject* GameObject::resetMatrix() {
+    this->modelMatrix = Matrix_Identity();
+    return this;
+}
+
 GameObject* GameObject::translate(float x, float y, float z) {
     this->modelMatrix = Matrix_Translate(x, y, z) * this->modelMatrix;
     return this;
