@@ -19,6 +19,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <iostream>
 
 // Headers das bibliotecas OpenGL
 #include <glad/glad.h>   // Criação de contexto OpenGL 3.3, precisa importar antes do glfw3
@@ -41,6 +42,7 @@
 #include "renderer/Window.h"
 #include "renderer/Renderer.h"
 #include "renderer/SceneObject.h"
+#include "renderer/VBO.h"
 #include "input/Command.h"
 #include "input/MoveCommand.h"
 #include "input/InputManager.h"
@@ -523,11 +525,6 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model) {
                 bbox_max.y = std::max(bbox_max.y, vy);
                 bbox_max.z = std::max(bbox_max.z, vz);
 
-                // Inspecionando o código da tinyobjloader, o aluno Bernardo
-                // Sulzbach (2017/1) apontou que a maneira correta de testar se
-                // existem normais e coordenadas de textura no ObjModel é
-                // comparando se o índice retornado é -1. Fazemos isso abaixo.
-
                 if (idx.normal_index != -1) {
                     const float nx = model->attrib.normals[3 * idx.normal_index + 0];
                     const float ny = model->attrib.normals[3 * idx.normal_index + 1];
@@ -562,41 +559,23 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model) {
         g_VirtualScene[model->shapes[shape].name] = theobject;
     }
 
-    GLuint VBO_model_coefficients_id;
-    glGenBuffers(1, &VBO_model_coefficients_id);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_model_coefficients_id);
-    glBufferData(GL_ARRAY_BUFFER, model_coefficients.size() * sizeof(float), NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, model_coefficients.size() * sizeof(float), model_coefficients.data());
     GLuint location = 0;             // "(location = 0)" em "shader_vertex.glsl"
     GLint number_of_dimensions = 4;  // vec4 em "shader_vertex.glsl"
-    glVertexAttribPointer(location, number_of_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(location);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    VBO VBO_model_coefficients(model_coefficients.data(), model_coefficients.size() * sizeof(float), location, number_of_dimensions);
 
     if (!normal_coefficients.empty()) {
-        GLuint VBO_normal_coefficients_id;
-        glGenBuffers(1, &VBO_normal_coefficients_id);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_normal_coefficients_id);
-        glBufferData(GL_ARRAY_BUFFER, normal_coefficients.size() * sizeof(float), NULL, GL_STATIC_DRAW);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, normal_coefficients.size() * sizeof(float), normal_coefficients.data());
         location = 1;              // "(location = 1)" em "shader_vertex.glsl"
         number_of_dimensions = 4;  // vec4 em "shader_vertex.glsl"
-        glVertexAttribPointer(location, number_of_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
-        glEnableVertexAttribArray(location);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        VBO VBO_normal_coefficients(normal_coefficients.data(), normal_coefficients.size() * sizeof(float), location, number_of_dimensions);
     }
 
     if (!texture_coefficients.empty()) {
-        GLuint VBO_texture_coefficients_id;
-        glGenBuffers(1, &VBO_texture_coefficients_id);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_texture_coefficients_id);
-        glBufferData(GL_ARRAY_BUFFER, texture_coefficients.size() * sizeof(float), NULL, GL_STATIC_DRAW);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, texture_coefficients.size() * sizeof(float), texture_coefficients.data());
-        location = 2;              // "(location = 1)" em "shader_vertex.glsl"
+        location = 2;              // "(location = 2)" em "shader_vertex.glsl"
         number_of_dimensions = 2;  // vec2 em "shader_vertex.glsl"
-        glVertexAttribPointer(location, number_of_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
-        glEnableVertexAttribArray(location);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        VBO VBO_texture_coefficients(texture_coefficients.data(), texture_coefficients.size() * sizeof(float), location, number_of_dimensions);
     }
 
     GLuint indices_id;
@@ -606,8 +585,6 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), NULL, GL_STATIC_DRAW);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indices.size() * sizeof(GLuint), indices.data());
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // XXX Errado!
-    //
 
     // "Desligamos" o VAO, evitando assim que operações posteriores venham a
     // alterar o mesmo. Isso evita bugs.
