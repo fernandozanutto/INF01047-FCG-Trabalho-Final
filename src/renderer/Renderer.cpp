@@ -14,6 +14,7 @@
 #include "Matrices.h"
 #include "Model.h"
 #include "../game/GameObject.h"
+#include "../game/Scene.h"
 #include "SceneObject.h"
 
 #define DOWNSCALE_FACTOR 1/4
@@ -25,8 +26,7 @@
 
 GameObject bunny, plane, sphere, smallBunny;
 
-Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight, std::map<std::string, SceneObject> g_VirtualScene, Model* sphereModel, Model* bunnyModel, Model* planeModel)
-: g_VirtualScene(g_VirtualScene) {
+Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight, Model* sphereModel, Model* bunnyModel, Model* planeModel) {
     unsigned int vertexShader3dId     = LoadVertexShader("shader_vertex.glsl");
     unsigned int fragmentShader3dId   = LoadFragmentShader("shader_fragment.glsl");
     unsigned int vertexShader2dId     = LoadVertexShader("shader_vertex.glsl");
@@ -62,11 +62,8 @@ Renderer::~Renderer() {
     glDeleteProgram(shader2dId);
 }
 
-void Renderer::draw(glm::mat4 cameraView, GLint object_id_uniform) {
+void Renderer::draw(glm::mat4 cameraView, GLint object_id_uniform, Scene scene) {
     glViewport(0,0, screenWidth, screenHeight);
-    //(glBindFramebuffer(GL_FRAMEBUFFER, downscaledBuffer.getId()));
-    //uses downscaled screensize and binds framebuffer
-
     // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
     // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:
     // Vermelho, Verde, Azul, Alpha (valor de transparência).
@@ -91,45 +88,16 @@ void Renderer::draw(glm::mat4 cameraView, GLint object_id_uniform) {
     float screenRatio = (float)screenWidth / (float)screenHeight;
 
     glm::mat4 projection = Matrix_Perspective(fov, screenRatio, NEARPLANE, FARPLANE);
-    glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);                  // Vetor "up" fixado para apontar para o "céu" (eito Y global)
 
-    //glm::mat4 view = Matrix_Camera_View(scene.player.getPosition(), scene.player.getFacing(), camera_up_vector);
     (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView)));
     (glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection)));
-    
-    #define SPHERE 0
-    #define BUNNY 1
-    #define PLANE 2
-    #define SMALL_BUNNY 3
 
-    // Desenhamos o modelo de um coelho pequeno
-    smallBunny.resetMatrix();
-    smallBunny.scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 2.0f, 0.0f);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(smallBunny.modelMatrix));
-    
-    glUniform1i(object_id_uniform, 10);
-    drawObject(smallBunny.model);
-
-    // Desenhamos o modelo da esfera
-    sphere.resetMatrix();
-    sphere.rotateY(glfwGetTime() * 0.1f)->rotateX(0.2f)->rotateZ(0.6f)->translate(-1.0f, 0, 0);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(sphere.modelMatrix));
-    glUniform1i(object_id_uniform, SPHERE);
-    drawObject(sphere.model);
-
-    // Desenhamos o modelo do coelho
-    bunny.resetMatrix();
-    bunny.rotateX(glfwGetTime() * 0.1f)->translate(1,0,0);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(bunny.modelMatrix));
-    glUniform1i(object_id_uniform, BUNNY);
-    drawObject(bunny.model);
-
-    // Desenhamos o plano do chão
-    plane.resetMatrix();
-    plane.scale(2.0f, 1.0f, 2.0f)->translate(0, -1.1f, 0);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(plane.modelMatrix));
-    glUniform1i(object_id_uniform, PLANE);
-    drawObject(plane.model);
+    for (unsigned int i=0; i < scene.gameObject.size(); i++) {
+        GameObject object = scene.gameObject[i];
+        glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.modelMatrix));
+        glUniform1i(object_id_uniform, i);
+        drawObject(object.model);
+    }
 }
 
 void Renderer::drawObject(Model* model) {

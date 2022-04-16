@@ -7,15 +7,15 @@
 #include <glm/mat4x4.hpp>
 #include "SceneObject.h"
 #include "Model.h"
+#include "../game/Scene.h"
 
 class Renderer {
 public: 
-    Renderer(unsigned int screenWidth, unsigned int screenHeight, std::map<std::string, SceneObject> g_VirtualScene, Model*, Model*, Model*);
+    Renderer(unsigned int screenWidth, unsigned int screenHeight, Model*, Model*, Model*);
     ~Renderer();
-    void draw(glm::mat4 cameraView, GLint objectUniform);
+    void draw(glm::mat4 cameraView, GLint objectUniform, Scene scene);
 
 private:
-    std::map<std::string, SceneObject> g_VirtualScene;
     float screenWidth;
     float screenHeight;
     GLint bbox_min_uniform;

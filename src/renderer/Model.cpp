@@ -27,17 +27,18 @@ Model::Model(std::string filename) : name(filename) {
         throw std::runtime_error("Erro ao carregar modelo.");
     }
 
-    printf("OK.\n");
+    printf("OK. ");
 
     computeNormals();
+    printf("compute normals OK. ");
     buildTrianglesAndAddToVirtualScene();
+    printf("build triangles OK.\n");
 }
 
 void Model::computeNormals() {
     if (!attrib.normals.empty())
         return;
 
-    std::cout << "Computando normais de " << name << std::endl;
     // Primeiro computamos as normais para todos os TRIÂNGULOS.
     // Segundo, computamos as normais dos VÉRTICES através do método proposto
     // por Gouraud, onde a normal de cada vértice vai ser a média das normais de
@@ -93,7 +94,6 @@ void Model::buildTrianglesAndAddToVirtualScene() {
     GLuint vertex_array_object_id;
     glGenVertexArrays(1, &vertex_array_object_id);
     glBindVertexArray(vertex_array_object_id);
-
     std::vector<GLuint> indices;
     std::vector<float> model_coefficients;
     std::vector<float> normal_coefficients;
@@ -155,7 +155,6 @@ void Model::buildTrianglesAndAddToVirtualScene() {
         size_t last_index = indices.size() - 1;
 
         shapeName.push_back(shapes[shape].name);
-        std::cout << "build triangles for " << shapes[shape].name << " " << &(vaoId) << std::endl;
         firstIndex.push_back(first_index);
         numIndexes.push_back(last_index - first_index + 1);
         vaoId.push_back(vertex_array_object_id);

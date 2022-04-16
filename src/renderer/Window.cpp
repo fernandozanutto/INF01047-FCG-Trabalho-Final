@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Window.h"
+#include "../input/InputManager.h"
 
 Window::Window() {
     if (!glfwInit()) {
@@ -55,6 +56,12 @@ Window::Window() {
 Window::~Window() {
    glfwDestroyWindow(this->window); 
    glfwTerminate();
+}
+
+void Window::setKeyCallbacks(InputManager* input) {
+    glfwSetCursorPosCallback(this->window, [](GLFWwindow* window, double xpos, double ypos) {
+        
+    });
 }
 
 bool Window::shouldClose() {

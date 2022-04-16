@@ -36,9 +36,9 @@
 #include <tiny_obj_loader.h>
 
 // Headers locais, definidos na pasta "include/"
+#include "utils.h"
 #include "renderer/Model.h"
 #include "renderer/matrices.h"
-#include "utils.h"
 #include "renderer/Window.h"
 #include "renderer/Renderer.h"
 #include "renderer/SceneObject.h"
@@ -47,6 +47,7 @@
 #include "input/Command.h"
 #include "input/MoveCommand.h"
 #include "input/InputManager.h"
+#include "game/Scene.h"
 
 // Declaração de funções utilizadas para pilha de matrizes de modelagem.
 void PushMatrix(glm::mat4 M);
@@ -78,7 +79,6 @@ void TextRendering_PrintMatrixVectorProductDivW(GLFWwindow* window, glm::mat4 M,
 // outras informações do programa. Definidas após main().
 void TextRendering_ShowModelViewProjection(GLFWwindow* window, glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec4 p_model);
 void TextRendering_ShowEulerAngles(GLFWwindow* window);
-void TextRendering_ShowProjection(GLFWwindow* window);
 void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
 
 // Funções callback para comunicação com o sistema operacional e interação do
@@ -90,12 +90,6 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
 // Abaixo definimos variáveis globais utilizadas em várias funções do código.
-
-// A cena virtual é uma lista de objetos nomeados, guardados em um dicionário
-// (map).  Veja dentro da função BuildTrianglesAndAddToVirtualScene() como que são incluídos
-// objetos dentro da variável g_VirtualScene, e veja na função main() como
-// estes são acessados.
-std::map<std::string, SceneObject> g_VirtualScene;
 
 // Pilha que guardará as matrizes de modelagem.
 std::stack<glm::mat4> g_MatrixStack;
@@ -138,9 +132,6 @@ float g_ForearmAngleX = 0.0f;
 float g_TorsoPositionX = 0.0f;
 float g_TorsoPositionY = 0.0f;
 
-// Variável que controla o tipo de projeção utilizada: perspectiva ou ortográfica.
-bool g_UsePerspectiveProjection = true;
-
 // Variável que controla se o texto informativo será mostrado na tela.
 bool g_ShowInfoText = true;
 
@@ -161,7 +152,7 @@ GLuint g_NumLoadedTextures = 0;
 #define FPS 75.0
 #define SECONDS_PER_FRAME 1.0/FPS
 
-int main(int argc, char* argv[]) {
+int main() {
     MoveCommand test2(MoveCommand::BACKWARD);
     
     // TODO: pass game to movecommand
@@ -171,13 +162,14 @@ int main(int argc, char* argv[]) {
         std::make_tuple(GLFW_KEY_A,     new MoveCommand(MoveCommand::LEFT)),
         std::make_tuple(GLFW_KEY_D,     new MoveCommand(MoveCommand::RIGHT))
     };
-
+    
     // TODO: pass player to inputmanager
     InputManager input(commandLst);
 
     Window windoww;
     GLFWwindow* window = windoww.window;
     
+    Scene primeiroNivel;
 
     // Definimos a função de callback que será chamada sempre que o usuário
     // pressionar alguma tecla do teclado ...
@@ -212,7 +204,7 @@ int main(int argc, char* argv[]) {
     Model bunnymodel("bunny");
     Model planemodel("plane");
 
-    Renderer rendererr(windoww.width, windoww.height, g_VirtualScene, &spheremodel, &bunnymodel, &planemodel);
+    Renderer rendererr(windoww.width, windoww.height, &spheremodel, &bunnymodel, &planemodel);
     
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
@@ -273,9 +265,8 @@ int main(int argc, char* argv[]) {
 
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
-            rendererr.draw(view, object_id_uniform);
+            rendererr.draw(view, object_id_uniform, primeiroNivel);
             TextRendering_ShowEulerAngles(window);
-            TextRendering_ShowProjection(window);
             TextRendering_ShowFramesPerSecond(window);
             windoww.swapBuffers();
             lastFrameTime = glfwGetTime();
@@ -665,16 +656,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         g_TorsoPositionY = 0.0f;
     }
 
-    // Se o usuário apertar a tecla P, utilizamos projeção perspectiva.
-    if (key == GLFW_KEY_P && action == GLFW_PRESS) {
-        g_UsePerspectiveProjection = true;
-    }
-
-    // Se o usuário apertar a tecla O, utilizamos projeção ortográfica.
-    if (key == GLFW_KEY_O && action == GLFW_PRESS) {
-        g_UsePerspectiveProjection = false;
-    }
-
     // Se o usuário apertar a tecla H, fazemos um "toggle" do texto informativo mostrado na tela.
     if (key == GLFW_KEY_H && action == GLFW_PRESS) {
         g_ShowInfoText = !g_ShowInfoText;
@@ -798,20 +779,6 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window) {
     snprintf(buffer, 120, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f) - Theta:(%.2f) Phi:(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX, g_CameraTheta, g_CameraPhi);
 
     TextRendering_PrintString(window, buffer, -1.0f + pad / 10, -1.0f + 2 * pad / 10, 1.0f);
-}
-
-// Escrevemos na tela qual matriz de projeção está sendo utilizada.
-void TextRendering_ShowProjection(GLFWwindow* window) {
-    if (!g_ShowInfoText)
-        return;
-
-    float lineheight = TextRendering_LineHeight(window);
-    float charwidth = TextRendering_CharWidth(window);
-
-    if (g_UsePerspectiveProjection)
-        TextRendering_PrintString(window, "Perspective", 1.0f - 13 * charwidth, -1.0f + 2 * lineheight / 10, 1.0f);
-    else
-        TextRendering_PrintString(window, "Orthographic", 1.0f - 13 * charwidth, -1.0f + 2 * lineheight / 10, 1.0f);
 }
 
 // Escrevemos na tela o número de quadros renderizados por segundo (frames per
