@@ -8,6 +8,7 @@ class Model {
 private:
     void computeNormals();
 public:
+    Model();
     Model(std::string filename);
     std::string name;
     tinyobj::attrib_t                 attrib;

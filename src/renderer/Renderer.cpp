@@ -11,6 +11,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 #include "Matrices.h"
+#include "Model.h"
+#include "../game/GameObject.h"
 #include "SceneObject.h"
 
 #define DOWNSCALE_FACTOR 1/4
@@ -92,31 +94,33 @@ void Renderer::draw(glm::mat4 cameraView, GLint object_id_uniform) {
     #define PLANE 2
     #define SMALL_BUNNY 3
 
-    glm::mat4 model = Matrix_Identity();
+    // Desenhamos o modelo de um coelho pequeno
+    GameObject coelhoPequeno;
+    coelhoPequeno.scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 2.0f, 0.0f);
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(coelhoPequeno.modelMatrix));
+    glUniform1i(object_id_uniform, 10);
+    DrawVirtualObject("bunny");
 
     // Desenhamos o modelo da esfera
-    model = Matrix_Translate(-1.0f, 0.0f, 0.0f) * Matrix_Rotate_Z(0.6f) * Matrix_Rotate_X(0.2f) * Matrix_Rotate_Y((float)glfwGetTime() * 0.1f);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(model));
+    GameObject sphere;
+    sphere.rotateY(glfwGetTime() * 0.1f)->rotateX(0.2f)->rotateZ(0.6f)->translate(-1.0f, 0, 0);
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(sphere.modelMatrix));
     glUniform1i(object_id_uniform, SPHERE);
     DrawVirtualObject("sphere");
 
     // Desenhamos o modelo do coelho
-    model = Matrix_Translate(1.0f, 0.0f, 0.0f) * Matrix_Rotate_X((float)glfwGetTime() * 0.1f);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(model));
+    GameObject coelho;
+    coelho.rotateX(glfwGetTime() * 0.1f)->translate(1,0,0);
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(coelho.modelMatrix));
     glUniform1i(object_id_uniform, BUNNY);
     DrawVirtualObject("bunny");
 
     // Desenhamos o plano do chão
-    model = Matrix_Translate(0.0f, -1.1f, 0.0f) * Matrix_Scale(2.0f, 1.0f, 2.0f);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(model));
+    GameObject floor;
+    floor.scale(2.0f, 1.0f, 2.0f)->translate(0, -1.1f, 0);
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(floor.modelMatrix));
     glUniform1i(object_id_uniform, PLANE);
     DrawVirtualObject("plane");
-
-    // Desenhamos o modelo de um coelho pequeno
-    model = Matrix_Translate(0.0f, 2.0f, 0.0f) * Matrix_Scale(0.3f, 0.3f, 0.3f);
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(object_id_uniform, 10);
-    DrawVirtualObject("bunny");
 }
 
 void Renderer::DrawVirtualObject(const char* object_name) {

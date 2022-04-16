@@ -43,6 +43,7 @@
 #include "renderer/Renderer.h"
 #include "renderer/SceneObject.h"
 #include "renderer/VBO.h"
+#include "renderer/IBO.h"
 #include "input/Command.h"
 #include "input/MoveCommand.h"
 #include "input/InputManager.h"
@@ -463,35 +464,22 @@ void BuildTrianglesAndAddToVirtualScene(Model* model) {
         theobject.bbox_min = bbox_min;
         theobject.bbox_max = bbox_max;
 
+        std::cout << model->shapes[shape].name << std::endl;
+        
         g_VirtualScene[model->shapes[shape].name] = theobject;
     }
 
-    GLuint location = 0;             // "(location = 0)" em "shader_vertex.glsl"
-    GLint number_of_dimensions = 4;  // vec4 em "shader_vertex.glsl"
-
-    VBO VBO_model_coefficients(model_coefficients.data(), model_coefficients.size() * sizeof(float), location, number_of_dimensions);
+    VBO VBO_model_coefficients(model_coefficients.data(), model_coefficients.size() * sizeof(float), 0, 4);
 
     if (!normal_coefficients.empty()) {
-        location = 1;              // "(location = 1)" em "shader_vertex.glsl"
-        number_of_dimensions = 4;  // vec4 em "shader_vertex.glsl"
-
-        VBO VBO_normal_coefficients(normal_coefficients.data(), normal_coefficients.size() * sizeof(float), location, number_of_dimensions);
+        VBO VBO_normal_coefficients(normal_coefficients.data(), normal_coefficients.size() * sizeof(float), 1, 4);
     }
 
     if (!texture_coefficients.empty()) {
-        location = 2;              // "(location = 2)" em "shader_vertex.glsl"
-        number_of_dimensions = 2;  // vec2 em "shader_vertex.glsl"
-
-        VBO VBO_texture_coefficients(texture_coefficients.data(), texture_coefficients.size() * sizeof(float), location, number_of_dimensions);
+        VBO VBO_texture_coefficients(texture_coefficients.data(), texture_coefficients.size() * sizeof(float), 2, 2);
     }
 
-    GLuint indices_id;
-    glGenBuffers(1, &indices_id);
-
-    // "Ligamos" o buffer. Note que o tipo agora é GL_ELEMENT_ARRAY_BUFFER.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indices.size() * sizeof(GLuint), indices.data());
+    IBO indexBuffer(indices.data(), indices.size() * sizeof(GLuint));
 
     // "Desligamos" o VAO, evitando assim que operações posteriores venham a
     // alterar o mesmo. Isso evita bugs.

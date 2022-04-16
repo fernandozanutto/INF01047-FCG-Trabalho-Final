@@ -6,6 +6,8 @@
 #include "Matrices.h"
 #include "Model.h"
 
+Model::Model() { }
+
 Model::Model(std::string filename) : name(filename) {
 
     std::string fileLocation = "data/" + filename + ".obj";
