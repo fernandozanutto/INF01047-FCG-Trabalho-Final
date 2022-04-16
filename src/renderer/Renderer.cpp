@@ -34,15 +34,15 @@ Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight, std::map
 
     this->shader3dId = CreateGpuProgram(vertexShader3dId, fragmentShader3dId);
     this->shader2dId = CreateGpuProgram(vertexShader2dId, fragmentShader2dId);
-    // this->modelUniformId      = glGetUniformLocation(this->shader3dId, "model"); 
-    // this->viewUniformId       = glGetUniformLocation(this->shader3dId, "view"); 
-    // this->projectionUniformId = glGetUniformLocation(this->shader3dId, "projection"); 
-    // this->lightingUniformId = glGetUniformLocation(this->shader3dId, "lightingIsEnabled"); 
-    // this->handUniformId = glGetUniformLocation(this->shader3dId, "isRenderingHand"); 
-    // this->groundUniformId = glGetUniformLocation(this->shader3dId, "isRenderingGround"); 
-    // this->camPosUniformId = glGetUniformLocation(this->shader3dId, "cameraPosition"); 
-    // this->camDirUniformId = glGetUniformLocation(this->shader3dId, "cameraDirection"); 
-    // this->modelUniform2dId      = glGetUniformLocation(this->shader2dId, "model"); 
+    this->modelUniformId      = glGetUniformLocation(this->shader3dId, "model"); 
+    this->viewUniformId       = glGetUniformLocation(this->shader3dId, "view"); 
+    this->projectionUniformId = glGetUniformLocation(this->shader3dId, "projection"); 
+    this->lightingUniformId = glGetUniformLocation(this->shader3dId, "lightingIsEnabled"); 
+    this->handUniformId = glGetUniformLocation(this->shader3dId, "isRenderingHand"); 
+    this->groundUniformId = glGetUniformLocation(this->shader3dId, "isRenderingGround"); 
+    this->camPosUniformId = glGetUniformLocation(this->shader3dId, "cameraPosition"); 
+    this->camDirUniformId = glGetUniformLocation(this->shader3dId, "cameraDirection"); 
+    this->modelUniform2dId      = glGetUniformLocation(this->shader2dId, "model"); 
     this->bbox_min_uniform = glGetUniformLocation(this->shader3dId, "bbox_min");
     this->bbox_max_uniform = glGetUniformLocation(this->shader3dId, "bbox_max");
 }
@@ -52,7 +52,7 @@ Renderer::~Renderer() {
     glDeleteProgram(shader2dId);
 }
 
-void Renderer::draw(glm::mat4 cameraView, GLint viewUniform, GLint projectionUniform, GLint model_uniform, GLint object_id_uniform) {
+void Renderer::draw(glm::mat4 cameraView, GLint object_id_uniform) {
     glViewport(0,0, screenWidth, screenHeight);
     //(glBindFramebuffer(GL_FRAMEBUFFER, downscaledBuffer.getId()));
     //uses downscaled screensize and binds framebuffer
@@ -84,8 +84,8 @@ void Renderer::draw(glm::mat4 cameraView, GLint viewUniform, GLint projectionUni
     glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);                  // Vetor "up" fixado para apontar para o "céu" (eito Y global)
 
     //glm::mat4 view = Matrix_Camera_View(scene.player.getPosition(), scene.player.getFacing(), camera_up_vector);
-    (glUniformMatrix4fv(viewUniform, 1 , GL_FALSE , glm::value_ptr(cameraView)));
-    (glUniformMatrix4fv(projectionUniform, 1 , GL_FALSE , glm::value_ptr(projection)));
+    (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView)));
+    (glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection)));
     
     #define SPHERE 0
     #define BUNNY 1
@@ -96,31 +96,29 @@ void Renderer::draw(glm::mat4 cameraView, GLint viewUniform, GLint projectionUni
 
     // Desenhamos o modelo da esfera
     model = Matrix_Translate(-1.0f, 0.0f, 0.0f) * Matrix_Rotate_Z(0.6f) * Matrix_Rotate_X(0.2f) * Matrix_Rotate_Y((float)glfwGetTime() * 0.1f);
-    glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(object_id_uniform, SPHERE);
     DrawVirtualObject("sphere");
 
     // Desenhamos o modelo do coelho
     model = Matrix_Translate(1.0f, 0.0f, 0.0f) * Matrix_Rotate_X((float)glfwGetTime() * 0.1f);
-    glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(object_id_uniform, BUNNY);
     DrawVirtualObject("bunny");
 
     // Desenhamos o plano do chão
     model = Matrix_Translate(0.0f, -1.1f, 0.0f) * Matrix_Scale(2.0f, 1.0f, 2.0f);
-    glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(object_id_uniform, PLANE);
     DrawVirtualObject("plane");
 
     // Desenhamos o modelo de um coelho pequeno
-    model = Matrix_Translate(0.0f, 2.0f, 0.0f) * Matrix_Scale(0.5f, 0.5f, 0.5f);
-    glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    model = Matrix_Translate(0.0f, 2.0f, 0.0f) * Matrix_Scale(0.3f, 0.3f, 0.3f);
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(object_id_uniform, 10);
     DrawVirtualObject("bunny");
 }
 
-// Função que desenha um objeto armazenado em g_VirtualScene. Veja definição
-// dos objetos na função BuildTrianglesAndAddToVirtualScene().
 void Renderer::DrawVirtualObject(const char* object_name) {
     // "Ligamos" o VAO. Informamos que queremos utilizar os atributos de
     // vértices apontados pelo VAO criado pela função BuildTrianglesAndAddToVirtualScene(). Veja
@@ -134,19 +132,13 @@ void Renderer::DrawVirtualObject(const char* object_name) {
     glUniform4f(this->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
     glUniform4f(this->bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
 
-    // Pedimos para a GPU rasterizar os vértices dos eixos XYZ
-    // apontados pelo VAO como linhas. Veja a definição de
-    // g_VirtualScene[""] dentro da função BuildTrianglesAndAddToVirtualScene(), e veja
-    // a documentação da função glDrawElements() em
-    // http://docs.gl/gl3/glDrawElements.
+    
     glDrawElements(
         this->g_VirtualScene[object_name].rendering_mode,
         this->g_VirtualScene[object_name].num_indices,
         GL_UNSIGNED_INT,
         (void*)(this->g_VirtualScene[object_name].first_index * sizeof(GLuint)));
 
-    // "Desligamos" o VAO, evitando assim que operações posteriores venham a
-    // alterar o mesmo. Isso evita bugs.
     glBindVertexArray(0);
 }
 

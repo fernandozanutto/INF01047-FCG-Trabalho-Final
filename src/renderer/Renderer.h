@@ -11,7 +11,7 @@ class Renderer {
 public: 
     Renderer(unsigned int screenWidth, unsigned int screenHeight, std::map<std::string, SceneObject> g_VirtualScene);
     ~Renderer();
-    void draw(glm::mat4 cameraView, GLint viewUniform, GLint projectionUniform, GLint modelUniform, GLint objectUniform);
+    void draw(glm::mat4 cameraView, GLint objectUniform);
 
 private:
     std::map<std::string, SceneObject> g_VirtualScene;
