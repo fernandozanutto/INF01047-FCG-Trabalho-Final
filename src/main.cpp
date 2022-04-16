@@ -214,8 +214,6 @@ int main(int argc, char* argv[]) {
 
     Renderer rendererr(windoww.width, windoww.height, g_VirtualScene, &spheremodel, &bunnymodel, &planemodel);
     
-    std::cout << spheremodel.vaoId.at(0) << std::endl;
-
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
 

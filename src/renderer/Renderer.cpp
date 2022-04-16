@@ -108,51 +108,51 @@ void Renderer::draw(glm::mat4 cameraView, GLint object_id_uniform) {
     glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(smallBunny.modelMatrix));
     
     glUniform1i(object_id_uniform, 10);
-    DrawVirtualObject(smallBunny.model);
+    drawObject(smallBunny.model);
 
     // Desenhamos o modelo da esfera
     sphere.resetMatrix();
     sphere.rotateY(glfwGetTime() * 0.1f)->rotateX(0.2f)->rotateZ(0.6f)->translate(-1.0f, 0, 0);
     glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(sphere.modelMatrix));
     glUniform1i(object_id_uniform, SPHERE);
-    DrawVirtualObject(sphere.model);
+    drawObject(sphere.model);
 
     // Desenhamos o modelo do coelho
     bunny.resetMatrix();
     bunny.rotateX(glfwGetTime() * 0.1f)->translate(1,0,0);
     glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(bunny.modelMatrix));
     glUniform1i(object_id_uniform, BUNNY);
-    DrawVirtualObject(bunny.model);
+    drawObject(bunny.model);
 
     // Desenhamos o plano do chão
     plane.resetMatrix();
     plane.scale(2.0f, 1.0f, 2.0f)->translate(0, -1.1f, 0);
     glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(plane.modelMatrix));
     glUniform1i(object_id_uniform, PLANE);
-    DrawVirtualObject(plane.model);
+    drawObject(plane.model);
 }
 
-void Renderer::DrawVirtualObject(Model* model) {
-    // "Ligamos" o VAO. Informamos que queremos utilizar os atributos de
-    // vértices apontados pelo VAO criado pela função BuildTrianglesAndAddToVirtualScene(). Veja
-    // comentários detalhados dentro da definição de BuildTrianglesAndAddToVirtualScene().
+void Renderer::drawObject(Model* model) {
+    int size = model->vaoId.size();
 
-    glBindVertexArray(model->vaoId[0]);
-    // Setamos as variáveis "bbox_min" e "bbox_max" do fragment shader
-    // com os parâmetros da axis-aligned bounding box (AABB) do modelo.
-    glm::vec3 bbox_min = model->bbox_min[0];
-    glm::vec3 bbox_max = model->bbox_max[0];
-    glUniform4f(this->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
-    glUniform4f(this->bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
+    for (int i=0; i < size; i++) {
+        glBindVertexArray(model->vaoId[i]);
+        // Setamos as variáveis "bbox_min" e "bbox_max" do fragment shader
+        // com os parâmetros da axis-aligned bounding box (AABB) do modelo.
+        glm::vec3 bbox_min = model->bbox_min[i];
+        glm::vec3 bbox_max = model->bbox_max[i];
+        glUniform4f(this->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
+        glUniform4f(this->bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
 
-    
-    glDrawElements(
-        model->renderingMode[0],
-        model->numIndexes[0],
-        GL_UNSIGNED_INT,
-        (void*)(model->firstIndex[0] * sizeof(GLuint)));
+        
+        glDrawElements(
+            model->renderingMode[i],
+            model->numIndexes[i],
+            GL_UNSIGNED_INT,
+            (void*)(model->firstIndex[i] * sizeof(GLuint)));
 
-    glBindVertexArray(0);
+        glBindVertexArray(0);
+    }
 }
 
 
