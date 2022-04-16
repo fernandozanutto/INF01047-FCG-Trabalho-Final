@@ -36,7 +36,7 @@
 #include <tiny_obj_loader.h>
 
 // Headers locais, definidos na pasta "include/"
-#include "ObjModel.cpp"
+#include "renderer/Model.h"
 #include "renderer/matrices.h"
 #include "utils.h"
 #include "renderer/Window.h"
@@ -53,8 +53,8 @@ void PopMatrix(glm::mat4& M);
 
 // Declaração de várias funções utilizadas em main().  Essas estão definidas
 // logo após a definição de main() neste arquivo.
-void BuildTrianglesAndAddToVirtualScene(ObjModel*);                           // Constrói representação de um ObjModel como malha de triângulos para renderização
-void ComputeNormals(ObjModel* model);                                         // Computa normais de um ObjModel, caso não existam.
+void BuildTrianglesAndAddToVirtualScene(Model*);                           // Constrói representação de um ObjModel como malha de triângulos para renderização
+void ComputeNormals(Model* model);                                         // Computa normais de um ObjModel, caso não existam.
 void LoadShadersFromFiles();                                                  // Carrega os shaders de vértice e fragmento, criando um programa de GPU
 void LoadTextureImage(const char* filename);                                  // Função que carrega imagens de textura
 void DrawVirtualObject(const char* object_name);                              // Desenha um objeto armazenado em g_VirtualScene
@@ -62,7 +62,7 @@ GLuint LoadShader_Vertex(const char* filename);                               //
 GLuint LoadShader_Fragment(const char* filename);                             // Carrega um fragment shader
 void LoadShader(const char* filename, GLuint shader_id);                      // Função utilizada pelas duas acima
 GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id);  // Cria um programa de GPU
-void PrintObjModelInfo(ObjModel*);                                            // Função para debugging
+void PrintObjModelInfo(Model*);                                            // Função para debugging
 
 // Declaração de funções auxiliares para renderizar texto dentro da janela
 // OpenGL. Estas funções estão definidas no arquivo "textrendering.cpp".
@@ -210,15 +210,15 @@ int main(int argc, char* argv[]) {
     LoadTextureImage("./data/tc-earth_nightmap_citylights.gif");  // TextureImage1
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
-    ObjModel spheremodel("./data/sphere.obj");
+    Model spheremodel("./data/sphere.obj");
     ComputeNormals(&spheremodel);
     BuildTrianglesAndAddToVirtualScene(&spheremodel);
 
-    ObjModel bunnymodel("./data/bunny.obj");
+    Model bunnymodel("./data/bunny.obj");
     ComputeNormals(&bunnymodel);
     BuildTrianglesAndAddToVirtualScene(&bunnymodel);
 
-    ObjModel planemodel("./data/plane.obj");
+    Model planemodel("./data/plane.obj");
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
 
@@ -425,7 +425,7 @@ void PopMatrix(glm::mat4& M) {
 
 // Função que computa as normais de um ObjModel, caso elas não tenham sido
 // especificadas dentro do arquivo ".obj"
-void ComputeNormals(ObjModel* model) {
+void ComputeNormals(Model* model) {
     if (!model->attrib.normals.empty())
         return;
 
@@ -481,7 +481,7 @@ void ComputeNormals(ObjModel* model) {
 }
 
 // Constrói triângulos para futura renderização a partir de um ObjModel.
-void BuildTrianglesAndAddToVirtualScene(ObjModel* model) {
+void BuildTrianglesAndAddToVirtualScene(Model* model) {
     GLuint vertex_array_object_id;
     glGenVertexArrays(1, &vertex_array_object_id);
     glBindVertexArray(vertex_array_object_id);
@@ -1098,7 +1098,7 @@ void TextRendering_ShowFramesPerSecond(GLFWwindow* window) {
 // Função para debugging: imprime no terminal todas informações de um modelo
 // geométrico carregado de um arquivo ".obj".
 // Veja: https://github.com/syoyo/tinyobjloader/blob/22883def8db9ef1f3ffb9b404318e7dd25fdbb51/loader_example.cc#L98
-void PrintObjModelInfo(ObjModel* model) {
+void PrintObjModelInfo(Model* model) {
     const tinyobj::attrib_t& attrib = model->attrib;
     const std::vector<tinyobj::shape_t>& shapes = model->shapes;
     const std::vector<tinyobj::material_t>& materials = model->materials;
