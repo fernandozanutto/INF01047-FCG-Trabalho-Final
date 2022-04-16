@@ -21,7 +21,6 @@ Window::Window() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     //glfwWindowHint(GLFW_SAMPLES, 4);
-    //glfw initialization
 
     GLFWmonitor* monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode* screen = glfwGetVideoMode(monitor);
@@ -53,19 +52,16 @@ Window::Window() {
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 }
 
-Window::~Window()
-{
+Window::~Window() {
    glfwDestroyWindow(this->window); 
    glfwTerminate();
 }
 
-bool Window::shouldClose()
-{
+bool Window::shouldClose() {
     return glfwWindowShouldClose(this->window);
 }
 
-void Window::setShouldClose()
-{
+void Window::setShouldClose() {
     glfwSetWindowShouldClose(this->window, GL_TRUE);
 }
 
@@ -73,7 +69,6 @@ void Window::swapBuffers() {
     glfwSwapBuffers(this->window);
 }
 
-void Window::pollEvents()
-{
+void Window::pollEvents() {
     glfwPollEvents();
 }
