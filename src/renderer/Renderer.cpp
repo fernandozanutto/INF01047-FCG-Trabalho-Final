@@ -14,19 +14,15 @@
 #include "Matrices.h"
 #include "Model.h"
 #include "../game/GameObject.h"
-#include "../game/Scene.h"
+#include "../game/BaseScene.h"
 #include "SceneObject.h"
 
-#define DOWNSCALE_FACTOR 1/4
-//factor used in the game's pixelated effect
 
 #define FOV 3.141592f/3.0f
 #define NEARPLANE -0.1f
 #define FARPLANE -400.0f
 
-GameObject bunny, plane, sphere, smallBunny;
-
-Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight, Model* sphereModel, Model* bunnyModel, Model* planeModel) {
+Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight) {
     unsigned int vertexShader3dId     = LoadVertexShader("shader_vertex.glsl");
     unsigned int fragmentShader3dId   = LoadFragmentShader("shader_fragment.glsl");
     unsigned int vertexShader2dId     = LoadVertexShader("shader_vertex.glsl");
@@ -42,19 +38,15 @@ Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight, Model* s
     this->modelUniformId      = glGetUniformLocation(this->shader3dId, "model"); 
     this->viewUniformId       = glGetUniformLocation(this->shader3dId, "view"); 
     this->projectionUniformId = glGetUniformLocation(this->shader3dId, "projection"); 
-    this->lightingUniformId = glGetUniformLocation(this->shader3dId, "lightingIsEnabled"); 
-    this->handUniformId = glGetUniformLocation(this->shader3dId, "isRenderingHand"); 
-    this->groundUniformId = glGetUniformLocation(this->shader3dId, "isRenderingGround"); 
-    this->camPosUniformId = glGetUniformLocation(this->shader3dId, "cameraPosition"); 
-    this->camDirUniformId = glGetUniformLocation(this->shader3dId, "cameraDirection"); 
+    this->object_id_uniform = glGetUniformLocation(this->shader3dId, "object_id");    // Variável "object_id" em shader_fragment.glsl
+    //this->lightingUniformId = glGetUniformLocation(this->shader3dId, "lightingIsEnabled"); 
+    //this->handUniformId = glGetUniformLocation(this->shader3dId, "isRenderingHand"); 
+    //this->groundUniformId = glGetUniformLocation(this->shader3dId, "isRenderingGround"); 
+    //this->camPosUniformId = glGetUniformLocation(this->shader3dId, "cameraPosition"); 
+    //this->camDirUniformId = glGetUniformLocation(this->shader3dId, "cameraDirection"); 
     this->modelUniform2dId      = glGetUniformLocation(this->shader2dId, "model"); 
     this->bbox_min_uniform = glGetUniformLocation(this->shader3dId, "bbox_min");
     this->bbox_max_uniform = glGetUniformLocation(this->shader3dId, "bbox_max");
-
-    bunny = GameObject(bunnyModel);
-    sphere = GameObject(sphereModel);
-    plane = GameObject(planeModel);
-    smallBunny = GameObject(bunnyModel);
 }
 
 Renderer::~Renderer() {
@@ -62,7 +54,7 @@ Renderer::~Renderer() {
     glDeleteProgram(shader2dId);
 }
 
-void Renderer::draw(glm::mat4 cameraView, GLint object_id_uniform, Scene scene) {
+void Renderer::draw(glm::mat4 cameraView, BaseScene* scene) {
     glViewport(0,0, screenWidth, screenHeight);
     // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
     // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:
@@ -92,17 +84,20 @@ void Renderer::draw(glm::mat4 cameraView, GLint object_id_uniform, Scene scene) 
     (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView)));
     (glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection)));
 
-    for (unsigned int i=0; i < scene.gameObject.size(); i++) {
-        GameObject object = scene.gameObject[i];
-        glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.modelMatrix));
+    for (unsigned int i=0; i < scene->gameObjects.size(); i++) {
+        GameObject object = scene->gameObjects[i];
+        glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.getModelMatrix()));
         glUniform1i(object_id_uniform, i);
-        drawObject(object.model);
+        drawObject(object.getModel());
     }
 }
 
 void Renderer::drawObject(Model* model) {
+    if (model == NULL) {
+        std::cout << "NULOOOOO" << std::endl;
+    }
+    
     int size = model->vaoId.size();
-
     for (int i=0; i < size; i++) {
         glBindVertexArray(model->vaoId[i]);
         // Setamos as variáveis "bbox_min" e "bbox_max" do fragment shader

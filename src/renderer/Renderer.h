@@ -7,13 +7,13 @@
 #include <glm/mat4x4.hpp>
 #include "SceneObject.h"
 #include "Model.h"
-#include "../game/Scene.h"
+#include "../game/BaseScene.h"
 
 class Renderer {
 public: 
-    Renderer(unsigned int screenWidth, unsigned int screenHeight, Model*, Model*, Model*);
+    Renderer(unsigned int screenWidth, unsigned int screenHeight);
     ~Renderer();
-    void draw(glm::mat4 cameraView, GLint objectUniform, Scene scene);
+    void draw(glm::mat4 cameraView, BaseScene* scene);
 
 private:
     float screenWidth;
@@ -32,6 +32,7 @@ private:
     unsigned int modelUniformId;
     unsigned int viewUniformId;
     unsigned int projectionUniformId;
+    unsigned int object_id_uniform;
     unsigned int lightingUniformId;
     unsigned int handUniformId;
     unsigned int groundUniformId;

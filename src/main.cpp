@@ -47,7 +47,8 @@
 #include "input/Command.h"
 #include "input/MoveCommand.h"
 #include "input/InputManager.h"
-#include "game/Scene.h"
+#include "game/FirstScene.h"
+#include "game/Game.h"
 
 // Declaração de funções utilizadas para pilha de matrizes de modelagem.
 void PushMatrix(glm::mat4 M);
@@ -153,34 +154,14 @@ GLuint g_NumLoadedTextures = 0;
 #define SECONDS_PER_FRAME 1.0/FPS
 
 int main() {
-    MoveCommand test2(MoveCommand::BACKWARD);
-    
-    // TODO: pass game to movecommand
-    std::vector<std::tuple<int, Command*>> commandLst = {
-        std::make_tuple(GLFW_KEY_W,     new MoveCommand(MoveCommand::FORWARD)),
-        std::make_tuple(GLFW_KEY_S,     new MoveCommand(MoveCommand::BACKWARD)),
-        std::make_tuple(GLFW_KEY_A,     new MoveCommand(MoveCommand::LEFT)),
-        std::make_tuple(GLFW_KEY_D,     new MoveCommand(MoveCommand::RIGHT))
-    };
-    
-    // TODO: pass player to inputmanager
-    InputManager input(commandLst);
-
     Window windoww;
+
     GLFWwindow* window = windoww.window;
-    
-    Scene primeiroNivel;
 
-    // Definimos a função de callback que será chamada sempre que o usuário
-    // pressionar alguma tecla do teclado ...
     glfwSetKeyCallback(window, KeyCallback);
-    // ... ou clicar os botões do mouse ...
     glfwSetMouseButtonCallback(window, MouseButtonCallback);
-    // ... ou movimentar o cursor do mouse em cima da janela ...
     glfwSetCursorPosCallback(window, CursorPosCallback);
-    // ... ou rolar a "rodinha" do mouse.
     glfwSetScrollCallback(window, ScrollCallback);
-
 
     // Imprimimos no terminal informações sobre a GPU do sistema
     const GLubyte* vendor = glGetString(GL_VENDOR);
@@ -190,6 +171,14 @@ int main() {
 
     printf("GPU: %s, %s, OpenGL %s, GLSL %s\n", vendor, renderer, glversion, glslversion);
 
+    // TODO: pass game to movecommand
+    std::vector<std::tuple<int, Command*>> commandLst = {
+        std::make_tuple(GLFW_KEY_W,     new MoveCommand(MoveCommand::FORWARD)),
+        std::make_tuple(GLFW_KEY_S,     new MoveCommand(MoveCommand::BACKWARD)),
+        std::make_tuple(GLFW_KEY_A,     new MoveCommand(MoveCommand::LEFT)),
+        std::make_tuple(GLFW_KEY_D,     new MoveCommand(MoveCommand::RIGHT))
+    };
+    
     // Carregamos os shaders de vértices e de fragmentos que serão utilizados
     // para renderização. Veja slides 176-196 do documento Aula_03_Rendering_Pipeline_Grafico.pdf.
     //
@@ -199,20 +188,19 @@ int main() {
     LoadTextureImage("./data/tc-earth_daymap_surface.jpg");       // TextureImage0
     LoadTextureImage("./data/tc-earth_nightmap_citylights.gif");  // TextureImage1
 
-    // Construímos a representação de objetos geométricos através de malhas de triângulos
-    Model spheremodel("sphere");
-    Model bunnymodel("bunny");
-    Model planemodel("plane");
-
-    Renderer rendererr(windoww.width, windoww.height, &spheremodel, &bunnymodel, &planemodel);
+    // TODO: pass player to inputmanager
+    InputManager input(commandLst);
+    FirstScene firstLevel;
+    Game game(&firstLevel);
+    Renderer rendererr(windoww.width, windoww.height);
     
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
 
     double lastFrameTime = glfwGetTime();
 
-    // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window)) {
+        
         float r = -1.0f;
         float y = r * sin(g_CameraPhi);
         float z = r * cos(g_CameraPhi) * cos(g_CameraTheta);
@@ -260,12 +248,13 @@ int main() {
         // Computamos a matriz "View" utilizando os parâmetros da câmera para
         // definir o sistema de coordenadas da câmera.  Veja slides 2-14, 184-190 e 236-242 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
-
+        
+        game.update();    
         windoww.pollEvents();
-
+        
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
-            rendererr.draw(view, object_id_uniform, primeiroNivel);
+            rendererr.draw(view, game.currentScene);
             TextRendering_ShowEulerAngles(window);
             TextRendering_ShowFramesPerSecond(window);
             windoww.swapBuffers();
@@ -339,16 +328,6 @@ void LoadShadersFromFiles() {
 
     // Criamos um programa de GPU utilizando os shaders carregados acima.
     program_id = CreateGpuProgram(vertex_shader_id, fragment_shader_id);
-
-    // Buscamos o endereço das variáveis definidas dentro do Vertex Shader.
-    // Utilizaremos estas variáveis para enviar dados para a placa de vídeo
-    // (GPU)! Veja arquivo "shader_vertex.glsl" e "shader_fragment.glsl".
-    model_uniform = glGetUniformLocation(program_id, "model");            // Variável da matriz "model"
-    view_uniform = glGetUniformLocation(program_id, "view");              // Variável da matriz "view" em shader_vertex.glsl
-    projection_uniform = glGetUniformLocation(program_id, "projection");  // Variável da matriz "projection" em shader_vertex.glsl
-    object_id_uniform = glGetUniformLocation(program_id, "object_id");    // Variável "object_id" em shader_fragment.glsl
-    bbox_min_uniform = glGetUniformLocation(program_id, "bbox_min");
-    bbox_max_uniform = glGetUniformLocation(program_id, "bbox_max");
 
     // Variáveis em "shader_fragment.glsl" para acesso das imagens de textura
     glUseProgram(program_id);

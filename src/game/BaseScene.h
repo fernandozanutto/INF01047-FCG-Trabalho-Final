@@ -4,8 +4,7 @@
 
 #include "GameObject.h"
 
-class Scene {
+class BaseScene {
 public:
-    std::vector<GameObject> gameObject;
-    Scene();
+    std::vector<GameObject> gameObjects;
 };
