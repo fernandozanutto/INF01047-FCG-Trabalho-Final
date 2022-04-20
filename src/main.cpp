@@ -89,7 +89,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-
+void printGPUInfo();
 // Abaixo definimos variáveis globais utilizadas em várias funções do código.
 
 // Pilha que guardará as matrizes de modelagem.
@@ -162,14 +162,9 @@ int main() {
     glfwSetMouseButtonCallback(window, MouseButtonCallback);
     glfwSetCursorPosCallback(window, CursorPosCallback);
     glfwSetScrollCallback(window, ScrollCallback);
+    glfwSetErrorCallback(ErrorCallback);
 
-    // Imprimimos no terminal informações sobre a GPU do sistema
-    const GLubyte* vendor = glGetString(GL_VENDOR);
-    const GLubyte* renderer = glGetString(GL_RENDERER);
-    const GLubyte* glversion = glGetString(GL_VERSION);
-    const GLubyte* glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
-    printf("GPU: %s, %s, OpenGL %s, GLSL %s\n", vendor, renderer, glversion, glslversion);
+    printGPUInfo();
 
     // TODO: pass game to movecommand
     std::vector<std::tuple<int, Command*>> commandLst = {
@@ -178,21 +173,16 @@ int main() {
         std::make_tuple(GLFW_KEY_A,     new MoveCommand(MoveCommand::LEFT)),
         std::make_tuple(GLFW_KEY_D,     new MoveCommand(MoveCommand::RIGHT))
     };
-    
-    // Carregamos os shaders de vértices e de fragmentos que serão utilizados
-    // para renderização. Veja slides 176-196 do documento Aula_03_Rendering_Pipeline_Grafico.pdf.
-    //
-    LoadShadersFromFiles();
 
     // Carregamos duas imagens para serem utilizadas como textura
     LoadTextureImage("./data/tc-earth_daymap_surface.jpg");       // TextureImage0
     LoadTextureImage("./data/tc-earth_nightmap_citylights.gif");  // TextureImage1
 
-    // TODO: pass player to inputmanager
+    // TODO: pass game to inputmanager or pass inputa manager to game?
     InputManager input(commandLst);
     FirstScene firstLevel;
     Game game(firstLevel);
-    Renderer rendererr(windoww.width, windoww.height);
+    Renderer renderer(windoww.width, windoww.height);
     
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
@@ -200,7 +190,6 @@ int main() {
     double lastFrameTime = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
-        
         float r = -1.0f;
         float y = r * sin(g_CameraPhi);
         float z = r * cos(g_CameraPhi) * cos(g_CameraTheta);
@@ -254,7 +243,7 @@ int main() {
         
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
-            rendererr.draw(view, game.getScene());
+            renderer.draw(view, game.getScene());
             TextRendering_ShowEulerAngles(window);
             TextRendering_ShowFramesPerSecond(window);
             windoww.swapBuffers();
@@ -263,6 +252,16 @@ int main() {
     }
 
     return 0;
+}
+
+void printGPUInfo() {
+    // Imprimimos no terminal informações sobre a GPU do sistema
+    const GLubyte* vendor = glGetString(GL_VENDOR);
+    const GLubyte* renderer = glGetString(GL_RENDERER);
+    const GLubyte* glversion = glGetString(GL_VERSION);
+    const GLubyte* glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+    printf("GPU: %s, %s, OpenGL %s, GLSL %s\n", vendor, renderer, glversion, glslversion);
 }
 
 // Função que carrega uma imagem para ser utilizada como textura
@@ -961,6 +960,3 @@ void PrintObjModelInfo(Model* model) {
         printf("\n");
     }
 }
-
-// set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
-// vim: set spell spelllang=pt_br :
