@@ -191,7 +191,7 @@ int main() {
     // TODO: pass player to inputmanager
     InputManager input(commandLst);
     FirstScene firstLevel;
-    Game game(&firstLevel);
+    Game game(firstLevel);
     Renderer rendererr(windoww.width, windoww.height);
     
     // Inicializamos o código para renderização de texto.
@@ -249,12 +249,12 @@ int main() {
         // definir o sistema de coordenadas da câmera.  Veja slides 2-14, 184-190 e 236-242 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
         
-        game.update();    
+        game.update();
         windoww.pollEvents();
         
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
-            rendererr.draw(view, game.currentScene);
+            rendererr.draw(view, game.getScene());
             TextRendering_ShowEulerAngles(window);
             TextRendering_ShowFramesPerSecond(window);
             windoww.swapBuffers();

@@ -13,7 +13,7 @@ class Renderer {
 public: 
     Renderer(unsigned int screenWidth, unsigned int screenHeight);
     ~Renderer();
-    void draw(glm::mat4 cameraView, BaseScene* scene);
+    void draw(glm::mat4 cameraView, BaseScene& scene);
 
 private:
     float screenWidth;

@@ -54,7 +54,7 @@ Renderer::~Renderer() {
     glDeleteProgram(shader2dId);
 }
 
-void Renderer::draw(glm::mat4 cameraView, BaseScene* scene) {
+void Renderer::draw(glm::mat4 cameraView, BaseScene& scene) {
     glViewport(0,0, screenWidth, screenHeight);
     // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
     // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:
@@ -84,8 +84,8 @@ void Renderer::draw(glm::mat4 cameraView, BaseScene* scene) {
     (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView)));
     (glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection)));
 
-    for (unsigned int i=0; i < scene->gameObjects.size(); i++) {
-        GameObject object = scene->gameObjects[i];
+    for (unsigned int i=0; i < scene.gameObjects.size(); i++) {
+        GameObject object = scene.gameObjects[i];
         glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.getModelMatrix()));
         glUniform1i(object_id_uniform, i);
         drawObject(object.getModel());

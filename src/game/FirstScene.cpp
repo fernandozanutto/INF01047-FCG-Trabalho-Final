@@ -11,11 +11,11 @@ FirstScene::FirstScene() {
     Model* bunnyModel = new Model("bunny");
 
     GameObject sphere(new Model("sphere"));
-    sphere.rotateX(0.2f)->rotateZ(0.6f)->translate(-1.0f, 0, 0)->setAngularVelocity(1, 0.1f, 1)->setVelocity(1, 1, 1);
+    sphere.rotateX(0.2f)->rotateZ(0.6f)->translate(-1.0f, 0, 0)->setAngularVelocity(0, 0.3f, 0)->setVelocity(0, 0, 0);
     this->gameObjects.push_back(sphere);
 
     GameObject bunny(bunnyModel);
-    bunny.translate(1,0,0)->setVelocity(1,1,1);
+    bunny.translate(1,0,0)->setAngularVelocity(1.0f, 0.2f, 0);
     this->gameObjects.push_back(bunny);
 
     GameObject smallBunny(bunnyModel);

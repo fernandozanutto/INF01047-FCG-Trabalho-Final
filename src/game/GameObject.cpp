@@ -9,14 +9,11 @@ float startTime = glfwGetTime();
 
 GameObject::GameObject() {
     model = NULL;
-    std::cout << "construtor padrao" << std::endl;
     resetMatrix();
 }
 
-GameObject::GameObject(Model* model) {
-    this->model = model;
+GameObject::GameObject(Model* model): model(model) {
     resetMatrix();
-    std::cout << "construtor com model " << this << " " << this->model << std::endl;
 }
 
 void GameObject::resetMatrix() {
@@ -81,28 +78,11 @@ Model* GameObject::getModel() {
 }
 
 void GameObject::update() {
-    if (model == NULL) {
-        std::cout << "NULOOOOO" << std::endl;
-        return;
-    }
-    std::string name = model->name;
-    
     float currentTime = glfwGetTime();
     float delta = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
 
-    glm::vec4 velocity = velocityVector * delta;
-
-    if (name == "sphere") {
-        std::cout << " old X position " << this->positionVector.x << " - velocity X: " << velocity.x;
-    }
-
     this->velocityVector += accelerationVector * delta;
-    this->positionVector += velocity;
+    this->positionVector += velocityVector * delta;
     this->rotationVector += angularVelocityVector * delta;
-
-
-    if (name == "sphere") {
-        std::cout << " - new X position: " << this->positionVector.x << " " << this << std::endl;
-    }
 }
