@@ -15,7 +15,7 @@ file(GLOB SOURCES src/*.c src/*.cpp src/*/*.cpp)
 
 add_library(Libs ${SOURCES})
 
-target_compile_options(Libs PRIVATE -Wall -Wextra)
+#target_compile_options(Libs PRIVATE -Wall -Wextra)
 
 add_executable(TrabFinal src/main.cpp)
 
