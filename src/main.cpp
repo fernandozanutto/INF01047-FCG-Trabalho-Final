@@ -76,7 +76,7 @@ void TextRendering_PrintMatrixVectorProductDivW(GLFWwindow* window, glm::mat4 M,
 // Funções abaixo renderizam como texto na janela OpenGL algumas matrizes e
 // outras informações do programa. Definidas após main().
 void TextRendering_ShowModelViewProjection(GLFWwindow* window, glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec4 p_model);
-void TextRendering_ShowEulerAngles(GLFWwindow* window);
+void TextRendering_ShowEulerAngles(GLFWwindow* window, GameObject*);
 void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
 
 // Funções callback para comunicação com o sistema operacional e interação do
@@ -146,7 +146,7 @@ int main() {
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
             renderer.draw(game);
-            TextRendering_ShowEulerAngles(window.window);
+            TextRendering_ShowEulerAngles(window.window, game.cameraFollowing);
             TextRendering_ShowFramesPerSecond(window.window);
             window.swapBuffers();
             lastFrameTime = glfwGetTime();
@@ -374,14 +374,14 @@ void TextRendering_ShowModelViewProjection(
     TextRendering_PrintMatrixVectorProductMoreDigits(window, viewport_mapping, p_ndc, -1.0f, 1.0f - 26 * pad, 1.0f);
 }
 
-void TextRendering_ShowEulerAngles(GLFWwindow* window) {
+void TextRendering_ShowEulerAngles(GLFWwindow* window, GameObject* gameObject) {
     if (!g_ShowInfoText)
         return;
 
     float pad = TextRendering_LineHeight(window);
 
     char buffer[120];
-    snprintf(buffer, 120, "Angles Theta:(%.2f) Phi:(%.2f)\n", g_CameraTheta, g_CameraPhi);
+    snprintf(buffer, 120, "Angles Theta:(%.2f) Phi:(%.2f)\n", gameObject->theta, gameObject->phi);
 
     TextRendering_PrintString(window, buffer, -1.0f + pad / 10, -1.0f + 2 * pad / 10, 1.0f);
 }

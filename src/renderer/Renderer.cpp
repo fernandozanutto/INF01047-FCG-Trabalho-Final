@@ -22,8 +22,6 @@
 #define NEARPLANE -0.1f
 #define FARPLANE -400.0f
 
-void TextRendering_ShowEulerAngles(GameObject* gameObject);
-
 Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight) {
     this->screenWidth = screenWidth;
     this->screenHeight = screenHeight;
@@ -63,7 +61,7 @@ void Renderer::loadShaders() {
 
 void Renderer::draw(Game& game) {
     glViewport(0,0, screenWidth, screenHeight);
-    
+
     // Definimos a cor do "fundo" do framebuffer.
     //           R     G     B     A
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -89,7 +87,7 @@ void Renderer::draw(Game& game) {
 
     (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView)));
     (glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection)));
-    TextRendering_ShowEulerAngles(game.cameraFollowing);
+    
     for (unsigned int i=0; i < game.getScene().gameObjects.size(); i++) {
         GameObject object = game.getScene().gameObjects[i];
         glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.getModelMatrix()));
@@ -244,16 +242,4 @@ unsigned int Renderer::CreateGpuProgram(unsigned int vertexId, unsigned int frag
     glDeleteShader(fragmentId);
 
     return program_id;
-}
-
-void TextRendering_ShowEulerAngles(GameObject* gameObject) {
-    /*
-    float pad = TextRendering_LineHeight(window);
-
-    char buffer[120];
-    snprintf(buffer, 120, "Angles Theta:(%.2f) Phi:(%.2f)\n", g_CameraTheta, g_CameraPhi);
-
-    TextRendering_PrintString(window, buffer, -1.0f + pad / 10, -1.0f + 2 * pad / 10, 1.0f);*/
-
-    //std::cout << "Angles Theta:(" << gameObject->theta << ") Phi:(" << gameObject->phi << ") " << gameObject->getFacingDirection().x << " " << gameObject->getFacingDirection().y << std::endl;
 }
