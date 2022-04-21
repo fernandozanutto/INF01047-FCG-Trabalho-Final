@@ -9,6 +9,8 @@
 #include "../input/InputManager.h"
 
 Window::Window() {
+    bool isFullscreen = true;
+
     if (!glfwInit()) {
         fprintf(stderr, "ERROR: glfwInit() failed.\n");
         std::exit(EXIT_FAILURE);
@@ -23,17 +25,30 @@ Window::Window() {
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     //glfwWindowHint(GLFW_SAMPLES, 4);
 
-    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    //https://www.glfw.org/docs/latest/monitor_guide.html#monitor_monitors
+    int monitorCount;
+    GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+    GLFWmonitor* monitor = monitors[monitorCount - 1];
+
+    std::cout << "Monitores detectados: " << monitorCount << std::endl;
+
     const GLFWvidmode* screen = glfwGetVideoMode(monitor);
-    this->window = glfwCreateWindow(screen->width, screen->height, "Super Game", monitor, NULL);
+
+    if (isFullscreen) {
+        this->window = glfwCreateWindow(screen->width, screen->height, "Super Game", monitor, NULL);    
+    } else {
+        this->window = glfwCreateWindow(screen->width, screen->height, "Super Game", NULL, NULL);    
+    }
+
     this->width = screen->width;
     this->height = screen->height;
 
     if (!this->window) {
-        glfwTerminate();
         fprintf(stderr, "ERROR: glfwCreateWindow() failed.\n");
+        glfwTerminate();
         std::exit(EXIT_FAILURE);
     }
+
     glfwMakeContextCurrent(this->window);
 
     glfwSetFramebufferSizeCallback(this->window, [](GLFWwindow* window, int width, int height) {

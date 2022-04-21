@@ -8,7 +8,6 @@
 Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene), player(player) {
     isRunning = true;
     cameraFollowing = &player;
-    cameraRelativePosition = glm::vec4(0, 0, 2, 0);
 }
 
 void Game::update() {
@@ -48,5 +47,5 @@ void Game::changePlayerFacingDirection(float x, float y) {
 }
 
 glm::vec4 Game::getCameraPosition() {
-    return cameraFollowing->getPosition() + cameraRelativePosition;
+    return cameraFollowing->getPosition() - (cameraFollowing->getFacingDirection() * 3.0f);
 }

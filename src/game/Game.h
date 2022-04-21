@@ -13,7 +13,6 @@ public:
     void setScene(BaseScene& scene);
     BaseScene& getScene();
     GameObject* cameraFollowing;
-    glm::vec4 cameraRelativePosition;
     glm::vec4 getCameraPosition();
     void setPlayerMovingForward(bool);
     void setPlayerMovingLeft(bool);
