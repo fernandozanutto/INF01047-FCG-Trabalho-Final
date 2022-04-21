@@ -56,7 +56,7 @@ Renderer::~Renderer() {
     glDeleteProgram(shader2dId);
 }
 
-void Renderer::draw(glm::mat4 cameraView, Game& game) {
+void Renderer::draw(Game& game) {
     glViewport(0,0, screenWidth, screenHeight);
     // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
     // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:

@@ -83,7 +83,6 @@ void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
 void ErrorCallback(int error, const char* description);
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void printGPUInfo();
 // Abaixo definimos variáveis globais utilizadas em várias funções do código.
@@ -154,7 +153,6 @@ int main() {
 
     glfwSetKeyCallback(window, KeyCallback);
     glfwSetMouseButtonCallback(window, MouseButtonCallback);
-    glfwSetCursorPosCallback(window, CursorPosCallback);
     glfwSetScrollCallback(window, ScrollCallback);
     glfwSetErrorCallback(ErrorCallback);
 
@@ -186,60 +184,12 @@ int main() {
     double lastFrameTime = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
-        float r = -1.0f;
-        float x = r * cos(g_CameraPhi) * sin(g_CameraTheta);
-        float y = r * sin(g_CameraPhi);
-        float z = r * cos(g_CameraPhi) * cos(g_CameraTheta);
-
-        float g_CameraTheta2 = g_CameraTheta;
-        g_CameraTheta2 -= 3.141592f / 2;
-        float z2 = r * cos(g_CameraPhi) * cos(g_CameraTheta2);
-        float x2 = r * cos(g_CameraPhi) * sin(g_CameraTheta2);
-
-        glm::vec4 camera_view_vector = glm::vec4(x, y, z, 0.0f);                         
-        glm::vec4 camera_forward_vetor = camera_view_vector;
-        glm::vec4 camera_left_vetor = glm::vec4(x2, y, z2, 0.0f);
-
-        // Variáveis estáticas (static) mantém seus valores entre chamadas
-        // subsequentes da função!
-        static float old_seconds = (float)glfwGetTime();
-
-        // Recuperamos o número de segundos que passou desde a execução do programa
-        float seconds = (float)glfwGetTime();
-        float ellapsed_seconds = seconds - old_seconds;
-        old_seconds = seconds;
-
-        if (isMovingLeft) {
-            g_CameraX -= camera_left_vetor.x * ellapsed_seconds;
-            g_CameraZ -= camera_left_vetor.z * ellapsed_seconds;
-        }
-        if (isMovingRight) {
-            g_CameraX += camera_left_vetor.x * ellapsed_seconds;
-            g_CameraZ += camera_left_vetor.z * ellapsed_seconds;
-        }
-        if (isMovingBackward) {
-            g_CameraX -= camera_forward_vetor.x * ellapsed_seconds;
-            g_CameraY -= camera_forward_vetor.y * ellapsed_seconds;
-            g_CameraZ -= camera_forward_vetor.z * ellapsed_seconds;
-        }
-        if (isMovingForward) {
-            g_CameraX += camera_forward_vetor.x * ellapsed_seconds;
-            g_CameraY += camera_forward_vetor.y * ellapsed_seconds;
-            g_CameraZ += camera_forward_vetor.z * ellapsed_seconds;
-        }
-
-        glm::vec4 camera_position_c = glm::vec4(g_CameraX, g_CameraY, g_CameraZ, 1.0f);  // Ponto "c", centro da câmera
-        glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);                  // Vetor "up" fixado para apontar para o "céu" (eito Y global)
-        // Computamos a matriz "View" utilizando os parâmetros da câmera para
-        // definir o sistema de coordenadas da câmera.  Veja slides 2-14, 184-190 e 236-242 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
-        glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
-        
         game.update();
         windoww.pollEvents();
         input.handleInput();
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
-            renderer.draw(view, game);
+            renderer.draw(game);
             TextRendering_ShowEulerAngles(window);
             TextRendering_ShowFramesPerSecond(window);
             windoww.swapBuffers();
@@ -523,49 +473,8 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
     }
 }
 
-// Função callback chamada sempre que o usuário movimentar o cursor do mouse em
-// cima da janela OpenGL.
-void CursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
-    // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
-    float dx = xpos - g_LastCursorPosX;
-    float dy = ypos - g_LastCursorPosY;
-
-    // Atualizamos parâmetros da câmera com os deslocamentos
-    g_CameraTheta -= 0.01f * dx;
-    g_CameraPhi += 0.01f * dy;
-
-    // Em coordenadas esféricas, o ângulo phi deve ficar entre -pi/2 e +pi/2.
-    float phimax = 3.141592f / 2;
-    float phimin = -phimax;
-
-    if (g_CameraPhi > phimax)
-        g_CameraPhi = phimax;
-
-    if (g_CameraPhi < phimin)
-        g_CameraPhi = phimin;
-
-    // Atualizamos as variáveis globais para armazenar a posição atual do
-    // cursor como sendo a última posição conhecida do cursor.
-    g_LastCursorPosX = xpos;
-    g_LastCursorPosY = ypos;
-}
-
 // Função callback chamada sempre que o usuário movimenta a "rodinha" do mouse.
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
-    /*
-    // Atualizamos a distância da câmera para a origem utilizando a
-    // movimentação da "rodinha", simulando um ZOOM.
-    g_CameraDistance -= 0.1f*yoffset;
-
-    // Uma câmera look-at nunca pode estar exatamente "em cima" do ponto para
-    // onde ela está olhando, pois isto gera problemas de divisão por zero na
-    // definição do sistema de coordenadas da câmera. Isto é, a variável abaixo
-    // nunca pode ser zero. Versões anteriores deste código possuíam este bug,
-    // o qual foi detectado pelo aluno Vinicius Fraga (2017/2).
-    const float verysmallnumber = std::numeric_limits<float>::epsilon();
-    if (g_CameraDistance < verysmallnumber)
-        g_CameraDistance = verysmallnumber;
-    */
 }
 
 // Definição da função que será chamada sempre que o usuário pressionar alguma
