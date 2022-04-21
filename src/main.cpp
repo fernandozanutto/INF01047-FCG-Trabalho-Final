@@ -57,11 +57,7 @@
 
 // Declaração de várias funções utilizadas em main().  Essas estão definidas
 // logo após a definição de main() neste arquivo.
-void LoadShadersFromFiles();                                                  // Carrega os shaders de vértice e fragmento, criando um programa de GPU
 void LoadTextureImage(const char* filename);                                  // Função que carrega imagens de textura
-GLuint LoadShader_Vertex(const char* filename);                               // Carrega um vertex shader
-GLuint LoadShader_Fragment(const char* filename);                             // Carrega um fragment shader
-void LoadShader(const char* filename, GLuint shader_id);                      // Função utilizada pelas duas acima
 GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id);  // Cria um programa de GPU
 void PrintObjModelInfo(Model*);                                            // Função para debugging
 
@@ -85,19 +81,9 @@ void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
 
 // Funções callback para comunicação com o sistema operacional e interação do
 // usuário. Veja mais comentários nas definições das mesmas, abaixo.
-void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void printGPUInfo();
-// Abaixo definimos variáveis globais utilizadas em várias funções do código.
 
-
-float g_ScreenRatio = 16.0f/9.0f;
-
-// Ângulos de Euler que controlam a rotação de um dos cubos da cena virtual
-float g_AngleX = 0.0f;
-float g_AngleY = 0.0f;
-float g_AngleZ = 0.0f;
 
 // "g_LeftMouseButtonPressed = true" se o usuário está com o botão esquerdo do mouse
 // pressionado no momento atual. Veja função MouseButtonCallback().
@@ -111,32 +97,9 @@ bool g_MiddleMouseButtonPressed = false;  // Análogo para botão do meio do mou
 // renderização.
 float g_CameraTheta = 0.0f;     // Ângulo no plano ZX em relação ao eixo Z
 float g_CameraPhi = 0.0f;       // Ângulo em relação ao eixo Y
-float g_CameraDistance = 3.5f;  // Distância da câmera para a origem
-
-float g_CameraX = 0.5f;
-float g_CameraY = 0.5f;
-float g_CameraZ = 0.5f;
-
-bool isMovingRight = false;
-bool isMovingForward = false;
-bool isMovingBackward = false;
-bool isMovingLeft = false;
-
-// Variáveis que controlam rotação do antebraço
-float g_ForearmAngleZ = 0.0f;
-float g_ForearmAngleX = 0.0f;
-
-// Variáveis que controlam translação do torso
-float g_TorsoPositionX = 0.0f;
-float g_TorsoPositionY = 0.0f;
 
 // Variável que controla se o texto informativo será mostrado na tela.
 bool g_ShowInfoText = true;
-
-// Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
-GLuint vertex_shader_id;
-GLuint fragment_shader_id;
-GLuint program_id = 0;
 
 // Número de texturas carregadas pela função LoadTextureImage()
 GLuint g_NumLoadedTextures = 0;
@@ -253,119 +216,6 @@ void LoadTextureImage(const char* filename) {
     g_NumLoadedTextures += 1;
 }
 
-// Função que carrega os shaders de vértices e de fragmentos que serão
-// utilizados para renderização. Veja slides 176-196 do documento Aula_03_Rendering_Pipeline_Grafico.pdf.
-//
-void LoadShadersFromFiles() {
-    vertex_shader_id = LoadShader_Vertex("./shaders/shader_vertex.glsl");
-    fragment_shader_id = LoadShader_Fragment("./shaders/shader_fragment.glsl");
-
-    // Deletamos o programa de GPU anterior, caso ele exista.
-    if (program_id != 0)
-        glDeleteProgram(program_id);
-
-    // Criamos um programa de GPU utilizando os shaders carregados acima.
-    program_id = CreateGpuProgram(vertex_shader_id, fragment_shader_id);
-
-    // Variáveis em "shader_fragment.glsl" para acesso das imagens de textura
-    glUseProgram(program_id);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage0"), 0);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage1"), 1);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage2"), 2);
-    glUseProgram(0);
-}
-
-// Carrega um Vertex Shader de um arquivo GLSL. Veja definição de LoadShader() abaixo.
-GLuint LoadShader_Vertex(const char* filename) {
-    // Criamos um identificador (ID) para este shader, informando que o mesmo
-    // será aplicado nos vértices.
-    GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
-
-    // Carregamos e compilamos o shader
-    LoadShader(filename, vertex_shader_id);
-
-    // Retorna o ID gerado acima
-    return vertex_shader_id;
-}
-
-// Carrega um Fragment Shader de um arquivo GLSL . Veja definição de LoadShader() abaixo.
-GLuint LoadShader_Fragment(const char* filename) {
-    // Criamos um identificador (ID) para este shader, informando que o mesmo
-    // será aplicado nos fragmentos.
-    GLuint fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-
-    // Carregamos e compilamos o shader
-    LoadShader(filename, fragment_shader_id);
-
-    // Retorna o ID gerado acima
-    return fragment_shader_id;
-}
-
-// Função auxilar, utilizada pelas duas funções acima. Carrega código de GPU de
-// um arquivo GLSL e faz sua compilação.
-void LoadShader(const char* filename, GLuint shader_id) {
-    // Lemos o arquivo de texto indicado pela variável "filename"
-    // e colocamos seu conteúdo em memória, apontado pela variável
-    // "shader_string".
-    std::ifstream file;
-    try {
-        file.exceptions(std::ifstream::failbit);
-        file.open(filename);
-    } catch (std::exception& e) {
-        fprintf(stderr, "ERROR: Cannot open file \"%s\".\n", filename);
-        std::exit(EXIT_FAILURE);
-    }
-    std::stringstream shader;
-    shader << file.rdbuf();
-    std::string str = shader.str();
-    const GLchar* shader_string = str.c_str();
-    const GLint shader_string_length = static_cast<GLint>(str.length());
-
-    // Define o código do shader GLSL, contido na string "shader_string"
-    glShaderSource(shader_id, 1, &shader_string, &shader_string_length);
-
-    // Compila o código do shader GLSL (em tempo de execução)
-    glCompileShader(shader_id);
-
-    // Verificamos se ocorreu algum erro ou "warning" durante a compilação
-    GLint compiled_ok;
-    glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compiled_ok);
-
-    GLint log_length = 0;
-    glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &log_length);
-
-    // Alocamos memória para guardar o log de compilação.
-    // A chamada "new" em C++ é equivalente ao "malloc()" do C.
-    GLchar* log = new GLchar[log_length];
-    glGetShaderInfoLog(shader_id, log_length, &log_length, log);
-
-    // Imprime no terminal qualquer erro ou "warning" de compilação
-    if (log_length != 0) {
-        std::string output;
-
-        if (!compiled_ok) {
-            output += "ERROR: OpenGL compilation of \"";
-            output += filename;
-            output += "\" failed.\n";
-            output += "== Start of compilation log\n";
-            output += log;
-            output += "== End of compilation log\n";
-        } else {
-            output += "WARNING: OpenGL compilation of \"";
-            output += filename;
-            output += "\".\n";
-            output += "== Start of compilation log\n";
-            output += log;
-            output += "== End of compilation log\n";
-        }
-
-        fprintf(stderr, "%s", output.c_str());
-    }
-
-    // A chamada "delete" em C++ é equivalente ao "free()" do C
-    delete[] log;
-}
-
 // Esta função cria um programa de GPU, o qual contém obrigatoriamente um
 // Vertex Shader e um Fragment Shader.
 GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id) {
@@ -414,7 +264,6 @@ GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id) {
     // Retornamos o ID gerado acima
     return program_id;
 }
-
 // Variáveis globais que armazenam a última posição do cursor do mouse, para
 // que possamos calcular quanto que o mouse se movimentou entre dois instantes
 // de tempo. Utilizadas no callback CursorPosCallback() abaixo.
@@ -463,104 +312,6 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
         // Quando o usuário soltar o botão esquerdo do mouse, atualizamos a
         // variável abaixo para false.
         g_MiddleMouseButtonPressed = false;
-    }
-}
-
-// Função callback chamada sempre que o usuário movimenta a "rodinha" do mouse.
-void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
-}
-
-// Definição da função que será chamada sempre que o usuário pressionar alguma
-// tecla do teclado. Veja http://www.glfw.org/docs/latest/input_guide.html#input_key
-void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod) {
-    // ===============
-    // Não modifique este loop! Ele é utilizando para correção automatizada dos
-    // laboratórios. Deve ser sempre o primeiro comando desta função KeyCallback().
-    for (int i = 0; i < 10; ++i)
-        if (key == GLFW_KEY_0 + i && action == GLFW_PRESS && mod == GLFW_MOD_SHIFT)
-            std::exit(100 + i);
-    // ===============
-
-    // Se o usuário pressionar a tecla ESC, fechamos a janela.
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-
-    // O código abaixo implementa a seguinte lógica:
-    //   Se apertar tecla X       então g_AngleX += delta;
-    //   Se apertar tecla shift+X então g_AngleX -= delta;
-    //   Se apertar tecla Y       então g_AngleY += delta;
-    //   Se apertar tecla shift+Y então g_AngleY -= delta;
-    //   Se apertar tecla Z       então g_AngleZ += delta;
-    //   Se apertar tecla shift+Z então g_AngleZ -= delta;
-
-    float delta = 3.141592 / 16;  // 22.5 graus, em radianos.
-
-    if (key == GLFW_KEY_X && action == GLFW_PRESS) {
-        g_AngleX += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    if (key == GLFW_KEY_Y && action == GLFW_PRESS) {
-        g_AngleY += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-    if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
-        g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-        g_AngleX = 0.0f;
-        g_AngleY = 0.0f;
-        g_AngleZ = 0.0f;
-        g_ForearmAngleX = 0.0f;
-        g_ForearmAngleZ = 0.0f;
-        g_TorsoPositionX = 0.0f;
-        g_TorsoPositionY = 0.0f;
-    }
-
-    // Se o usuário apertar a tecla H, fazemos um "toggle" do texto informativo mostrado na tela.
-    if (key == GLFW_KEY_H && action == GLFW_PRESS) {
-        g_ShowInfoText = !g_ShowInfoText;
-    }
-
-    // MOVER CÂMERA
-    // Se o usuário apertar a tecla W, move a câmera para frente
-    if (key == GLFW_KEY_W) {
-        if (action == GLFW_PRESS) {
-            isMovingForward = true;
-        } else if (action == GLFW_RELEASE) {
-            isMovingForward = false;
-        }
-    }
-    // Se o usuário apertar a tecla A, move a câmera para a esquerda
-    if (key == GLFW_KEY_A) {
-        if (action == GLFW_PRESS) {
-            isMovingLeft = true;
-        } else if (action == GLFW_RELEASE) {
-            isMovingLeft = false;
-        }
-    }
-    // Se o usuário apertar a tecla S, move a câmera para trás
-    if (key == GLFW_KEY_S) {
-        if (action == GLFW_PRESS) {
-            isMovingBackward = true;
-        } else if (action == GLFW_RELEASE) {
-            isMovingBackward = false;
-        }
-    }
-    // Se o usuário apertar a tecla D, move a câmera para a direita
-    if (key == GLFW_KEY_D) {
-        if (action == GLFW_PRESS) {
-            isMovingRight = true;
-        } else if (action == GLFW_RELEASE) {
-            isMovingRight = false;
-        }
-    }
-
-    // Se o usuário apertar a tecla R, recarregamos os shaders dos arquivos "shader_fragment.glsl" e "shader_vertex.glsl".
-    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        LoadShadersFromFiles();
-        fprintf(stdout, "Shaders recarregados!\n");
-        fflush(stdout);
     }
 }
 
@@ -623,8 +374,6 @@ void TextRendering_ShowModelViewProjection(
     TextRendering_PrintMatrixVectorProductMoreDigits(window, viewport_mapping, p_ndc, -1.0f, 1.0f - 26 * pad, 1.0f);
 }
 
-// Escrevemos na tela os ângulos de Euler definidos nas variáveis globais
-// g_AngleX, g_AngleY, e g_AngleZ.
 void TextRendering_ShowEulerAngles(GLFWwindow* window) {
     if (!g_ShowInfoText)
         return;
