@@ -49,6 +49,7 @@
 #include "input/Command.h"
 #include "input/MoveCommand.h"
 #include "input/EscCommand.h"
+#include "input/ReloadShadersCommand.h"
 #include "input/InputManager.h"
 
 #include "game/FirstScene.h"
@@ -144,13 +145,7 @@ GLuint g_NumLoadedTextures = 0;
 #define SECONDS_PER_FRAME 1.0/FPS
 
 int main() {
-    Window windoww;
-
-    GLFWwindow* window = windoww.window;
-
-    glfwSetKeyCallback(window, KeyCallback);
-    glfwSetMouseButtonCallback(window, MouseButtonCallback);
-    glfwSetScrollCallback(window, ScrollCallback);
+    Window window;
 
     printGPUInfo();
 
@@ -160,37 +155,37 @@ int main() {
 
     FirstScene firstLevel;
     Game game(firstLevel, firstLevel.gameObjects[0]);
-    windoww.setGame(&game);
+    window.setGame(&game);
+    Renderer renderer(window.width, window.height);
 
     // TODO: pass game to movecommand
     std::vector<std::tuple<int, Command*>> commandLst = {
-        std::make_tuple(GLFW_KEY_W,     new MoveCommand(game, MoveCommand::FORWARD)),
-        std::make_tuple(GLFW_KEY_S,     new MoveCommand(game, MoveCommand::BACKWARD)),
-        std::make_tuple(GLFW_KEY_A,     new MoveCommand(game, MoveCommand::LEFT)),
-        std::make_tuple(GLFW_KEY_D,     new MoveCommand(game, MoveCommand::RIGHT)),
-        std::make_tuple(GLFW_KEY_ESCAPE, new EscCommand(game))
+        std::make_tuple(GLFW_KEY_W,      new MoveCommand(game, MoveCommand::FORWARD)),
+        std::make_tuple(GLFW_KEY_S,      new MoveCommand(game, MoveCommand::BACKWARD)),
+        std::make_tuple(GLFW_KEY_A,      new MoveCommand(game, MoveCommand::LEFT)),
+        std::make_tuple(GLFW_KEY_D,      new MoveCommand(game, MoveCommand::RIGHT)),
+        std::make_tuple(GLFW_KEY_ESCAPE, new EscCommand(game)),
+        std::make_tuple(GLFW_KEY_R,      new ReloadShadersCommand(renderer))
     };
 
     InputManager input(commandLst, game);
-    windoww.setKeyCallbacks(&input);
-
-    Renderer renderer(windoww.width, windoww.height);
+    window.setKeyCallbacks(&input);
     
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
 
     double lastFrameTime = glfwGetTime();
 
-    while (!windoww.shouldClose()) {
+    while (!window.shouldClose()) {
         game.update();
-        windoww.pollEvents();
+        window.pollEvents();
         input.handleInput();
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
             renderer.draw(game);
-            TextRendering_ShowEulerAngles(window);
-            TextRendering_ShowFramesPerSecond(window);
-            windoww.swapBuffers();
+            TextRendering_ShowEulerAngles(window.window);
+            TextRendering_ShowFramesPerSecond(window.window);
+            window.swapBuffers();
             lastFrameTime = glfwGetTime();
         }
     }

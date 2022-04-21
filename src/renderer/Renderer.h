@@ -15,7 +15,7 @@ public:
     Renderer(unsigned int screenWidth, unsigned int screenHeight);
     ~Renderer();
     void draw(Game& game);
-
+    void loadShaders();
 private:
     float screenWidth;
     float screenHeight;

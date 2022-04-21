@@ -25,16 +25,26 @@
 void TextRendering_ShowEulerAngles(GameObject* gameObject);
 
 Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight) {
-    unsigned int vertexShader3dId     = LoadVertexShader("shader_vertex.glsl");
-    unsigned int fragmentShader3dId   = LoadFragmentShader("shader_fragment.glsl");
-    unsigned int vertexShader2dId     = LoadVertexShader("shader_vertex.glsl");
-    unsigned int fragmentShader2dId   = LoadFragmentShader("shader_fragment.glsl");
-
     this->screenWidth = screenWidth;
     this->screenHeight = screenHeight;
 
     this->fov = FOV;
 
+    loadShaders();
+}
+
+Renderer::~Renderer() {
+    glDeleteProgram(shader3dId);
+    glDeleteProgram(shader2dId);
+}
+
+void Renderer::loadShaders() {
+    std::cout << "Carregando shaders" << std::endl;
+
+    unsigned int vertexShader3dId     = LoadVertexShader("shader_vertex.glsl");
+    unsigned int fragmentShader3dId   = LoadFragmentShader("shader_fragment.glsl");
+    unsigned int vertexShader2dId     = LoadVertexShader("shader_vertex.glsl");
+    unsigned int fragmentShader2dId   = LoadFragmentShader("shader_fragment.glsl");
     this->shader3dId = CreateGpuProgram(vertexShader3dId, fragmentShader3dId);
     this->shader2dId = CreateGpuProgram(vertexShader2dId, fragmentShader2dId);
     this->modelUniformId      = glGetUniformLocation(this->shader3dId, "model"); 
@@ -51,18 +61,10 @@ Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight) {
     this->bbox_max_uniform = glGetUniformLocation(this->shader3dId, "bbox_max");
 }
 
-Renderer::~Renderer() {
-    glDeleteProgram(shader3dId);
-    glDeleteProgram(shader2dId);
-}
-
 void Renderer::draw(Game& game) {
     glViewport(0,0, screenWidth, screenHeight);
-    // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
-    // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:
-    // Vermelho, Verde, Azul, Alpha (valor de transparência).
-    // Conversaremos sobre sistemas de cores nas aulas de Modelos de Iluminação.
-    //
+    
+    // Definimos a cor do "fundo" do framebuffer.
     //           R     G     B     A
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -77,15 +79,15 @@ void Renderer::draw(Game& game) {
 
     // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
     // os shaders de vértice e fragmentos).
-    (glUseProgram(shader3dId));
+    glUseProgram(shader3dId);
 
     float screenRatio = (float)screenWidth / (float)screenHeight;
 
     glm::mat4 projection = Matrix_Perspective(fov, screenRatio, NEARPLANE, FARPLANE);
     glm::vec4 upVector = glm::vec4(0,1,0,0);
-    glm::mat4 view = Matrix_Camera_View(game.getCameraPosition(), game.cameraFollowing->getFacingDirection(), upVector);
+    glm::mat4 cameraView = Matrix_Camera_View(game.getCameraPosition(), game.cameraFollowing->getFacingDirection(), upVector);
 
-    (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(view)));
+    (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView)));
     (glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection)));
     TextRendering_ShowEulerAngles(game.cameraFollowing);
     for (unsigned int i=0; i < game.getScene().gameObjects.size(); i++) {
@@ -98,7 +100,8 @@ void Renderer::draw(Game& game) {
 
 void Renderer::drawObject(Model* model) {
     if (model == NULL) {
-        std::cout << "NULOOOOO" << std::endl;
+        std::cout << "model passado de parâmetro é NULO" << std::endl;
+        return;
     }
     
     int size = model->vaoId.size();
@@ -111,7 +114,6 @@ void Renderer::drawObject(Model* model) {
         glUniform4f(this->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
         glUniform4f(this->bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
 
-        
         glDrawElements(
             model->renderingMode[i],
             model->numIndexes[i],
