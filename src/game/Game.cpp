@@ -8,7 +8,7 @@
 Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene), player(player) {
     isRunning = true;
     cameraFollowing = &player;
-    cameraRelativePosition = glm::vec4(0, 0, 1, 0);
+    cameraRelativePosition = glm::vec4(0, 0, 2, 0);
 }
 
 void Game::update() {
@@ -30,15 +30,23 @@ BaseScene& Game::getScene() {
 void Game::setPlayerMovingForward(bool isMoving) {
     player.isWalkingForward = isMoving;
 }
+
 void Game::setPlayerMovingLeft(bool isMoving) {
     player.isWalkingLeft = isMoving;
 }
+
 void Game::setPlayerMovingBackward(bool isMoving) {
     player.isWalkingBackward = isMoving;
 }
+
 void Game::setPlayerMovingRight(bool isMoving) {
     player.isWalkingRight = isMoving;
 }
+
 void Game::changePlayerFacingDirection(float x, float y) {
     player.changePlayerFacingDirection(x, y);
+}
+
+glm::vec4 Game::getCameraPosition() {
+    return cameraFollowing->getPosition() + cameraRelativePosition;
 }

@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-InputManager::InputManager(std::vector<std::tuple<int,Command*>> cList, Game& game): game(game) {
+InputManager::InputManager(std::vector<std::tuple<int, Command*>> cList, Game& game): game(game) {
     for(unsigned int i=0; i < cList.size(); i++) {
         int key          = std::get<0>(cList[i]);
         Command* command = std::get<1>(cList[i]);

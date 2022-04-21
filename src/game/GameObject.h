@@ -14,8 +14,7 @@ private:
     glm::vec4 velocityVector;
     glm::vec4 accelerationVector;
     glm::vec4 angularVelocityVector;
-    float theta;     // Ângulo no plano ZX em relação ao eixo Z
-    float phi;       // Ângulo em relação ao eixo Y
+    float lastUpdateTime;
 public:
     GameObject();
     GameObject(Model* model);
@@ -34,6 +33,9 @@ public:
     bool isWalkingLeft = false;
     bool isWalkingBackward = false;
     bool isWalkingRight = false;
+
+    float theta;     // Ângulo no plano ZX em relação ao eixo Z
+    float phi;       // Ângulo em relação ao eixo Y
 
     bool isPlayerWalking();
 

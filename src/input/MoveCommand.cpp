@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "MoveCommand.h"
 #include "../game/Game.h"
 

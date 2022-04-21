@@ -187,9 +187,9 @@ int main() {
 
     while (!glfwWindowShouldClose(window)) {
         float r = -1.0f;
+        float x = r * cos(g_CameraPhi) * sin(g_CameraTheta);
         float y = r * sin(g_CameraPhi);
         float z = r * cos(g_CameraPhi) * cos(g_CameraTheta);
-        float x = r * cos(g_CameraPhi) * sin(g_CameraTheta);
 
         float g_CameraTheta2 = g_CameraTheta;
         g_CameraTheta2 -= 3.141592f / 2;
@@ -236,7 +236,7 @@ int main() {
         
         game.update();
         windoww.pollEvents();
-        
+        input.handleInput();
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
             renderer.draw(view, game);
@@ -735,7 +735,7 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window) {
     float pad = TextRendering_LineHeight(window);
 
     char buffer[120];
-    snprintf(buffer, 120, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f) - Theta:(%.2f) Phi:(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX, g_CameraTheta, g_CameraPhi);
+    snprintf(buffer, 120, "Angles Theta:(%.2f) Phi:(%.2f)\n", g_CameraTheta, g_CameraPhi);
 
     TextRendering_PrintString(window, buffer, -1.0f + pad / 10, -1.0f + 2 * pad / 10, 1.0f);
 }

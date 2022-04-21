@@ -7,9 +7,6 @@
 
 #define PI 3.1415926f
 
-float lastFrameTime = glfwGetTime();
-float startTime = glfwGetTime();
-
 GameObject::GameObject() {
     model = NULL;
     resetMatrix();
@@ -28,6 +25,7 @@ void GameObject::resetMatrix() {
     angularVelocityVector = glm::vec4(0.0, 0.0, 0.0, 0.0);
     theta = 0.0f;
     phi = 0.0f;
+    lastUpdateTime = glfwGetTime();
 }
 
 GameObject* GameObject::translate(float x, float y, float z) {
@@ -72,9 +70,9 @@ GameObject* GameObject::setAngularVelocity(float x, float y, float z) {
 
 glm::mat4 GameObject::getModelMatrix() {
     return Matrix_Translate(positionVector.x, positionVector.y, positionVector.z)
+            * Matrix_Rotate_Z(rotationVector.z)
             * Matrix_Rotate_X(rotationVector.x) 
             * Matrix_Rotate_Y(rotationVector.y)
-            * Matrix_Rotate_Z(rotationVector.z)
             * Matrix_Scale(scaleVector.x, scaleVector.y, scaleVector.z);
 }
 
@@ -90,20 +88,35 @@ glm::vec4 GameObject::getFacingDirection() {
             0
     );
 
-    return direction / norm(direction);
+    return direction;
 }
 
 void GameObject::update() {
     float currentTime = glfwGetTime();
-    float delta = currentTime - lastFrameTime;
-    lastFrameTime = currentTime;
+    float delta = currentTime - lastUpdateTime;
+    lastUpdateTime = currentTime;
 
     velocityVector += accelerationVector * delta;
     positionVector += velocityVector * delta;
     rotationVector += angularVelocityVector * delta;
-    
+
     if (isWalkingForward) {
         positionVector += getFacingDirection() * walkSpeed * delta;
+    }
+
+    if (model->name == "bunny") {
+        std::cout << "angularVelocityVector " << angularVelocityVector.x << " " << angularVelocityVector.y << " " << angularVelocityVector.z << std::endl;
+        std::cout << "rotationVector " << rotationVector.x << " " << rotationVector.y << " " << rotationVector.z << std::endl;
+        std::cout << "positionVector " << positionVector.x << " " << positionVector.y << " " << positionVector.z << std::endl;
+        std::cout << "velocityVector " << velocityVector.x << " " << velocityVector.y << " " << velocityVector.z << std::endl;
+    }
+
+    if (isWalkingLeft) {
+
+    }
+
+    if (isWalkingRight) {
+
     }
 
     if (isWalkingBackward) {
@@ -112,8 +125,8 @@ void GameObject::update() {
 }
 
 void GameObject::changePlayerFacingDirection(float x, float y) {
-    theta -= x; 
-    phi -= y; 
+    theta -= x;
+    phi -= y;
 
     if(phi > PI/2) phi = PI/2;
     if(phi < -PI/2) phi = -PI/2;

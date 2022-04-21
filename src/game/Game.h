@@ -5,7 +5,7 @@
 class Game {
 private:
     bool isRunning;
-    BaseScene currentScene;
+    BaseScene& currentScene;
 public:
     Game(BaseScene& firstScene, GameObject& player);
     GameObject& player;
@@ -14,6 +14,7 @@ public:
     BaseScene& getScene();
     GameObject* cameraFollowing;
     glm::vec4 cameraRelativePosition;
+    glm::vec4 getCameraPosition();
     void setPlayerMovingForward(bool);
     void setPlayerMovingLeft(bool);
     void setPlayerMovingBackward(bool);
