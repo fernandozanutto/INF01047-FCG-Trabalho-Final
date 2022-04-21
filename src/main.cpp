@@ -50,10 +50,6 @@
 #include "game/FirstScene.h"
 #include "game/Game.h"
 
-// Declaração de funções utilizadas para pilha de matrizes de modelagem.
-void PushMatrix(glm::mat4 M);
-void PopMatrix(glm::mat4& M);
-
 // Declaração de várias funções utilizadas em main().  Essas estão definidas
 // logo após a definição de main() neste arquivo.
 void LoadShadersFromFiles();                                                  // Carrega os shaders de vértice e fragmento, criando um programa de GPU
@@ -92,8 +88,6 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void printGPUInfo();
 // Abaixo definimos variáveis globais utilizadas em várias funções do código.
 
-// Pilha que guardará as matrizes de modelagem.
-std::stack<glm::mat4> g_MatrixStack;
 
 float g_ScreenRatio = 16.0f/9.0f;
 
@@ -166,22 +160,24 @@ int main() {
 
     printGPUInfo();
 
-    // TODO: pass game to movecommand
-    std::vector<std::tuple<int, Command*>> commandLst = {
-        std::make_tuple(GLFW_KEY_W,     new MoveCommand(MoveCommand::FORWARD)),
-        std::make_tuple(GLFW_KEY_S,     new MoveCommand(MoveCommand::BACKWARD)),
-        std::make_tuple(GLFW_KEY_A,     new MoveCommand(MoveCommand::LEFT)),
-        std::make_tuple(GLFW_KEY_D,     new MoveCommand(MoveCommand::RIGHT))
-    };
-
     // Carregamos duas imagens para serem utilizadas como textura
     LoadTextureImage("./data/tc-earth_daymap_surface.jpg");       // TextureImage0
     LoadTextureImage("./data/tc-earth_nightmap_citylights.gif");  // TextureImage1
 
-    // TODO: pass game to inputmanager or pass inputa manager to game?
-    InputManager input(commandLst);
     FirstScene firstLevel;
-    Game game(firstLevel);
+    Game game(firstLevel, firstLevel.gameObjects[0]);
+
+    // TODO: pass game to movecommand
+    std::vector<std::tuple<int, Command*>> commandLst = {
+        std::make_tuple(GLFW_KEY_W,     new MoveCommand(game, MoveCommand::FORWARD)),
+        std::make_tuple(GLFW_KEY_S,     new MoveCommand(game, MoveCommand::BACKWARD)),
+        std::make_tuple(GLFW_KEY_A,     new MoveCommand(game, MoveCommand::LEFT)),
+        std::make_tuple(GLFW_KEY_D,     new MoveCommand(game, MoveCommand::RIGHT))
+    };
+
+    InputManager input(commandLst, game);
+    //windoww.setKeyCallbacks(&input);
+
     Renderer renderer(windoww.width, windoww.height);
     
     // Inicializamos o código para renderização de texto.
@@ -334,21 +330,6 @@ void LoadShadersFromFiles() {
     glUniform1i(glGetUniformLocation(program_id, "TextureImage1"), 1);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage2"), 2);
     glUseProgram(0);
-}
-
-// Função que pega a matriz M e guarda a mesma no topo da pilha
-void PushMatrix(glm::mat4 M) {
-    g_MatrixStack.push(M);
-}
-
-// Função que remove a matriz atualmente no topo da pilha e armazena a mesma na variável M
-void PopMatrix(glm::mat4& M) {
-    if (g_MatrixStack.empty()) {
-        M = Matrix_Identity();
-    } else {
-        M = g_MatrixStack.top();
-        g_MatrixStack.pop();
-    }
 }
 
 // Carrega um Vertex Shader de um arquivo GLSL. Veja definição de LoadShader() abaixo.

@@ -1,20 +1,38 @@
 #include "MoveCommand.h"
-//#include "Game.h"
+#include "../game/Game.h"
 
-MoveCommand::MoveCommand(Direction d) : dir(d) { }
-void MoveCommand::execute() {
+MoveCommand::MoveCommand(Game& game, Direction d) : dir(d), game(game) { }
+
+void MoveCommand::onPress() {
     switch(dir) {
         case(FORWARD):
-            //game.movePlayerForward();
+            game.setPlayerMovingForward(true);
             break;
         case(BACKWARD):
-            //game.movePlayerBackward();
+            game.setPlayerMovingBackward(true);
             break;
         case(LEFT):
-            //game.movePlayerLeft();
+            game.setPlayerMovingLeft(true);
             break;
         case(RIGHT):
-            //game.movePlayerRight();
+            game.setPlayerMovingRight(true);
+            break;
+    }
+}
+
+void MoveCommand::onRelease() {
+    switch(dir) {
+        case(FORWARD):
+            game.setPlayerMovingForward(false);
+            break;
+        case(BACKWARD):
+            game.setPlayerMovingBackward(false);
+            break;
+        case(LEFT):
+            game.setPlayerMovingLeft(false);
+            break;
+        case(RIGHT):
+            game.setPlayerMovingRight(false);
             break;
     }
 }

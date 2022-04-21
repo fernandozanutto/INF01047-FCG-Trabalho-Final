@@ -1,8 +1,11 @@
 #include <GLFW/glfw3.h>
 #include <glm/mat4x4.hpp>
+#include <glm/trigonometric.hpp>
 #include <iostream>
 #include "GameObject.h"
 #include "../renderer/Matrices.h"
+
+#define PI 3.1415926f
 
 float lastFrameTime = glfwGetTime();
 float startTime = glfwGetTime();
@@ -23,6 +26,8 @@ void GameObject::resetMatrix() {
     velocityVector = glm::vec4(0.0, 0.0, 0.0, 0.0);
     accelerationVector = glm::vec4(0.0, 0.0, 0.0, 0.0);
     angularVelocityVector = glm::vec4(0.0, 0.0, 0.0, 0.0);
+    theta = 0.0f;
+    phi = 0.0f;
 }
 
 GameObject* GameObject::translate(float x, float y, float z) {
@@ -77,12 +82,39 @@ Model* GameObject::getModel() {
     return model;
 }
 
+glm::vec4 GameObject::getFacingDirection() {
+    glm::vec4 direction = glm::vec4(
+            glm::cos(phi) * glm::sin(theta),
+            glm::sin(phi),
+            glm::cos(phi) * glm::cos(theta),
+            0
+    );
+
+    return direction / norm(direction);
+}
+
 void GameObject::update() {
     float currentTime = glfwGetTime();
     float delta = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
 
-    this->velocityVector += accelerationVector * delta;
-    this->positionVector += velocityVector * delta;
-    this->rotationVector += angularVelocityVector * delta;
+    velocityVector += accelerationVector * delta;
+    positionVector += velocityVector * delta;
+    rotationVector += angularVelocityVector * delta;
+    
+    if (isWalkingForward) {
+        positionVector += getFacingDirection() * walkSpeed * delta;
+    }
+
+    if (isWalkingBackward) {
+        positionVector -= getFacingDirection() * walkSpeed * delta;
+    }
+}
+
+void GameObject::changePlayerFacingDirection(float x, float y) {
+    theta -= x; 
+    phi -= y; 
+
+    if(phi > PI/2) phi = PI/2;
+    if(phi < -PI/2) phi = -PI/2;
 }

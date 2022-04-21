@@ -40,15 +40,13 @@ Window::Window() {
         glViewport(0, 0, width, height);
     });
 
-
     //if possible, uses raw input, for better aim control
-    if (glfwRawMouseMotionSupported())
+    if (glfwRawMouseMotionSupported()) {
         glfwSetInputMode(this->window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-    
+    }
 
     //hides mouse cursor
     glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    
     
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 }
@@ -59,8 +57,24 @@ Window::~Window() {
 }
 
 void Window::setKeyCallbacks(InputManager* input) {
+    // para que possamos pegar a referencia do InputManager de dentro dos callbacks
+    // https://code-examples.net/en/q/75242b
+    glfwSetWindowUserPointer(this->window, input);
+
+    glfwSetKeyCallback(this->window, [](GLFWwindow* window, int key, int scancode, int action, int mod) {
+        InputManager* input = (InputManager*) glfwGetWindowUserPointer(window);
+        input->keyCallback(key, action, mod); 
+    });
+    //lambda used for callbacks (calls input manager for handling)
+
+    glfwSetMouseButtonCallback(this->window, [](GLFWwindow* window, int button, int action, int mod) {
+        InputManager* input = (InputManager*) glfwGetWindowUserPointer(window);
+        input->mouseButtonCallback(button, action, mod); 
+    });
+
     glfwSetCursorPosCallback(this->window, [](GLFWwindow* window, double xpos, double ypos) {
-        
+        InputManager* input = (InputManager*) glfwGetWindowUserPointer(window);
+        input->cursorCallback(xpos, ypos); 
     });
 }
 

@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-InputManager::InputManager(std::vector<std::tuple<int,Command*>> cList) {
+InputManager::InputManager(std::vector<std::tuple<int,Command*>> cList, Game& game): game(game) {
     for(unsigned int i=0; i < cList.size(); i++) {
         int key          = std::get<0>(cList[i]);
         Command* command = std::get<1>(cList[i]);
@@ -48,7 +48,7 @@ void InputManager::mouseButtonCallback(int button, int action, int mods) {
 void InputManager::cursorCallback(double xpos, double ypos) {
     float dx = xpos - lastCursorPosX;
     float dy = ypos - lastCursorPosY;
-    // player.moveView(dx, dy);
+    game.changePlayerFacingDirection(xpos, ypos);
     lastCursorPosX = xpos;
     lastCursorPosY = ypos;
 }
@@ -60,12 +60,14 @@ void InputManager::setInitialCursorPos(double xpos, double ypos) {
 
 void InputManager::handleInput() {
     for(auto& k : heldKeys) {
-        if(k.second == true){               //if key is held
-            Command* targetCommand = commands[k.first];
-            targetCommand->execute();       //execute key's command
+        Command* targetCommand = commands[k.first];
+        if(k.second){
+            targetCommand->onPress();
             if(!targetCommand->isRepeatable()){
                 k.second = false;
             }
+        } else {
+            targetCommand->onRelease();
         }
     }
 }

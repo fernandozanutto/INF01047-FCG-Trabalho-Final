@@ -9,9 +9,11 @@
 
 #include <GLFW/glfw3.h>
 
+#include "../game/Game.h"
+
 class InputManager {
 public:
-    InputManager(std::vector <std::tuple<int,Command*>> cList);
+    InputManager(std::vector <std::tuple<int,Command*>> cList, Game& game);
     void keyCallback(int key, int action, int mods);
     void cursorCallback(double xpos, double ypos);
     void mouseButtonCallback(int button, int action, int mods);
@@ -23,5 +25,5 @@ private:
     std::map<int,Command*> commands;
     float lastCursorPosX;
     float lastCursorPosY;
-    //Player& player;
+    Game& game;
 };
