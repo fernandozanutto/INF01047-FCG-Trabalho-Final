@@ -176,7 +176,7 @@ int main() {
     };
 
     InputManager input(commandLst, game);
-    //windoww.setKeyCallbacks(&input);
+    windoww.setKeyCallbacks(&input);
 
     Renderer renderer(windoww.width, windoww.height);
     
@@ -239,7 +239,7 @@ int main() {
         
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
-            renderer.draw(view, game.getScene());
+            renderer.draw(view, game);
             TextRendering_ShowEulerAngles(window);
             TextRendering_ShowFramesPerSecond(window);
             windoww.swapBuffers();

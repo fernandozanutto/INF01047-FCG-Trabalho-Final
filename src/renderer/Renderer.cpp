@@ -15,6 +15,7 @@
 #include "Model.h"
 #include "../game/GameObject.h"
 #include "../game/BaseScene.h"
+#include "../game/Game.h"
 #include "SceneObject.h"
 
 
@@ -54,7 +55,7 @@ Renderer::~Renderer() {
     glDeleteProgram(shader2dId);
 }
 
-void Renderer::draw(glm::mat4 cameraView, BaseScene& scene) {
+void Renderer::draw(glm::mat4 cameraView, Game& game) {
     glViewport(0,0, screenWidth, screenHeight);
     // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
     // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:
@@ -80,12 +81,14 @@ void Renderer::draw(glm::mat4 cameraView, BaseScene& scene) {
     float screenRatio = (float)screenWidth / (float)screenHeight;
 
     glm::mat4 projection = Matrix_Perspective(fov, screenRatio, NEARPLANE, FARPLANE);
+    glm::vec4 upVector = glm::vec4(0,1,0,0);
+    glm::mat4 view = Matrix_Camera_View(game.cameraFollowing->getPosition(), game.cameraFollowing->getFacingDirection(), upVector);
 
-    (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView)));
+    (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(view)));
     (glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection)));
 
-    for (unsigned int i=0; i < scene.gameObjects.size(); i++) {
-        GameObject object = scene.gameObjects[i];
+    for (unsigned int i=0; i < game.getScene().gameObjects.size(); i++) {
+        GameObject object = game.getScene().gameObjects[i];
         glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.getModelMatrix()));
         glUniform1i(object_id_uniform, i);
         drawObject(object.getModel());

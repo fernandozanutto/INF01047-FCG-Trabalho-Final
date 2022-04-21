@@ -42,6 +42,7 @@ public:
     void update();
     glm::mat4 getModelMatrix();
     glm::vec4 getFacingDirection();
+    glm::vec4 getPosition();
     
     float walkSpeed;
 };

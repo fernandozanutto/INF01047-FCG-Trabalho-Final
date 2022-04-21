@@ -48,9 +48,12 @@ void InputManager::mouseButtonCallback(int button, int action, int mods) {
 void InputManager::cursorCallback(double xpos, double ypos) {
     float dx = xpos - lastCursorPosX;
     float dy = ypos - lastCursorPosY;
-    game.changePlayerFacingDirection(xpos, ypos);
     lastCursorPosX = xpos;
     lastCursorPosY = ypos;
+
+    float sensibility = 0.01;
+
+    game.changePlayerFacingDirection(dx * sensibility, dy * sensibility);
 }
 
 void InputManager::setInitialCursorPos(double xpos, double ypos) {

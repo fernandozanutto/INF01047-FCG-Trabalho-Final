@@ -8,12 +8,13 @@
 #include "SceneObject.h"
 #include "Model.h"
 #include "../game/BaseScene.h"
+#include "../game/Game.h"
 
 class Renderer {
 public: 
     Renderer(unsigned int screenWidth, unsigned int screenHeight);
     ~Renderer();
-    void draw(glm::mat4 cameraView, BaseScene& scene);
+    void draw(glm::mat4 cameraView, Game& game);
 
 private:
     float screenWidth;

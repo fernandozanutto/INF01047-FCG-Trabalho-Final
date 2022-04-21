@@ -20,7 +20,7 @@ GameObject::GameObject(Model* model): model(model) {
 }
 
 void GameObject::resetMatrix() {
-    positionVector = glm::vec4(0.0, 0.0, 0.0, 0.0);
+    positionVector = glm::vec4(0.0, 0.0, 0.0, 1.0);
     rotationVector = glm::vec4(0.0);
     scaleVector = glm::vec4(1.0);
     velocityVector = glm::vec4(0.0, 0.0, 0.0, 0.0);
@@ -117,4 +117,8 @@ void GameObject::changePlayerFacingDirection(float x, float y) {
 
     if(phi > PI/2) phi = PI/2;
     if(phi < -PI/2) phi = -PI/2;
+}
+
+glm::vec4 GameObject::getPosition() {
+    return positionVector;
 }

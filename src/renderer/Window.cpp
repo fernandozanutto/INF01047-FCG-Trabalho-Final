@@ -60,7 +60,7 @@ void Window::setKeyCallbacks(InputManager* input) {
     // para que possamos pegar a referencia do InputManager de dentro dos callbacks
     // https://code-examples.net/en/q/75242b
     glfwSetWindowUserPointer(this->window, input);
-
+    /*
     glfwSetKeyCallback(this->window, [](GLFWwindow* window, int key, int scancode, int action, int mod) {
         InputManager* input = (InputManager*) glfwGetWindowUserPointer(window);
         input->keyCallback(key, action, mod); 
@@ -71,7 +71,7 @@ void Window::setKeyCallbacks(InputManager* input) {
         InputManager* input = (InputManager*) glfwGetWindowUserPointer(window);
         input->mouseButtonCallback(button, action, mod); 
     });
-
+    */
     glfwSetCursorPosCallback(this->window, [](GLFWwindow* window, double xpos, double ypos) {
         InputManager* input = (InputManager*) glfwGetWindowUserPointer(window);
         input->cursorCallback(xpos, ypos); 
