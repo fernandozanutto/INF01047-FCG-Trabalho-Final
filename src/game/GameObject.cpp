@@ -1,7 +1,9 @@
 #include <GLFW/glfw3.h>
 #include <glm/mat4x4.hpp>
 #include <glm/trigonometric.hpp>
+
 #include <iostream>
+
 #include "GameObject.h"
 #include "../renderer/Matrices.h"
 
@@ -104,19 +106,22 @@ void GameObject::update() {
         positionVector += getFacingDirection() * walkSpeed * delta;
     }
 
-    if (model->name == "bunny") {
-        std::cout << "angularVelocityVector " << angularVelocityVector.x << " " << angularVelocityVector.y << " " << angularVelocityVector.z << std::endl;
-        std::cout << "rotationVector " << rotationVector.x << " " << rotationVector.y << " " << rotationVector.z << std::endl;
-        std::cout << "positionVector " << positionVector.x << " " << positionVector.y << " " << positionVector.z << std::endl;
-        std::cout << "velocityVector " << velocityVector.x << " " << velocityVector.y << " " << velocityVector.z << std::endl;
-    }
-
     if (isWalkingLeft) {
-
+        theta += PI / 2;
+        float oldPhi = phi;
+        phi = 0;
+        positionVector += getFacingDirection() * walkSpeed * delta;
+        theta -= PI / 2;
+        phi = oldPhi;
     }
 
     if (isWalkingRight) {
-
+        theta -= PI / 2;
+        float oldPhi = phi;
+        phi = 0;
+        positionVector += getFacingDirection() * walkSpeed * delta;
+        theta += PI / 2;
+        phi = oldPhi;
     }
 
     if (isWalkingBackward) {
