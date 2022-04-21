@@ -19,4 +19,6 @@ public:
     void setPlayerMovingBackward(bool);
     void setPlayerMovingRight(bool);
     void changePlayerFacingDirection(float x, float y);
+    void pause();
+    bool hasFinished = false;
 };

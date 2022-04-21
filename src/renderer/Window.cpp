@@ -112,4 +112,12 @@ void Window::swapBuffers() {
 
 void Window::pollEvents() {
     glfwPollEvents();
+
+    if (game != NULL & game->hasFinished) {
+        setShouldClose();
+    }
+}
+
+void Window::setGame(Game* game) {
+    this->game = game;
 }

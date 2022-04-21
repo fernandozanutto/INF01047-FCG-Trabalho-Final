@@ -37,6 +37,7 @@
 
 // Headers locais, definidos na pasta "include/"
 #include "utils.h"
+
 #include "renderer/Model.h"
 #include "renderer/matrices.h"
 #include "renderer/Window.h"
@@ -44,9 +45,12 @@
 #include "renderer/SceneObject.h"
 #include "renderer/VBO.h"
 #include "renderer/IBO.h"
+
 #include "input/Command.h"
 #include "input/MoveCommand.h"
+#include "input/EscCommand.h"
 #include "input/InputManager.h"
+
 #include "game/FirstScene.h"
 #include "game/Game.h"
 
@@ -80,7 +84,6 @@ void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
 
 // Funções callback para comunicação com o sistema operacional e interação do
 // usuário. Veja mais comentários nas definições das mesmas, abaixo.
-void ErrorCallback(int error, const char* description);
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
@@ -133,12 +136,6 @@ bool g_ShowInfoText = true;
 GLuint vertex_shader_id;
 GLuint fragment_shader_id;
 GLuint program_id = 0;
-GLint model_uniform;
-GLint view_uniform;
-GLint projection_uniform;
-GLint object_id_uniform;
-GLint bbox_min_uniform;
-GLint bbox_max_uniform;
 
 // Número de texturas carregadas pela função LoadTextureImage()
 GLuint g_NumLoadedTextures = 0;
@@ -154,7 +151,6 @@ int main() {
     glfwSetKeyCallback(window, KeyCallback);
     glfwSetMouseButtonCallback(window, MouseButtonCallback);
     glfwSetScrollCallback(window, ScrollCallback);
-    glfwSetErrorCallback(ErrorCallback);
 
     printGPUInfo();
 
@@ -164,13 +160,15 @@ int main() {
 
     FirstScene firstLevel;
     Game game(firstLevel, firstLevel.gameObjects[0]);
+    windoww.setGame(&game);
 
     // TODO: pass game to movecommand
     std::vector<std::tuple<int, Command*>> commandLst = {
         std::make_tuple(GLFW_KEY_W,     new MoveCommand(game, MoveCommand::FORWARD)),
         std::make_tuple(GLFW_KEY_S,     new MoveCommand(game, MoveCommand::BACKWARD)),
         std::make_tuple(GLFW_KEY_A,     new MoveCommand(game, MoveCommand::LEFT)),
-        std::make_tuple(GLFW_KEY_D,     new MoveCommand(game, MoveCommand::RIGHT))
+        std::make_tuple(GLFW_KEY_D,     new MoveCommand(game, MoveCommand::RIGHT)),
+        std::make_tuple(GLFW_KEY_ESCAPE, new EscCommand(game))
     };
 
     InputManager input(commandLst, game);
@@ -183,7 +181,7 @@ int main() {
 
     double lastFrameTime = glfwGetTime();
 
-    while (!glfwWindowShouldClose(window)) {
+    while (!windoww.shouldClose()) {
         game.update();
         windoww.pollEvents();
         input.handleInput();
@@ -569,11 +567,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fprintf(stdout, "Shaders recarregados!\n");
         fflush(stdout);
     }
-}
-
-// Definimos o callback para impressão de erros da GLFW no terminal
-void ErrorCallback(int error, const char* description) {
-    fprintf(stderr, "ERROR: GLFW: %s\n", description);
 }
 
 // Esta função recebe um vértice com coordenadas de modelo p_model e passa o

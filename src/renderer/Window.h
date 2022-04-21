@@ -4,7 +4,8 @@
 #include "../input/InputManager.h"
 
 class Window {
-//private:
+private:
+    Game* game;
 public:
     GLFWwindow* window;
     float screenRatio;
@@ -20,4 +21,5 @@ public:
     void setShouldClose();
     void swapBuffers();
     void pollEvents();
+    void setGame(Game* game);
 };

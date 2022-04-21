@@ -49,3 +49,8 @@ void Game::changePlayerFacingDirection(float x, float y) {
 glm::vec4 Game::getCameraPosition() {
     return cameraFollowing->getPosition() - (cameraFollowing->getFacingDirection() * 3.0f);
 }
+
+void Game::pause() {
+    isRunning = false;
+    hasFinished = true;
+}

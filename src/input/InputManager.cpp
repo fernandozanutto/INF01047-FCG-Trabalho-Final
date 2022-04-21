@@ -1,7 +1,6 @@
 #include <map>
 #include <iterator>
 
-//#include "Player.h"
 #include "InputManager.h" 
 #include <GLFW/glfw3.h>
 
