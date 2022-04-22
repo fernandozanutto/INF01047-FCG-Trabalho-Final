@@ -85,11 +85,11 @@ void Renderer::draw(Game& game) {
     glm::vec4 upVector = glm::vec4(0,1,0,0);
     glm::mat4 cameraView = Matrix_Camera_View(game.getCameraPosition(), game.cameraFollowing->getFacingDirection(), upVector);
 
-    (glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView)));
-    (glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection)));
+    glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView));
+    glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection));
     
     for (unsigned int i=0; i < game.getScene().gameObjects.size(); i++) {
-        GameObject object = game.getScene().gameObjects[i];
+        GameObject& object = game.getScene().gameObjects[i];
         glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.getModelMatrix()));
         glUniform1i(object_id_uniform, i);
         drawObject(object.getModel());
@@ -98,15 +98,14 @@ void Renderer::draw(Game& game) {
 
 void Renderer::drawObject(Model* model) {
     if (model == NULL) {
-        std::cout << "model passado de parâmetro é NULO" << std::endl;
         return;
     }
     
+    glBindTexture(GL_TEXTURE_2D, model->textureId);
+
     int size = model->vaoId.size();
     for (int i=0; i < size; i++) {
         glBindVertexArray(model->vaoId[i]);
-        // Setamos as variáveis "bbox_min" e "bbox_max" do fragment shader
-        // com os parâmetros da axis-aligned bounding box (AABB) do modelo.
         glm::vec3 bbox_min = model->bbox_min[i];
         glm::vec3 bbox_max = model->bbox_max[i];
         glUniform4f(this->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
@@ -168,20 +167,20 @@ void Renderer::LoadShader(const char* filename, unsigned int shader_id) {
     const GLchar* shader_string = str.c_str();
     const GLint   shader_string_length = static_cast<GLint>( str.length() );
 
-    (glShaderSource(shader_id, 1, &shader_string, &shader_string_length));
+    glShaderSource(shader_id, 1, &shader_string, &shader_string_length);
 
-    (glCompileShader(shader_id));
+    glCompileShader(shader_id);
 
     GLint compiled_ok;
-    (glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compiled_ok));
+    glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compiled_ok);
 
     GLint log_length = 0;
-    (glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &log_length));
+    glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &log_length);
 
     GLchar* log = new GLchar[log_length];
-    (glGetShaderInfoLog(shader_id, log_length, &log_length, log));
+    glGetShaderInfoLog(shader_id, log_length, &log_length, log);
 
-    if ( log_length != 0 ) {
+    if (log_length != 0) {
         std::string  output;
 
         if ( !compiled_ok ) {

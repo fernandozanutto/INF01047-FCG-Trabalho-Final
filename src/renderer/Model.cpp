@@ -1,8 +1,11 @@
 #include <iostream>
 
 #include <tiny_obj_loader.h>
+#include <stb_image.h>
 #include <glad/glad.h>
 #include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
+
 #include "Matrices.h"
 #include "Model.h"
 #include "VBO.h"
@@ -11,13 +14,17 @@
 Model::Model() { }
 
 Model::Model(std::string filename) : name(filename) {
+    loadModel();
+    loadTexture();
+}
 
-    std::string fileLocation = "data/" + filename + ".obj";
+void Model::loadModel() {
+    std::string modelLocation = "data/" + name + ".obj";
 
-    printf("Carregando modelo \"%s\"... ", filename.c_str());
+    printf("Carregando modelo \"%s\"... ", name.c_str());
 
     std::string err;
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileLocation.c_str(), NULL, true);
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, modelLocation.c_str(), NULL, true);
 
     if (!err.empty()) {
         fprintf(stderr, "\n%s\n", err.c_str());
@@ -35,14 +42,71 @@ Model::Model(std::string filename) : name(filename) {
     printf("build triangles OK.\n");
 }
 
+unsigned char* findPossiblesTextures(std::string file, int* width, int* height, int* channels) {
+    std::vector<std::string> possibleExtensions = {"mtl", "png", "jpg", "jpeg"};
+
+    unsigned char* data;
+    
+    for (std::string extension: possibleExtensions) {
+        std::string textureFile = "data/" + file + "." + extension;
+        printf("Procurando textura \"%s\"... ", textureFile.c_str());
+        data = stbi_load(textureFile.c_str(), width, height, channels, 3);
+        if (data != NULL) break;
+    }
+    
+    return data;
+}
+
+void Model::loadTexture() {
+    stbi_set_flip_vertically_on_load(true);
+    
+    int width;
+    int height;
+    int channels;
+
+    unsigned char* data = findPossiblesTextures(name, &width, &height, &channels);
+    
+    if (data == NULL) {
+        std::cout << "Não foi possível carregar. Usando textura padrão.\n";
+        data = stbi_load("data/missing_textures.png", &width, &height, &channels, 3);
+    }
+
+    std::cout << "OK (" << width << "x"<< height << ").\n";
+    
+    // Agora criamos objetos na GPU com OpenGL para armazenar a textura
+    GLuint texture_id;
+    GLuint sampler_id;
+    glGenTextures(1, &texture_id);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    std::cout << "ID gerado: " << texture_id << std::endl;
+    this->textureId = texture_id;
+    glGenSamplers(1, &sampler_id);
+    
+    // Veja slides 95-96 do documento Aula_20_Mapeamento_de_Texturas.pdf
+    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    
+    // Parâmetros de amostragem da textura.
+    glSamplerParameteri(sampler_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glSamplerParameteri(sampler_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    // Agora enviamos a imagem lida do disco para a GPU
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    
+    glGenerateMipmap(GL_TEXTURE_2D);
+    stbi_image_free(data);
+}
+
 void Model::computeNormals() {
     if (!attrib.normals.empty())
         return;
-
-    // Primeiro computamos as normais para todos os TRIÂNGULOS.
-    // Segundo, computamos as normais dos VÉRTICES através do método proposto
-    // por Gouraud, onde a normal de cada vértice vai ser a média das normais de
-    // todas as faces que compartilham este vértice.
 
     size_t num_vertices = attrib.vertices.size() / 3;
 
@@ -176,19 +240,4 @@ void Model::buildTrianglesAndAddToVirtualScene() {
     IBO indexBuffer(indices.data(), indices.size() * sizeof(GLuint));
 
     glBindVertexArray(0);
-}
-
-// Função que pega a matriz M e guarda a mesma no topo da pilha
-void Model::pushMatrix(glm::mat4 M) {
-    g_MatrixStack.push(M);
-}
-
-// Função que remove a matriz atualmente no topo da pilha e armazena a mesma na variável M
-void Model::popMatrix(glm::mat4& M) {
-    if (g_MatrixStack.empty()) {
-        M = Matrix_Identity();
-    } else {
-        M = g_MatrixStack.top();
-        g_MatrixStack.pop();
-    }
 }

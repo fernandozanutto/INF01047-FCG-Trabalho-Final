@@ -30,9 +30,7 @@ uniform vec4 bbox_min;
 uniform vec4 bbox_max;
 
 // Variáveis para acesso das imagens de textura
-uniform sampler2D TextureImage0;
-uniform sampler2D TextureImage1;
-uniform sampler2D TextureImage2;
+uniform sampler2D textureImage;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
@@ -41,8 +39,7 @@ out vec4 color;
 #define M_PI   3.14159265358979323846
 #define M_PI_2 1.57079632679489661923
 
-void main()
-{
+void main() {
     // Obtemos a posição da câmera utilizando a inversa da matriz que define o
     // sistema de coordenadas da câmera.
     vec4 origin = vec4(0.0, 0.0, 0.0, 1.0);
@@ -69,21 +66,8 @@ void main()
     float U = 0.0;
     float V = 0.0;
 
-    if ( object_id == SPHERE )
-    {
-        // PREENCHA AQUI as coordenadas de textura da esfera, computadas com
-        // projeção esférica EM COORDENADAS DO MODELO. Utilize como referência
-        // o slides 134-150 do documento Aula_20_Mapeamento_de_Texturas.pdf.
-        // A esfera que define a projeção deve estar centrada na posição
-        // "bbox_center" definida abaixo.
-
-        // Você deve utilizar:
-        //   função 'length( )' : comprimento Euclidiano de um vetor
-        //   função 'atan( , )' : arcotangente. Veja https://en.wikipedia.org/wiki/Atan2.
-        //   função 'asin( )'   : seno inverso.
-        //   constante M_PI
-        //   variável position_model
-
+    if (object_id == SPHERE) {
+        // projeção esférica
         vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
         vec4 c = bbox_center;
 
@@ -112,22 +96,23 @@ void main()
         U = px;
         V = py;
     }
-    else if ( object_id == PLANE ) {
+    else if (object_id == PLANE) {
         // Coordenadas de textura do plano, obtidas do arquivo OBJ.
+        U = texcoords.x;
+        V = texcoords.y;
+    } else {
         U = texcoords.x;
         V = texcoords.y;
     }
 
-    // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
-    vec3 Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
-
-    vec3 Kd1 = texture(TextureImage1, vec2(U,V)).rgb;
+    // Obtemos a refletância difusa a partir da leitura da imagem textureImage
+    vec3 Kd0 = texture(textureImage, vec2(U,V)).rgb;
 
     // Equação de Iluminação
     float lambert = max(0,dot(n,l));
     float lambert2 = max(0,dot(-n,l));
 
-    color.rgb = (Kd0 * (lambert + 0.01)) + (Kd1 * (lambert2 + 0.05));
+    color.rgb = (Kd0 * (lambert + 0.01));
 
     // NOTE: Se você quiser fazer o rendering de objetos transparentes, é
     // necessário:

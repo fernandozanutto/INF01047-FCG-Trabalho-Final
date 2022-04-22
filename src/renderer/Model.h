@@ -10,9 +10,8 @@ class Model {
 private:
     void computeNormals();
     void buildTrianglesAndAddToVirtualScene();
-    void pushMatrix(glm::mat4 M);
-    void popMatrix(glm::mat4& M);
-    std::stack<glm::mat4> g_MatrixStack;
+    void loadModel();
+    void loadTexture();
 public:
     Model();
     Model(std::string filename);
@@ -27,4 +26,5 @@ public:
     std::vector<int> numIndexes;
     std::vector<int> vaoId;
     std::vector<std::string> shapeName;
+    unsigned int textureId;
 };

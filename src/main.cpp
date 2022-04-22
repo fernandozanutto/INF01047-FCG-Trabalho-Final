@@ -56,8 +56,7 @@
 #include "game/Game.h"
 
 // Declaração de várias funções utilizadas em main().  Essas estão definidas
-// logo após a definição de main() neste arquivo.
-void LoadTextureImage(const char* filename);                                  // Função que carrega imagens de textura
+// logo após a definição de main() neste arquivo.                              // Função que carrega imagens de textura
 GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id);  // Cria um programa de GPU
 void PrintObjModelInfo(Model*);                                            // Função para debugging
 
@@ -101,9 +100,6 @@ float g_CameraPhi = 0.0f;       // Ângulo em relação ao eixo Y
 // Variável que controla se o texto informativo será mostrado na tela.
 bool g_ShowInfoText = true;
 
-// Número de texturas carregadas pela função LoadTextureImage()
-GLuint g_NumLoadedTextures = 0;
-
 #define FPS 75.0
 #define SECONDS_PER_FRAME 1.0/FPS
 
@@ -111,10 +107,6 @@ int main() {
     Window window;
 
     printGPUInfo();
-
-    // Carregamos duas imagens para serem utilizadas como textura
-    LoadTextureImage("./data/tc-earth_daymap_surface.jpg");       // TextureImage0
-    LoadTextureImage("./data/tc-earth_nightmap_citylights.gif");  // TextureImage1
 
     FirstScene firstLevel;
     Game game(firstLevel, firstLevel.gameObjects[0]);
@@ -135,7 +127,8 @@ int main() {
     window.setKeyCallbacks(&input);
     
     // Inicializamos o código para renderização de texto.
-    TextRendering_Init();
+    //TextRendering_Init();
+
 
     double lastFrameTime = glfwGetTime();
 
@@ -146,8 +139,8 @@ int main() {
         double elapsedTime = glfwGetTime() - lastFrameTime;
         if (elapsedTime >= SECONDS_PER_FRAME) {
             renderer.draw(game);
-            TextRendering_ShowEulerAngles(window.window, game.cameraFollowing);
-            TextRendering_ShowFramesPerSecond(window.window);
+            //TextRendering_ShowEulerAngles(window.window, game.cameraFollowing);
+            //TextRendering_ShowFramesPerSecond(window.window);
             window.swapBuffers();
             lastFrameTime = glfwGetTime();
         }
@@ -164,56 +157,6 @@ void printGPUInfo() {
     const GLubyte* glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
     printf("GPU: %s, %s, OpenGL %s, GLSL %s\n", vendor, renderer, glversion, glslversion);
-}
-
-// Função que carrega uma imagem para ser utilizada como textura
-void LoadTextureImage(const char* filename) {
-    printf("Carregando imagem \"%s\"... ", filename);
-
-    // Primeiro fazemos a leitura da imagem do disco
-    stbi_set_flip_vertically_on_load(true);
-    int width;
-    int height;
-    int channels;
-    unsigned char* data = stbi_load(filename, &width, &height, &channels, 3);
-
-    if (data == NULL) {
-        fprintf(stderr, "ERROR: Cannot open image file \"%s\".\n", filename);
-        std::exit(EXIT_FAILURE);
-    }
-
-    printf("OK (%dx%d).\n", width, height);
-
-    // Agora criamos objetos na GPU com OpenGL para armazenar a textura
-    GLuint texture_id;
-    GLuint sampler_id;
-    glGenTextures(1, &texture_id);
-    glGenSamplers(1, &sampler_id);
-
-    // Veja slides 95-96 do documento Aula_20_Mapeamento_de_Texturas.pdf
-    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // Parâmetros de amostragem da textura.
-    glSamplerParameteri(sampler_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glSamplerParameteri(sampler_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Agora enviamos a imagem lida do disco para a GPU
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-
-    GLuint textureunit = g_NumLoadedTextures;
-    glActiveTexture(GL_TEXTURE0 + textureunit);
-    glBindTexture(GL_TEXTURE_2D, texture_id);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    glBindSampler(textureunit, sampler_id);
-
-    stbi_image_free(data);
-
-    g_NumLoadedTextures += 1;
 }
 
 // Esta função cria um programa de GPU, o qual contém obrigatoriamente um
