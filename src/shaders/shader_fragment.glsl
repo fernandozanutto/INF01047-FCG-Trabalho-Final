@@ -79,8 +79,7 @@ void main() {
 
         U = (tetha + M_PI) / (2*M_PI);
         V = (phi + (M_PI/2)) / M_PI;
-    }
-    else if ( object_id == BUNNY || object_id == SMALL_BUNNY) {
+    } else if ( object_id == BUNNY || object_id == SMALL_BUNNY) {
         float minx = bbox_min.x;
         float maxx = bbox_max.x;
 
@@ -95,12 +94,8 @@ void main() {
 
         U = px;
         V = py;
-    }
-    else if (object_id == PLANE) {
-        // Coordenadas de textura do plano, obtidas do arquivo OBJ.
-        U = texcoords.x;
-        V = texcoords.y;
     } else {
+        // Coordenadas de textura do plano, obtidas do arquivo OBJ.
         U = texcoords.x;
         V = texcoords.y;
     }
@@ -112,7 +107,7 @@ void main() {
     float lambert = max(0,dot(n,l));
     float lambert2 = max(0,dot(-n,l));
 
-    color.rgb = (Kd0 * (lambert + 0.01));
+    color.rgb = Kd0 * (lambert + 0.01);
 
     // NOTE: Se você quiser fazer o rendering de objetos transparentes, é
     // necessário:
