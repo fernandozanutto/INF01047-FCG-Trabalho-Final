@@ -16,7 +16,6 @@
 #include "../game/GameObject.h"
 #include "../game/BaseScene.h"
 #include "../game/Game.h"
-#include "SceneObject.h"
 
 #define FOV 3.141592f/3.0f
 #define NEARPLANE -0.1f

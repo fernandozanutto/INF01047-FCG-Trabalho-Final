@@ -42,7 +42,6 @@
 #include "renderer/matrices.h"
 #include "renderer/Window.h"
 #include "renderer/Renderer.h"
-#include "renderer/SceneObject.h"
 
 #include "input/Command.h"
 #include "input/MoveCommand.h"
