@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include "BaseScene.h"
+#include "collisions.h"
 
 Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene), player(player) {
     isRunning = true;
@@ -14,6 +15,16 @@ void Game::update() {
     if (!isRunning) return;
 
     for (GameObject& object : currentScene.gameObjects) {
+
+        if (object.hasGravity()) {
+            object.setAcceleration(0, -9.8f, 0);
+        }
+
+        if (object.hasCollision() && boundBoxPlaneCollision(object.getGlobalBoundingBoxes()[0], currentScene.floor->getGlobalBoundingBoxes()[0])) {
+            // std::cout << "colidindo com o chao" << std::endl;
+            object.floorColliding = true;
+        }
+
         object.update();
     }
 }

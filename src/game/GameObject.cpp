@@ -98,13 +98,17 @@ void GameObject::update() {
     float delta = currentTime - lastUpdateTime;
     lastUpdateTime = currentTime;
 
+    float oldPhi = phi;
+
+    if (floorColliding) {
+        accelerationVector.y = 0;
+        velocityVector.y = 0;
+        phi = 0;
+    }
+
     velocityVector += accelerationVector * delta;
     positionVector += velocityVector * delta;
     rotationVector += angularVelocityVector * delta;
-
-    if (isWalkingForward) {
-        positionVector += getFacingDirection() * walkSpeed * delta;
-    }
 
     if (isWalkingLeft) {
         theta += PI / 2;
@@ -124,9 +128,15 @@ void GameObject::update() {
         phi = oldPhi;
     }
 
+    if (isWalkingForward) {
+        positionVector += getFacingDirection() * walkSpeed * delta;
+    }
+
     if (isWalkingBackward) {
         positionVector -= getFacingDirection() * walkSpeed * delta;
     }
+
+    phi = oldPhi;
 }
 
 void GameObject::changePlayerFacingDirection(float x, float y) {
@@ -139,4 +149,24 @@ void GameObject::changePlayerFacingDirection(float x, float y) {
 
 glm::vec4 GameObject::getPosition() {
     return positionVector;
+}
+
+bool GameObject::hasCollision() {
+    return collision;
+}
+
+bool GameObject::hasGravity() {
+    return gravity;
+}
+
+std::vector<BoundingBox> GameObject::getGlobalBoundingBoxes() {
+    std::vector<BoundingBox> globalBoudingBoxes;
+
+    for(BoundingBox& box : model->boundingBoxes) {
+        auto min = getModelMatrix() * box.min;
+        auto max = getModelMatrix() * box.max;
+        globalBoudingBoxes.push_back(BoundingBox(min, max));
+    }
+
+    return globalBoudingBoxes;
 }

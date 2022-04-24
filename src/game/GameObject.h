@@ -15,6 +15,9 @@ private:
     glm::vec4 accelerationVector;
     glm::vec4 angularVelocityVector;
     float lastUpdateTime;
+    bool collision = true;
+    bool gravity = true;
+    
 public:
     GameObject();
     GameObject(Model* model);
@@ -38,6 +41,10 @@ public:
     float phi;       // Ângulo em relação ao eixo Y
 
     bool isPlayerWalking();
+    bool hasCollision();
+    bool hasGravity();
+
+    bool floorColliding = false;
 
     Model* getModel();
     void resetMatrix();
@@ -47,4 +54,6 @@ public:
     glm::vec4 getPosition();
     
     float walkSpeed;
+
+    std::vector<BoundingBox> getGlobalBoundingBoxes();
 };
