@@ -8,9 +8,9 @@
 #include "../renderer/Model.h"
 
 FirstScene::FirstScene() {
-    Model* bunnyModel = new Model("bunny");
+    Model* bunnyModel = new Model("bunny", Model::PLANAR);
 
-    GameObject sphere(new Model("sphere"));
+    GameObject sphere(new Model("sphere", Model::SPHERIC));
     sphere.translate(-1.0f, 1.f, 0)->setAngularVelocity(0, .3f, 0);
     sphere.walkSpeed = 2;
 

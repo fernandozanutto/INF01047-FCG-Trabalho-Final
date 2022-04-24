@@ -14,8 +14,9 @@ private:
     void createVBObject(const void* data, unsigned int size, int location, int dimensions);
     void createIBObject(const void* data, unsigned int size);
 public:
-    Model();
+    enum RenderProjectType { SPHERIC, PLANAR, FROM_MODEL };
     Model(std::string filename);
+    Model(std::string filename, RenderProjectType renderType);
     std::string name;
     tinyobj::attrib_t                 attrib;
     std::vector<tinyobj::shape_t>     shapes;
@@ -27,4 +28,5 @@ public:
     std::vector<int> vaoId;
     std::vector<std::string> shapeName;
     unsigned int textureId;
+    RenderProjectType renderType;
 };
