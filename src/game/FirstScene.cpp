@@ -20,15 +20,16 @@ FirstScene::FirstScene() {
     GameObject smallBunny(bunnyModel);
     smallBunny.scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 2.0f, 0.0f);
     
-    GameObject plane(new Model("plane"));
-    plane.scale(2.0f, 1.0f, 2.0f)->translate(0, -1.1f, 0);
-    
     GameObject robot(new Model("robot"));
     robot.translate(3, 1, 3);
 
     this->gameObjects.push_back(sphere);
     this->gameObjects.push_back(bunny);
-    this->gameObjects.push_back(plane);
     this->gameObjects.push_back(smallBunny);
     this->gameObjects.push_back(robot);
+
+    GameObject* plane = new GameObject(new Model("plane"));
+    plane->scale(10.0f, 1.0f, 10.0f)->translate(0, -1.f, 0);
+
+    this->floor = plane;
 }

@@ -5,7 +5,6 @@
 
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
-#include "SceneObject.h"
 #include "Model.h"
 #include "../game/BaseScene.h"
 #include "../game/Game.h"
@@ -47,5 +46,5 @@ private:
     unsigned int LoadFragmentShader(std::string name);
     void LoadShader(const char* filename, unsigned int shader_id);
     unsigned int CreateGpuProgram(unsigned int vertexId, unsigned int fragmentId); 
-    void drawObject(Model* model);
+    void drawObject(GameObject& object, int objectId);
 };

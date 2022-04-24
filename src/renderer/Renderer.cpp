@@ -87,21 +87,25 @@ void Renderer::draw(Game& game) {
     glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView));
     glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection));
     
+    GameObject& floor = *game.getScene().floor;
+    drawObject(floor, 2);
+
     for (unsigned int i=0; i < game.getScene().gameObjects.size(); i++) {
         GameObject& object = game.getScene().gameObjects[i];
-        glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.getModelMatrix()));
-        glUniform1i(object_id_uniform, i);
-        drawObject(object.getModel());
+        drawObject(object, i);
     }
 }
 
-void Renderer::drawObject(Model* model) {
+void Renderer::drawObject(GameObject& object, int objectId) {
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.getModelMatrix()));
+    glUniform1i(object_id_uniform, objectId);
+
+    Model* model = object.getModel();
     if (model == NULL) {
         return;
     }
-    
-    glBindTexture(GL_TEXTURE_2D, model->textureId);
 
+    glBindTexture(GL_TEXTURE_2D, model->textureId);
     int size = model->vaoId.size();
     for (int i=0; i < size; i++) {
         glBindVertexArray(model->vaoId[i]);

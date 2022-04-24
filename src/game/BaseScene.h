@@ -7,4 +7,5 @@
 class BaseScene {
 public:
     std::vector<GameObject> gameObjects;
+    GameObject* floor;
 };
