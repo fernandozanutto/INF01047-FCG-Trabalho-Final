@@ -36,7 +36,7 @@ void Model::loadModel() {
 
     computeNormals();
     printf("compute normals OK. ");
-    buildTrianglesAndAddToVirtualScene();
+    buildTriangles();
     printf("build triangles OK.\n");
 }
 
@@ -152,26 +152,25 @@ void Model::computeNormals() {
     }
 }
 
-void Model::buildTrianglesAndAddToVirtualScene() {
+void Model::buildTriangles() {
     GLuint vertex_array_object_id;
     glGenVertexArrays(1, &vertex_array_object_id);
     glBindVertexArray(vertex_array_object_id);
+
     std::vector<GLuint> indices;
     std::vector<float> model_coefficients;
     std::vector<float> normal_coefficients;
     std::vector<float> texture_coefficients;
 
-    //std::cout << "shapes: " << shapes.size() << " - ";
     for (size_t shape = 0; shape < shapes.size(); ++shape) {
-        //std::cout << shapes[shape].name << " ";
         size_t first_index = indices.size();
         size_t num_triangles = shapes[shape].mesh.num_face_vertices.size();
 
         const float minval = std::numeric_limits<float>::min();
         const float maxval = std::numeric_limits<float>::max();
 
-        glm::vec3 bbox_min = glm::vec3(maxval, maxval, maxval);
-        glm::vec3 bbox_max = glm::vec3(minval, minval, minval);
+        glm::vec4 bbox_min = glm::vec4(maxval, maxval, maxval, 1);
+        glm::vec4 bbox_max = glm::vec4(minval, minval, minval, 1);
 
         for (size_t triangle = 0; triangle < num_triangles; ++triangle) {
             assert(shapes[shape].mesh.num_face_vertices[triangle] == 3);
@@ -222,8 +221,7 @@ void Model::buildTrianglesAndAddToVirtualScene() {
         firstIndex.push_back(first_index);
         numIndexes.push_back(last_index - first_index + 1);
         vaoId.push_back(vertex_array_object_id);
-        this->bbox_max.push_back(bbox_max);
-        this->bbox_min.push_back(bbox_min);
+        this->boundingBoxes.push_back(BoundingBox(bbox_min, bbox_max));
         renderingMode.push_back(GL_TRIANGLES);
     }
 

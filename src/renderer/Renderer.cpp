@@ -105,8 +105,8 @@ void Renderer::drawObject(Model* model) {
     int size = model->vaoId.size();
     for (int i=0; i < size; i++) {
         glBindVertexArray(model->vaoId[i]);
-        glm::vec3 bbox_min = model->bbox_min[i];
-        glm::vec3 bbox_max = model->bbox_max[i];
+        glm::vec3 bbox_min = model->boundingBoxes[i].min;
+        glm::vec3 bbox_max = model->boundingBoxes[i].max;
         glUniform4f(this->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
         glUniform4f(this->bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
 

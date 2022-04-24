@@ -1,15 +1,14 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
 #include <string>
 #include <tiny_obj_loader.h>
-#include <stack>
+#include "BoundingBox.h"
 
 class Model {
 private:
     void computeNormals();
-    void buildTrianglesAndAddToVirtualScene();
+    void buildTriangles();
     void loadModel();
     void loadTexture();
     void createVBObject(const void* data, unsigned int size, int location, int dimensions);
@@ -21,8 +20,7 @@ public:
     tinyobj::attrib_t                 attrib;
     std::vector<tinyobj::shape_t>     shapes;
     std::vector<tinyobj::material_t>  materials;
-    std::vector<glm::vec3> bbox_min;
-    std::vector<glm::vec3> bbox_max;
+    std::vector<BoundingBox> boundingBoxes;
     std::vector<int> renderingMode;
     std::vector<int> firstIndex;
     std::vector<int> numIndexes;
