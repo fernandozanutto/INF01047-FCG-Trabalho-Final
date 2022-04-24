@@ -12,6 +12,8 @@ private:
     void buildTrianglesAndAddToVirtualScene();
     void loadModel();
     void loadTexture();
+    void createVBObject(const void* data, unsigned int size, int location, int dimensions);
+    void createIBObject(const void* data, unsigned int size);
 public:
     Model();
     Model(std::string filename);

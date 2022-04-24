@@ -8,8 +8,6 @@
 
 #include "Matrices.h"
 #include "Model.h"
-#include "VBO.h"
-#include "IBO.h"
 
 Model::Model() { }
 
@@ -43,7 +41,7 @@ void Model::loadModel() {
 }
 
 unsigned char* findPossiblesTextures(std::string file, int* width, int* height, int* channels) {
-    std::vector<std::string> possibleExtensions = {"mtl", "png", "jpg", "jpeg"};
+    std::vector<std::string> possibleExtensions = {"png", "jpg", "jpeg"};
 
     unsigned char* data;
     
@@ -163,7 +161,9 @@ void Model::buildTrianglesAndAddToVirtualScene() {
     std::vector<float> normal_coefficients;
     std::vector<float> texture_coefficients;
 
+    //std::cout << "shapes: " << shapes.size() << " - ";
     for (size_t shape = 0; shape < shapes.size(); ++shape) {
+        //std::cout << shapes[shape].name << " ";
         size_t first_index = indices.size();
         size_t num_triangles = shapes[shape].mesh.num_face_vertices.size();
 
@@ -184,7 +184,7 @@ void Model::buildTrianglesAndAddToVirtualScene() {
                 const float vx = attrib.vertices[3 * idx.vertex_index + 0];
                 const float vy = attrib.vertices[3 * idx.vertex_index + 1];
                 const float vz = attrib.vertices[3 * idx.vertex_index + 2];
-                // printf("tri %d vert %d = (%.2f, %.2f, %.2f)\n", (int)triangle, (int)vertex, vx, vy, vz);
+
                 model_coefficients.push_back(vx);    // X
                 model_coefficients.push_back(vy);    // Y
                 model_coefficients.push_back(vz);    // Z
@@ -227,17 +227,39 @@ void Model::buildTrianglesAndAddToVirtualScene() {
         renderingMode.push_back(GL_TRIANGLES);
     }
 
-    VBO VBO_model_coefficients(model_coefficients.data(), model_coefficients.size() * sizeof(float), 0, 4);
+    createVBObject(model_coefficients.data(), model_coefficients.size() * sizeof(float), 0, 4);
 
     if (!normal_coefficients.empty()) {
-        VBO VBO_normal_coefficients(normal_coefficients.data(), normal_coefficients.size() * sizeof(float), 1, 4);
+        createVBObject(normal_coefficients.data(), normal_coefficients.size() * sizeof(float), 1, 4);
     }
 
     if (!texture_coefficients.empty()) {
-        VBO VBO_texture_coefficients(texture_coefficients.data(), texture_coefficients.size() * sizeof(float), 2, 2);
+        createVBObject(texture_coefficients.data(), texture_coefficients.size() * sizeof(float), 2, 2);
     }
 
-    IBO indexBuffer(indices.data(), indices.size() * sizeof(GLuint));
+    createIBObject(indices.data(), indices.size() * sizeof(GLuint));
 
     glBindVertexArray(0);
+}
+
+void Model::createVBObject(const void* data, unsigned int size, int location, int dimensions) {
+    unsigned int bufferId;
+
+    glGenBuffers(1, &bufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, bufferId); 
+    glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+    glVertexAttribPointer(location, dimensions, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(location);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Model::createIBObject(const void* data, unsigned int size) {
+    unsigned int indexId;
+
+    glGenBuffers(1, &indexId);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId); 
+
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
 }

@@ -43,8 +43,6 @@
 #include "renderer/Window.h"
 #include "renderer/Renderer.h"
 #include "renderer/SceneObject.h"
-#include "renderer/VBO.h"
-#include "renderer/IBO.h"
 
 #include "input/Command.h"
 #include "input/MoveCommand.h"
@@ -109,6 +107,7 @@ int main() {
     printGPUInfo();
 
     FirstScene firstLevel;
+
     Game game(firstLevel, firstLevel.gameObjects[0]);
     window.setGame(&game);
     Renderer renderer(window.width, window.height);
