@@ -5,7 +5,7 @@
 #include "../renderer/Model.h"
 
 class GameObject {
-private:
+protected:
     Model* model;
     // all velocities and accelerations are in units/second
     glm::vec4 positionVector;
@@ -48,7 +48,7 @@ public:
 
     Model* getModel();
     void resetMatrix();
-    void update();
+    virtual void update();
     glm::mat4 getModelMatrix();
     glm::vec4 getFacingDirection();
     glm::vec4 getPosition();

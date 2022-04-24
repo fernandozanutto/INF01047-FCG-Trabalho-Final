@@ -6,6 +6,6 @@
 
 class BaseScene {
 public:
-    std::vector<GameObject> gameObjects;
+    std::vector<GameObject*> gameObjects;
     GameObject* floor;
 };

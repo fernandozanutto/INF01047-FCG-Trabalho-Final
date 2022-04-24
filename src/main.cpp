@@ -107,7 +107,7 @@ int main() {
 
     FirstScene firstLevel;
 
-    Game game(firstLevel, firstLevel.gameObjects[0]);
+    Game game(firstLevel, *firstLevel.gameObjects[0]);
     window.setGame(&game);
     Renderer renderer(window.width, window.height);
 

@@ -46,5 +46,5 @@ private:
     unsigned int LoadFragmentShader(std::string name);
     void LoadShader(const char* filename, unsigned int shader_id);
     unsigned int CreateGpuProgram(unsigned int vertexId, unsigned int fragmentId); 
-    void drawObject(GameObject& object);
+    void drawObject(GameObject* object);
 };

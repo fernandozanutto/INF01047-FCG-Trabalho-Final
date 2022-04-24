@@ -87,19 +87,19 @@ void Renderer::draw(Game& game) {
     glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView));
     glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection));
     
-    GameObject& floor = *game.getScene().floor;
+    GameObject* floor = game.getScene().floor;
     drawObject(floor);
 
     for (unsigned int i=0; i < game.getScene().gameObjects.size(); i++) {
-        GameObject& object = game.getScene().gameObjects[i];
+        GameObject* object = game.getScene().gameObjects[i];
         drawObject(object);
     }
 }
 
-void Renderer::drawObject(GameObject& object) {
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object.getModelMatrix()));
+void Renderer::drawObject(GameObject* object) {
+    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object->getModelMatrix()));
 
-    Model* model = object.getModel();
+    Model* model = object->getModel();
     if (model == NULL) {
         return;
     }
