@@ -15,6 +15,7 @@ GameObject::GameObject(Model* model): model(model) {
 }
 
 void GameObject::resetMatrix() {
+    modelOffset = glm::vec4(0);
     positionVector = glm::vec4(0.0, 0.0, 0.0, 1.0);
     rotationVector = glm::vec4(0.0);
     scaleVector = glm::vec4(1.0);
@@ -67,6 +68,15 @@ GameObject* GameObject::setAngularVelocity(float x, float y, float z) {
 }
 
 glm::mat4 GameObject::getModelMatrix() {
+    return Matrix_Translate(positionVector.x, positionVector.y, positionVector.z)
+            * Matrix_Rotate_Z(rotationVector.z)
+            * Matrix_Rotate_X(rotationVector.x) 
+            * Matrix_Rotate_Y(rotationVector.y)
+            * Matrix_Scale(scaleVector.x, scaleVector.y, scaleVector.z)
+            * Matrix_Translate(modelOffset.x, modelOffset.y, modelOffset.z);
+}
+
+glm::mat4 GameObject::getModelMatrixWithOffset() {
     return Matrix_Translate(positionVector.x, positionVector.y, positionVector.z)
             * Matrix_Rotate_Z(rotationVector.z)
             * Matrix_Rotate_X(rotationVector.x) 

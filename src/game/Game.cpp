@@ -14,6 +14,8 @@ Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene)
 void Game::update() {
     if (!isRunning) return;
 
+    currentScene.floor->update();
+
     for (GameObject* object : currentScene.gameObjects) {
         if (object->hasGravity()) {
             object->setAcceleration(0, -9.8f, 0);

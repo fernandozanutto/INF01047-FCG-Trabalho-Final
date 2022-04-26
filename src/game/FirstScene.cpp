@@ -6,6 +6,7 @@
 #include "FirstScene.h"
 #include "GameObject.h"
 #include "BezierObject.h"
+#include "entities/Arrow.h"
 #include "../renderer/Model.h"
 
 FirstScene::FirstScene() {
@@ -20,7 +21,6 @@ FirstScene::FirstScene() {
     
     GameObject* smallBunny = new GameObject(bunnyModel);
     smallBunny->scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 3.0f, 0.0f);
-    
 
     Model* robotModel = new Model("robot");
 
@@ -34,12 +34,15 @@ FirstScene::FirstScene() {
     BezierObject* robot2 = new BezierObject(robotModel, p1, p2, p3, p4, 3);
     robot2->scale(.5f, .5f, .5f);
 
+    Arrow* arrow = new Arrow;
+    arrow->setAngularVelocity(0,1,0)->translate(-2,0,-2);
+
     this->gameObjects.push_back(sphere);
     this->gameObjects.push_back(robot2);
     this->gameObjects.push_back(bunny);
     this->gameObjects.push_back(smallBunny);
     this->gameObjects.push_back(robot);
-
+    this->gameObjects.push_back(arrow);
 
     GameObject* plane = new GameObject(new Model("plane"));
     plane->scale(10.0f, 1.0f, 10.0f)->translate(0, -1.f, 0);

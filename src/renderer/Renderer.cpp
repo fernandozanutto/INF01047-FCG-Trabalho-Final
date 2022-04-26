@@ -93,17 +93,15 @@ void Renderer::draw(Game& game) {
 }
 
 void Renderer::drawObject(GameObject* object) {
-    glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object->getModelMatrix()));
-
     Model* model = object->getModel();
-    if (model == NULL) {
-        return;
-    }
+    if (model == NULL) return;
+    
     int objectId = model->renderType;
     glUniform1i(object_id_uniform, objectId);
     glBindTexture(GL_TEXTURE_2D, model->textureId);
     int size = model->shapeName.size();
     for (int i=0; i < size; i++) {
+        glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object->getModelMatrix()));
         glBindVertexArray(model->vaoId);
         glm::vec3 bbox_min = model->boundingBoxes[i].min;
         glm::vec3 bbox_max = model->boundingBoxes[i].max;
@@ -119,6 +117,7 @@ void Renderer::drawObject(GameObject* object) {
 
         glBindVertexArray(model->vaoDebugId);
         glUniform1i(isDrawingAxis, true);
+        glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object->getModelMatrixWithOffset()));
         glLineWidth(10.0f);
         glDrawElements(
             model->debugRenderingMode,

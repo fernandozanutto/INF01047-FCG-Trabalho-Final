@@ -11,7 +11,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
 
 
-file(GLOB SOURCES src/*.c src/*.cpp src/*/*.cpp)
+file(GLOB SOURCES src/*.c src/*.cpp src/*/*.cpp src/*/*/*.cpp)
 
 add_library(Libs ${SOURCES})
 
@@ -37,13 +37,14 @@ target_link_libraries(TrabFinal Libs ${libs_user} ${libs_user2} -lgdi32 -lopengl
 target_include_directories(TrabFinal
     PRIVATE
     src/*/*.h
+    src/*/*/*.h
 )
 
-add_custom_command(TARGET TrabFinal PRE_BUILD
+add_custom_command(TARGET TrabFinal POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                        ${CMAKE_SOURCE_DIR}/src/data $<TARGET_FILE_DIR:TrabFinal>/data)
 
-add_custom_command(TARGET TrabFinal PRE_BUILD
+add_custom_command(TARGET TrabFinal POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E copy_directory
                            ${CMAKE_SOURCE_DIR}/src/shaders $<TARGET_FILE_DIR:TrabFinal>/shaders)
 

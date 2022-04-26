@@ -51,6 +51,7 @@ public:
     void resetMatrix();
     virtual void update();
     glm::mat4 getModelMatrix();
+    glm::mat4 getModelMatrixWithOffset();
     glm::vec4 getFacingDirection();
     glm::vec4 getPosition();
     

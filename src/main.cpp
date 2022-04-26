@@ -102,6 +102,7 @@ bool g_ShowInfoText = true;
 
 int main() {
     Window window;
+    Renderer renderer(window.width, window.height);
 
     printGPUInfo();
 
@@ -109,9 +110,7 @@ int main() {
 
     Game game(firstLevel, *firstLevel.gameObjects[0]);
     window.setGame(&game);
-    Renderer renderer(window.width, window.height);
 
-    // TODO: pass game to movecommand
     std::vector<std::tuple<int, Command*>> commandLst = {
         std::make_tuple(GLFW_KEY_W,      new MoveCommand(game, MoveCommand::FORWARD)),
         std::make_tuple(GLFW_KEY_S,      new MoveCommand(game, MoveCommand::BACKWARD)),
@@ -126,7 +125,6 @@ int main() {
     
     // Inicializamos o código para renderização de texto.
     //TextRendering_Init();
-
 
     double lastFrameTime = glfwGetTime();
 
