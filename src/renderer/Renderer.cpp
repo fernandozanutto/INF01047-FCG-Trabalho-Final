@@ -48,11 +48,7 @@ void Renderer::loadShaders() {
     this->viewUniformId       = glGetUniformLocation(this->shader3dId, "view"); 
     this->projectionUniformId = glGetUniformLocation(this->shader3dId, "projection"); 
     this->object_id_uniform = glGetUniformLocation(this->shader3dId, "object_id");    // Variável "object_id" em shader_fragment.glsl
-    //this->lightingUniformId = glGetUniformLocation(this->shader3dId, "lightingIsEnabled"); 
-    //this->handUniformId = glGetUniformLocation(this->shader3dId, "isRenderingHand"); 
-    //this->groundUniformId = glGetUniformLocation(this->shader3dId, "isRenderingGround"); 
-    //this->camPosUniformId = glGetUniformLocation(this->shader3dId, "cameraPosition"); 
-    //this->camDirUniformId = glGetUniformLocation(this->shader3dId, "cameraDirection"); 
+    this->isDrawingAxis = glGetUniformLocation(this->shader3dId, "is_drawing_axis"); 
     this->modelUniform2dId      = glGetUniformLocation(this->shader2dId, "model"); 
     this->bbox_min_uniform = glGetUniformLocation(this->shader3dId, "bbox_min");
     this->bbox_max_uniform = glGetUniformLocation(this->shader3dId, "bbox_max");
@@ -106,9 +102,9 @@ void Renderer::drawObject(GameObject* object) {
     int objectId = model->renderType;
     glUniform1i(object_id_uniform, objectId);
     glBindTexture(GL_TEXTURE_2D, model->textureId);
-    int size = model->vaoId.size();
+    int size = model->shapeName.size();
     for (int i=0; i < size; i++) {
-        glBindVertexArray(model->vaoId[i]);
+        glBindVertexArray(model->vaoId);
         glm::vec3 bbox_min = model->boundingBoxes[i].min;
         glm::vec3 bbox_max = model->boundingBoxes[i].max;
         glUniform4f(this->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
@@ -118,8 +114,19 @@ void Renderer::drawObject(GameObject* object) {
             model->renderingMode[i],
             model->numIndexes[i],
             GL_UNSIGNED_INT,
-            (void*)(model->firstIndex[i] * sizeof(GLuint)));
+            (void*)(model->firstIndex[i] * sizeof(GLuint))
+        );
 
+        glBindVertexArray(model->vaoDebugId);
+        glUniform1i(isDrawingAxis, true);
+        glLineWidth(10.0f);
+        glDrawElements(
+            model->debugRenderingMode,
+            model->debugNumIndexes,
+            GL_UNSIGNED_INT,
+            (void*)(model->debugFirstIndex * sizeof(GLuint))
+        );
+        glUniform1i(isDrawingAxis, false);
         glBindVertexArray(0);
     }
 }

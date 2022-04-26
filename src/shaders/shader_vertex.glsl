@@ -3,6 +3,7 @@
 layout (location = 0) in vec4 model_coefficients;
 layout (location = 1) in vec4 normal_coefficients;
 layout (location = 2) in vec2 texture_coefficients;
+layout (location = 3) in vec4 axis_color_coefficients;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -12,6 +13,7 @@ out vec4 position_world;
 out vec4 position_model;
 out vec4 normal;
 out vec2 texcoords;
+out vec4 axis_color;
 
 void main() {
     gl_Position = projection * view * model * model_coefficients;
@@ -24,5 +26,7 @@ void main() {
     normal.w = 0.0;
 
     texcoords = texture_coefficients;
+
+    axis_color = axis_color_coefficients;
 }
 

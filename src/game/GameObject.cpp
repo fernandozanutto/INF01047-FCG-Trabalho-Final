@@ -9,10 +9,6 @@
 
 #define PI 3.1415926f
 
-GameObject::GameObject() {
-    model = NULL;
-    resetMatrix();
-}
 
 GameObject::GameObject(Model* model): model(model) {
     resetMatrix();
@@ -22,9 +18,9 @@ void GameObject::resetMatrix() {
     positionVector = glm::vec4(0.0, 0.0, 0.0, 1.0);
     rotationVector = glm::vec4(0.0);
     scaleVector = glm::vec4(1.0);
-    velocityVector = glm::vec4(0.0, 0.0, 0.0, 0.0);
-    accelerationVector = glm::vec4(0.0, 0.0, 0.0, 0.0);
-    angularVelocityVector = glm::vec4(0.0, 0.0, 0.0, 0.0);
+    velocityVector = glm::vec4(0.0);
+    accelerationVector = glm::vec4(0.0);
+    angularVelocityVector = glm::vec4(0.0);
     theta = 0.0f;
     phi = 0.0f;
     lastUpdateTime = glfwGetTime();
@@ -163,10 +159,14 @@ std::vector<BoundingBox> GameObject::getGlobalBoundingBoxes() {
     std::vector<BoundingBox> globalBoudingBoxes;
 
     for(BoundingBox& box : model->boundingBoxes) {
-        auto min = getModelMatrix() * box.min;
-        auto max = getModelMatrix() * box.max;
+        auto min = getModelMatrix() * (box.min + modelOffset);
+        auto max = getModelMatrix() * (box.max + modelOffset);
         globalBoudingBoxes.push_back(BoundingBox(min, max));
     }
 
     return globalBoudingBoxes;
+}
+
+void GameObject::setBoundingBoxes(std::vector<BoundingBox> boundingBoxes) {
+    model->boundingBoxes = boundingBoxes;
 }

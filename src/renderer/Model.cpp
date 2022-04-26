@@ -12,11 +12,13 @@
 Model::Model(std::string filename) : name(filename) {
     renderType = Model::FROM_MODEL;
     loadModel();
+    createDebugModel();
     loadTexture();
 }
 
 Model::Model(std::string filename, RenderProjectType type) : name(filename), renderType(type) {
     loadModel();
+    createDebugModel();
     loadTexture();
 }
 
@@ -110,6 +112,8 @@ void Model::computeNormals() {
     if (!attrib.normals.empty())
         return;
 
+    std::cout << "computing normals... ";
+
     size_t num_vertices = attrib.vertices.size() / 3;
 
     std::vector<int> num_triangles_per_vertex(num_vertices, 0);
@@ -160,7 +164,7 @@ void Model::buildTriangles() {
     GLuint vertex_array_object_id;
     glGenVertexArrays(1, &vertex_array_object_id);
     glBindVertexArray(vertex_array_object_id);
-
+    this->vaoId = vertex_array_object_id;
     std::vector<GLuint> indices;
     std::vector<float> model_coefficients;
     std::vector<float> normal_coefficients;
@@ -219,12 +223,11 @@ void Model::buildTriangles() {
             }
         }
 
-        size_t last_index = indices.size() - 1;
+        size_t last_index = indices.size();
 
         shapeName.push_back(shapes[shape].name);
         firstIndex.push_back(first_index);
-        numIndexes.push_back(last_index - first_index + 1);
-        vaoId.push_back(vertex_array_object_id);
+        numIndexes.push_back(last_index - first_index);
         this->boundingBoxes.push_back(BoundingBox(bbox_min, bbox_max));
         renderingMode.push_back(GL_TRIANGLES);
     }
@@ -239,6 +242,58 @@ void Model::buildTriangles() {
         createVBObject(texture_coefficients.data(), texture_coefficients.size() * sizeof(float), 2, 2);
     }
 
+    createIBObject(indices.data(), indices.size() * sizeof(GLuint));
+
+    glBindVertexArray(0);
+}
+
+void Model::createDebugModel() {
+    GLuint vertex_array_object_id;
+    glGenVertexArrays(1, &vertex_array_object_id);
+    glBindVertexArray(vertex_array_object_id);
+    this->vaoDebugId = vertex_array_object_id;
+    
+    std::vector<GLuint> indices = {
+    // Definimos os índices dos vértices que definem as linhas dos eixos X, Y,
+    // Z, que serão desenhados com o modo GL_LINES.
+        0, 1, // linha 1
+        2, 3, // linha 2
+        4, 5  // linha 3
+    };
+
+    std::vector<float> model_coefficients = {
+    // Vértices para desenhar o eixo X
+    //    X      Y     Z     W
+         0.0f,  0.0f,  0.0f, 1.0f, // posição do vértice 8
+         2.0f,  0.0f,  0.0f, 1.0f, // posição do vértice 9
+    // Vértices para desenhar o eixo Y
+    //    X      Y     Z     W
+         0.0f,  0.0f,  0.0f, 1.0f, // posição do vértice 10
+         0.0f,  2.0f,  0.0f, 1.0f, // posição do vértice 11
+    // Vértices para desenhar o eixo Z
+    //    X      Y     Z     W
+         0.0f,  0.0f,  0.0f, 1.0f, // posição do vértice 12
+         0.0f,  0.0f,  2.0f, 1.0f, // posição do vértice 13
+    };
+
+    std::vector<float> colors = {
+    // Cores para desenhar o eixo X
+        1.0f, 0.0f, 0.0f, 1.0f, // cor do vértice 0
+        1.0f, 0.0f, 0.0f, 1.0f, // cor do vértice 1
+    // Cores para desenhar o eixo Y
+        0.0f, 1.0f, 0.0f, 1.0f, // cor do vértice 2
+        0.0f, 1.0f, 0.0f, 1.0f, // cor do vértice 3
+    // Cores para desenhar o eixo Z
+        0.0f, 0.0f, 1.0f, 1.0f, // cor do vértice 4
+        0.0f, 0.0f, 1.0f, 1.0f, // cor do vértice 5
+    };
+    
+    debugFirstIndex = 0;
+    debugNumIndexes = 6;
+    debugRenderingMode = GL_LINES;
+
+    createVBObject(model_coefficients.data(), model_coefficients.size() * sizeof(float), 0, 4);
+    createVBObject(colors.data(), colors.size() * sizeof(float), 3, 4);
     createIBObject(indices.data(), indices.size() * sizeof(GLuint));
 
     glBindVertexArray(0);

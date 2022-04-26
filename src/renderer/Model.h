@@ -13,6 +13,7 @@ private:
     void loadTexture();
     void createVBObject(const void* data, unsigned int size, int location, int dimensions);
     void createIBObject(const void* data, unsigned int size);
+    void createDebugModel();
 public:
     enum RenderProjectType { SPHERIC, PLANAR, FROM_MODEL };
     Model(std::string filename);
@@ -25,8 +26,13 @@ public:
     std::vector<int> renderingMode;
     std::vector<int> firstIndex;
     std::vector<int> numIndexes;
-    std::vector<int> vaoId;
+    unsigned int vaoId;
     std::vector<std::string> shapeName;
     unsigned int textureId;
     RenderProjectType renderType;
+
+    unsigned int vaoDebugId;
+    int debugRenderingMode;
+    int debugFirstIndex;
+    int debugNumIndexes;
 };

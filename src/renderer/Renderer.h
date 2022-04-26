@@ -39,6 +39,7 @@ private:
     unsigned int camPosUniformId;
     unsigned int camDirUniformId;
     unsigned int modelUniform2dId;
+    unsigned int isDrawingAxis;
 
     void renderTextureToScreen();       //render texture input into the entire screen
 

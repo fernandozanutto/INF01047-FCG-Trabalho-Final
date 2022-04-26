@@ -16,10 +16,9 @@ protected:
     glm::vec4 angularVelocityVector;
     float lastUpdateTime;
     bool collision = true;
-    bool gravity = true;
+    glm::vec4 modelOffset;
     
 public:
-    GameObject();
     GameObject(Model* model);
     GameObject* translate(float x, float y, float z);
     GameObject* scale(float x, float y, float z);
@@ -30,12 +29,14 @@ public:
     GameObject* setAcceleration(float x, float y, float z);
     GameObject* setAngularVelocity(float x, float y, float z);
 
-    void changePlayerFacingDirection(float x, float y);
+    void changePlayerFacingDirection(float dx, float dy);
+    void setBoundingBoxes(std::vector<BoundingBox>);
 
     bool isWalkingForward = false;
     bool isWalkingLeft = false;
     bool isWalkingBackward = false;
     bool isWalkingRight = false;
+    bool gravity = true;
 
     float theta;     // Ângulo no plano ZX em relação ao eixo Z
     float phi;       // Ângulo em relação ao eixo Y
