@@ -86,6 +86,7 @@ GLuint textVAO;
 GLuint textVBO;
 GLuint textprogram_id;
 GLuint texttexture_id;
+GLuint textureunit = 31;
 
 void TextRendering_Init()
 {
@@ -117,7 +118,6 @@ void TextRendering_Init()
     texttex_uniform = glGetUniformLocation(textprogram_id, "tex");
     glCheckError();
 
-    GLuint textureunit = 31;
     glActiveTexture(GL_TEXTURE0 + textureunit);
     glBindTexture(GL_TEXTURE_2D, texttexture_id);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, dejavufont.tex_width, dejavufont.tex_height, 0, GL_RED, GL_UNSIGNED_BYTE, dejavufont.tex_data);
@@ -139,6 +139,7 @@ void TextRendering_Init()
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glActiveTexture(GL_TEXTURE0);
     glCheckError();
 }
 
@@ -198,7 +199,8 @@ void TextRendering_PrintString(GLFWwindow* window, const std::string &str, float
 
         glUseProgram(textprogram_id);
         glBindVertexArray(textVAO);
-
+        glActiveTexture(GL_TEXTURE0 + textureunit);
+        glBindTexture(GL_TEXTURE_2D, texttexture_id);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glBindVertexArray(0);
@@ -206,6 +208,7 @@ void TextRendering_PrintString(GLFWwindow* window, const std::string &str, float
         glDepthFunc(GL_LESS);
 
         glDisable(GL_BLEND);
+        glActiveTexture(GL_TEXTURE0);
 
         x += (glyph->advance_x * sx);
     }
@@ -303,4 +306,51 @@ void TextRendering_PrintMatrixVectorProductDivW(GLFWwindow* window, glm::mat4 M,
     TextRendering_PrintString(window, buffer, x, y - 2*lineheight, scale);
     snprintf(buffer, 90, "[%+0.2f %+0.2f %+0.2f %+0.2f][%+0.2f]     [%+0.2f]        [%+0.2f]\n", M[0][3], M[1][3], M[2][3], M[3][3], v[3], r[3], r[3]/w);
     TextRendering_PrintString(window, buffer, x, y - 3*lineheight, scale);
+}
+
+GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id) {
+    // Criamos um identificador (ID) para este programa de GPU
+    GLuint program_id = glCreateProgram();
+
+    // Definição dos dois shaders GLSL que devem ser executados pelo programa
+    glAttachShader(program_id, vertex_shader_id);
+    glAttachShader(program_id, fragment_shader_id);
+
+    // Linkagem dos shaders acima ao programa
+    glLinkProgram(program_id);
+
+    // Verificamos se ocorreu algum erro durante a linkagem
+    GLint linked_ok = GL_FALSE;
+    glGetProgramiv(program_id, GL_LINK_STATUS, &linked_ok);
+
+    // Imprime no terminal qualquer erro de linkagem
+    if (linked_ok == GL_FALSE) {
+        GLint log_length = 0;
+        glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &log_length);
+
+        // Alocamos memória para guardar o log de compilação.
+        // A chamada "new" em C++ é equivalente ao "malloc()" do C.
+        GLchar* log = new GLchar[log_length];
+
+        glGetProgramInfoLog(program_id, log_length, &log_length, log);
+
+        std::string output;
+
+        output += "ERROR: OpenGL linking of program failed.\n";
+        output += "== Start of link log\n";
+        output += log;
+        output += "\n== End of link log\n";
+
+        // A chamada "delete" em C++ é equivalente ao "free()" do C
+        delete[] log;
+
+        fprintf(stderr, "%s", output.c_str());
+    }
+
+    // Os "Shader Objects" podem ser marcados para deleção após serem linkados
+    glDeleteShader(vertex_shader_id);
+    glDeleteShader(fragment_shader_id);
+
+    // Retornamos o ID gerado acima
+    return program_id;
 }
