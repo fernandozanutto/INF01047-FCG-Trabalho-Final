@@ -15,7 +15,6 @@
 #include <limits>
 #include <map>
 #include <sstream>
-#include <stack>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -46,6 +45,7 @@
 #include "input/Command.h"
 #include "input/MoveCommand.h"
 #include "input/EscCommand.h"
+#include "input/PrimaryActionCommand.h"
 #include "input/ReloadShadersCommand.h"
 #include "input/InputManager.h"
 
@@ -86,13 +86,6 @@ bool g_LeftMouseButtonPressed = false;
 bool g_RightMouseButtonPressed = false;   // Análogo para botão direito do mouse
 bool g_MiddleMouseButtonPressed = false;  // Análogo para botão do meio do mouse
 
-// Variáveis que definem a câmera em coordenadas esféricas, controladas pelo
-// usuário através do mouse (veja função CursorPosCallback()). A posição
-// efetiva da câmera é calculada dentro da função main(), dentro do loop de
-// renderização.
-float g_CameraTheta = 0.0f;     // Ângulo no plano ZX em relação ao eixo Z
-float g_CameraPhi = 0.0f;       // Ângulo em relação ao eixo Y
-
 // Variável que controla se o texto informativo será mostrado na tela.
 bool g_ShowInfoText = true;
 
@@ -106,8 +99,8 @@ int main() {
     printGPUInfo();
 
     FirstScene firstLevel;
-
-    Game game(firstLevel, *firstLevel.gameObjects[0]);
+    GameObject& player = *firstLevel.gameObjects[0];
+    Game game(firstLevel, player);
     window.setGame(&game);
 
     std::vector<std::tuple<int, Command*>> commandLst = {
@@ -116,7 +109,10 @@ int main() {
         std::make_tuple(GLFW_KEY_A,      new MoveCommand(game, MoveCommand::LEFT)),
         std::make_tuple(GLFW_KEY_D,      new MoveCommand(game, MoveCommand::RIGHT)),
         std::make_tuple(GLFW_KEY_ESCAPE, new EscCommand(game)),
-        std::make_tuple(GLFW_KEY_R,      new ReloadShadersCommand(renderer))
+        std::make_tuple(GLFW_KEY_R,      new ReloadShadersCommand(renderer)),
+        std::make_tuple(GLFW_MOUSE_BUTTON_LEFT, new PrimaryActionCommand(game))
+        //std::make_tuple(GLFW_MOUSE_BUTTON_RIGHT)
+        //std::make_tuple(GLFW_MOUSE_BUTTON_MIDLE)
     };
 
     InputManager input(commandLst, game);
