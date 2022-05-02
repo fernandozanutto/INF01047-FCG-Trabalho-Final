@@ -46,6 +46,7 @@ FirstScene::FirstScene() {
 
     GameObject* plane = new GameObject(new Model("plane"));
     plane->scale(10.0f, 1.0f, 10.0f)->translate(0, -1.f, 0);
-
+    plane->collisionType = GameObject::Plane;
+    
     this->floor = plane;
 }

@@ -6,6 +6,7 @@ class Game {
 private:
     bool isRunning;
     BaseScene& currentScene;
+    bool checkCollision(GameObject*, GameObject*);
 public:
     Game(BaseScene& firstScene, GameObject& player);
     GameObject& player;

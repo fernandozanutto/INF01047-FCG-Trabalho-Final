@@ -20,6 +20,7 @@ protected:
     
 public:
     GameObject(Model* model);
+    enum CollisionType { Point, Plane, OBB, Sphere };
     GameObject* translate(float x, float y, float z);
     GameObject* scale(float x, float y, float z);
     GameObject* rotateX(float angle);
@@ -31,6 +32,8 @@ public:
 
     void changePlayerFacingDirection(float dx, float dy);
     void setBoundingBoxes(std::vector<BoundingBox>);
+
+    CollisionType collisionType = OBB;
 
     bool isWalkingForward = false;
     bool isWalkingLeft = false;

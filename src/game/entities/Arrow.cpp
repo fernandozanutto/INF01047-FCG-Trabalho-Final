@@ -3,10 +3,9 @@
 #include "Arrow.h"
 #include "../../renderer/Model.h"
 
-
 Model* arrowModel;
 
-Model* start() {
+Model* getArrowModel() {
     if (arrowModel == NULL) {
         arrowModel = new Model("arrow");
     }
@@ -14,6 +13,7 @@ Model* start() {
     return arrowModel;
 }
 
-Arrow::Arrow() : GameObject(start()) {
+Arrow::Arrow() : GameObject(getArrowModel()) {
     modelOffset = glm::vec4(-scaleVector.x, 0, 0, 0);
+    collisionType = Point;
 }
