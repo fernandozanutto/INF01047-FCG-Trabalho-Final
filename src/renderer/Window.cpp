@@ -113,7 +113,7 @@ void Window::swapBuffers() {
 void Window::pollEvents() {
     glfwPollEvents();
 
-    if (game != NULL & game->hasFinished) {
+    if (game != NULL && game->hasFinished) {
         setShouldClose();
     }
 }
