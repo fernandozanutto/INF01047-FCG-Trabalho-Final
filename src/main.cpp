@@ -117,7 +117,7 @@ int main() {
 
     InputManager input(commandLst, game);
     window.setKeyCallbacks(&input);
-    
+
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
 
@@ -147,7 +147,9 @@ void printGPUInfo() {
     const GLubyte* glversion = glGetString(GL_VERSION);
     const GLubyte* glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-    printf("GPU: %s, %s, OpenGL %s, GLSL %s\n", vendor, renderer, glversion, glslversion);
+    const char* glfwVersion = glfwGetVersionString();
+
+    printf("GPU: %s, %s, OpenGL %s, GLSL %s\nGLFW Version: %s \n", vendor, renderer, glversion, glslversion, glfwVersion);
 }
 
 // Esta função cria um programa de GPU, o qual contém obrigatoriamente um

@@ -15,7 +15,7 @@ Window::Window() {
         fprintf(stderr, "ERROR: glfwInit() failed.\n");
         std::exit(EXIT_FAILURE);
     }
-    
+
     glfwSetErrorCallback([](int error, const char* description) {
         fprintf(stderr, "ERROR: GLFW: %s\n", description);
     });
@@ -35,9 +35,9 @@ Window::Window() {
     const GLFWvidmode* screen = glfwGetVideoMode(monitor);
 
     if (isFullscreen) {
-        this->window = glfwCreateWindow(screen->width, screen->height, "Super Game", monitor, NULL);    
+        this->window = glfwCreateWindow(screen->width, screen->height, "Super Game", monitor, NULL);
     } else {
-        this->window = glfwCreateWindow(screen->width, screen->height, "Super Game", NULL, NULL);    
+        this->window = glfwCreateWindow(screen->width, screen->height, "Super Game", NULL, NULL);
     }
 
     this->width = screen->width;
@@ -62,12 +62,12 @@ Window::Window() {
 
     //hides mouse cursor
     glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    
+
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 }
 
 Window::~Window() {
-   glfwDestroyWindow(this->window); 
+   glfwDestroyWindow(this->window);
    glfwTerminate();
 }
 
@@ -75,21 +75,21 @@ void Window::setKeyCallbacks(InputManager* input) {
     // para que possamos pegar a referencia do InputManager de dentro dos callbacks
     // https://code-examples.net/en/q/75242b
     glfwSetWindowUserPointer(this->window, input);
-    
+
     glfwSetKeyCallback(this->window, [](GLFWwindow* window, int key, int scancode, int action, int mod) {
         InputManager* input = (InputManager*) glfwGetWindowUserPointer(window);
-        input->keyCallback(key, action, mod); 
+        input->keyCallback(key, action, mod);
     });
     //lambda used for callbacks (calls input manager for handling)
 
     glfwSetMouseButtonCallback(this->window, [](GLFWwindow* window, int button, int action, int mod) {
         InputManager* input = (InputManager*) glfwGetWindowUserPointer(window);
-        input->mouseButtonCallback(button, action, mod); 
+        input->mouseButtonCallback(button, action, mod);
     });
-    
+
     glfwSetCursorPosCallback(this->window, [](GLFWwindow* window, double xpos, double ypos) {
         InputManager* input = (InputManager*) glfwGetWindowUserPointer(window);
-        input->cursorCallback(xpos, ypos); 
+        input->cursorCallback(xpos, ypos);
     });
 
     //sets initial position for mouse, since movement is calculated from mouse displacement
