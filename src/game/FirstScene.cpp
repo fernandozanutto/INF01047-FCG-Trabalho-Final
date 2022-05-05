@@ -13,19 +13,23 @@ FirstScene::FirstScene() {
     Model* bunnyModel = new Model("bunny", Model::PLANAR);
 
     GameObject* sphere = new GameObject(new Model("sphere", Model::SPHERIC));
-    sphere->translate(-1.0f, 1.f, 0)->setAngularVelocity(0, .3f, 0);
+    sphere->translate(-1.0f, 10, 0)->setAngularVelocity(0, .3f, 0);
     sphere->walkSpeed = 2;
 
     GameObject* bunny = new GameObject(bunnyModel);
-    bunny->translate(1,1.f,0)->setAngularVelocity(0, .2f, .0f);
+    bunny->translate(1,10,0)->setAngularVelocity(0, .2f, .0f);
     
     GameObject* smallBunny = new GameObject(bunnyModel);
-    smallBunny->scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 3.0f, 0.0f);
+    smallBunny->scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 10, 0.0f);
+
+    Model* targetModel = new Model("target", Model::PLANAR);
+    GameObject* target = new GameObject(targetModel);
+    target->translate(1,10,0)->setAngularVelocity(0, .2f, .0f)->scale(0.3f, 0.3f, 0.3f);
 
     Model* robotModel = new Model("robot");
 
     GameObject* robot = new GameObject(robotModel);
-    robot->translate(3, 1, 3);
+    robot->translate(3, 10, 3);
 
     glm::vec4 p1 = glm::vec4(0.f, 12.f,  5.f, 1.f);
     glm::vec4 p2 = glm::vec4(2.f, -18.f, 5.f, 1.f);
@@ -35,7 +39,7 @@ FirstScene::FirstScene() {
     robot2->scale(.5f, .5f, .5f);
 
     Arrow* arrow = new Arrow;
-    arrow->setAngularVelocity(0,1,0)->translate(-2,0,-2);
+    arrow->setAngularVelocity(0,1,0)->translate(-2,3,-2);
 
     this->gameObjects.push_back(sphere);
     this->gameObjects.push_back(robot2);
@@ -43,9 +47,10 @@ FirstScene::FirstScene() {
     this->gameObjects.push_back(smallBunny);
     this->gameObjects.push_back(robot);
     this->gameObjects.push_back(arrow);
+    this->gameObjects.push_back(target);
 
     GameObject* plane = new GameObject(new Model("plane"));
-    plane->scale(10.0f, 1.0f, 10.0f)->translate(0, -1.f, 0);
+    plane->scale(10.0f, 1.0f, 10.0f)->translate(0, 0, 0);
     plane->collisionType = GameObject::Plane;
     
     this->floor = plane;
