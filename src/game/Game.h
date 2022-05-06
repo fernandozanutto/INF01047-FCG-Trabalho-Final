@@ -22,4 +22,5 @@ public:
     void changePlayerFacingDirection(float x, float y);
     void pause();
     bool hasFinished = false;
+    void reset();
 };

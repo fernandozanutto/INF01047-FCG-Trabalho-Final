@@ -99,8 +99,7 @@ int main() {
     printGPUInfo();
 
     FirstScene firstLevel;
-    GameObject& player = *firstLevel.gameObjects[0];
-    Game game(firstLevel, player);
+    Game game(firstLevel, *firstLevel.gameObjects[0]);
     window.setGame(&game);
 
     std::vector<std::tuple<int, Command*>> commandLst = {
@@ -109,7 +108,7 @@ int main() {
         std::make_tuple(GLFW_KEY_A,      new MoveCommand(game, MoveCommand::LEFT)),
         std::make_tuple(GLFW_KEY_D,      new MoveCommand(game, MoveCommand::RIGHT)),
         std::make_tuple(GLFW_KEY_ESCAPE, new EscCommand(game)),
-        std::make_tuple(GLFW_KEY_R,      new ReloadShadersCommand(renderer)),
+        std::make_tuple(GLFW_KEY_R,      new ReloadShadersCommand(renderer, game)),
         std::make_tuple(GLFW_MOUSE_BUTTON_LEFT, new PrimaryActionCommand(game))
         //std::make_tuple(GLFW_MOUSE_BUTTON_RIGHT)
         //std::make_tuple(GLFW_MOUSE_BUTTON_MIDLE)

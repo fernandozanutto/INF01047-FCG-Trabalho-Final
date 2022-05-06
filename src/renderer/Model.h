@@ -15,7 +15,7 @@ private:
     void createIBObject(const void* data, unsigned int size);
     void createDebugModel();
 public:
-    enum RenderProjectType { SPHERIC, PLANAR, FROM_MODEL };
+    enum RenderProjectType { SPHERIC, PLANAR, FROM_MODEL, REPEAT };
     Model(std::string filename);
     Model(std::string filename, RenderProjectType renderType);
     std::string name;

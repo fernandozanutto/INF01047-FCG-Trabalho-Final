@@ -9,7 +9,7 @@
 #include "../input/InputManager.h"
 
 Window::Window() {
-    bool isFullscreen = true;
+    bool isFullscreen = false;
 
     if (!glfwInit()) {
         fprintf(stderr, "ERROR: glfwInit() failed.\n");

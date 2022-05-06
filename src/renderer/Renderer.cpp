@@ -99,7 +99,9 @@ void Renderer::drawObject(GameObject* object) {
     int objectId = model->renderType;
     glUniform1i(object_id_uniform, objectId);
     glBindTexture(GL_TEXTURE_2D, model->textureId);
+
     int size = model->shapeName.size();
+    
     for (int i=0; i < size; i++) {
         glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object->getModelMatrix()));
         glBindVertexArray(model->vaoId);
@@ -148,7 +150,7 @@ unsigned int Renderer::LoadVertexShader(std::string name) {
     GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
 
     LoadShader(filename.c_str(), vertex_shader_id);
-
+    std::cout << "Carregando shader " << filename << std::endl;
     return vertex_shader_id;
 }
 
@@ -157,7 +159,7 @@ unsigned int Renderer::LoadFragmentShader(std::string name) {
     GLuint fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
 
     LoadShader(filename.c_str(), fragmentShaderId);
-
+    std::cout << "Carregando shader " << filename << std::endl;
     return fragmentShaderId;
 }
 

@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "BaseScene.h"
 #include "GameObject.h"
+#include "FirstScene.h"
 #include "collisions.h"
 
 Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene), player(player) {
@@ -24,6 +25,11 @@ bool Game::checkCollision(GameObject* object1, GameObject* object2) {
     }
 
     return false;
+}
+
+void Game::reset() {
+    currentScene = FirstScene();
+    player = *currentScene.gameObjects[0];
 }
 
 void Game::update() {

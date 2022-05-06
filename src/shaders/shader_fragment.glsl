@@ -22,6 +22,7 @@ uniform mat4 projection;
 #define SPHERIC 0
 #define PLANAR  1
 #define FROM_MODEL  2
+#define REPEAT  3
 uniform int object_id;
 
 in vec4 axis_color;
@@ -101,10 +102,23 @@ void main() {
 
             U = px;
             V = py;
-        } else {
+        } else if (object_id == FROM_MODEL) {
             // Coordenadas de textura do plano, obtidas do arquivo OBJ.
             U = texcoords.x;
             V = texcoords.y;
+        } else if (object_id == REPEAT) {
+            float x = position_model.x * 10;
+            float y = position_model.z * 10;
+            
+            while (y > 1.0) y--;
+            while (x > 1.0) x--;
+            while (y < 0) y++;
+            while (x < 0) x++;
+            U = x;
+            V = y;
+        } else {
+            U = 0;
+            V = 0;
         }
 
         // Obtemos a refletância difusa a partir da leitura da imagem textureImage

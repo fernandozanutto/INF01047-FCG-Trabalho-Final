@@ -49,8 +49,9 @@ FirstScene::FirstScene() {
     this->gameObjects.push_back(arrow);
     this->gameObjects.push_back(target);
 
-    GameObject* plane = new GameObject(new Model("plane"));
-    plane->scale(10.0f, 1.0f, 10.0f)->translate(0, 0, 0);
+    GameObject* plane = new GameObject(new Model("plane", Model::REPEAT));
+    
+    plane->scale(10.0f, 1.0f, 20.0f)->translate(0, 0, 0);
     plane->collisionType = GameObject::Plane;
     
     this->floor = plane;
