@@ -29,6 +29,7 @@ public:
     GameObject* setVelocity(float x, float y, float z);
     GameObject* setAcceleration(float x, float y, float z);
     GameObject* setAngularVelocity(float x, float y, float z);
+    GameObject* setGlobalPosition(float x, float y, float z);
 
     void changePlayerFacingDirection(float dx, float dy);
     void setBoundingBoxes(std::vector<BoundingBox>);

@@ -6,6 +6,7 @@
 #include "BaseScene.h"
 #include "GameObject.h"
 #include "FirstScene.h"
+#include "entities/Arrow.h"
 #include "collisions.h"
 
 Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene), player(player) {
@@ -81,10 +82,22 @@ void Game::changePlayerFacingDirection(float x, float y) {
 }
 
 glm::vec4 Game::getCameraPosition() {
-    return cameraFollowing->getPosition() - (cameraFollowing->getFacingDirection() * 3.0f);
+    glm::vec4 cameraPos = cameraFollowing->getPosition() - (cameraFollowing->getFacingDirection() * 3.0f);
+    return cameraPos;
 }
 
 void Game::pause() {
     isRunning = false;
     hasFinished = true;
+}
+
+void Game::executeMainAction() {
+    std::cout << "Press left mouse " << std::endl;
+
+
+    Arrow* newArrow = new Arrow;
+    glm::vec4 facingDirection = player.getFacingDirection();
+    glm::vec4 position = player.getPosition();
+    newArrow->setGlobalPosition(position.x, position.y, position.z)->setVelocity(facingDirection.x,facingDirection.y,facingDirection.z)->scale(0.5,0.5,0.5);
+    currentScene.gameObjects.push_back(newArrow);
 }

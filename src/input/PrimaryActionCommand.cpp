@@ -8,7 +8,7 @@ PrimaryActionCommand::PrimaryActionCommand(Game& game) : game(game) {
 }
 
 void PrimaryActionCommand::onPress() {
-    std::cout << "Press left mouse " << std::endl;
+    game.executeMainAction();
 }
 
 void PrimaryActionCommand::onRelease() {

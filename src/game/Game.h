@@ -20,6 +20,7 @@ public:
     void setPlayerMovingBackward(bool);
     void setPlayerMovingRight(bool);
     void changePlayerFacingDirection(float x, float y);
+    void executeMainAction();
     void pause();
     bool hasFinished = false;
     void reset();

@@ -195,3 +195,9 @@ std::vector<BoundingBox> GameObject::getGlobalBoundingBoxes() {
 void GameObject::setBoundingBoxes(std::vector<BoundingBox> boundingBoxes) {
     model->boundingBoxes = boundingBoxes;
 }
+
+GameObject* GameObject::setGlobalPosition(float x, float y, float z) {
+    positionVector = glm::vec4(x, y, z, 1.0);
+
+    return this;
+}
