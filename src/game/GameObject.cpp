@@ -116,11 +116,26 @@ void GameObject::update() {
     positionVector += velocityVector * delta;
     rotationVector += angularVelocityVector * delta;
 
+    glm::vec4 moveForwardVector = glm::vec4(0);
+    glm::vec4 moveSideVector = glm::vec4(0);
+
+    if (isWalkingForward) {
+        moveForwardVector += getFacingDirection();
+    }
+
+    if (isWalkingBackward) {
+        moveForwardVector -= getFacingDirection();
+    }
+
+    if (floorColliding) {
+        moveForwardVector.y = 0;
+    }
+    
     if (isWalkingLeft) {
         theta += PI / 2;
         float oldPhi = phi;
         phi = 0;
-        positionVector += getFacingDirection() * walkSpeed * delta;
+        moveSideVector += getFacingDirection();
         theta -= PI / 2;
         phi = oldPhi;
     }
@@ -129,19 +144,19 @@ void GameObject::update() {
         theta -= PI / 2;
         float oldPhi = phi;
         phi = 0;
-        positionVector += getFacingDirection() * walkSpeed * delta;
+        moveSideVector += getFacingDirection();
         theta += PI / 2;
         phi = oldPhi;
     }
 
-    if (isWalkingForward) {
-        positionVector += getFacingDirection() * walkSpeed * delta;
-    }
+    glm::vec4 moveVector = moveSideVector + moveForwardVector;
 
-    if (isWalkingBackward) {
-        positionVector -= getFacingDirection() * walkSpeed * delta;
-    }
+    float normaVetor = norm(moveVector);
 
+    if (normaVetor != 0) {
+        moveVector = moveVector / normaVetor;
+        positionVector += moveVector * walkSpeed * delta;
+    }
     phi = oldPhi;
 }
 
