@@ -82,7 +82,19 @@ void Game::changePlayerFacingDirection(float x, float y) {
 }
 
 glm::vec4 Game::getCameraPosition() {
-    glm::vec4 cameraPos = cameraFollowing->getPosition() - (cameraFollowing->getFacingDirection() * 3.0f);
+    bool firstPerson = true;
+    auto maxY = cameraFollowing->getGlobalBoundingBoxes()[0].max.y;
+
+    auto headPosition = cameraFollowing->getPosition();
+    headPosition.y = maxY;
+    glm::vec4 cameraPos;
+    
+    if (firstPerson) {
+        cameraPos = headPosition;
+    } else {
+        cameraPos = headPosition - (cameraFollowing->getFacingDirection() * 5.0f);
+    }
+    
     return cameraPos;
 }
 
@@ -97,7 +109,11 @@ void Game::executeMainAction() {
     Arrow* newArrow = new Arrow;
     glm::vec4 facingDirection = player.getFacingDirection();
     glm::vec4 position = player.getPosition();
-    newArrow->setGlobalPosition(position.x, position.y, position.z)->setVelocity(facingDirection.x * 10,facingDirection.y * 10,facingDirection.z * 10)->scale(0.5,0.5,0.5);
+
+    float maxY = player.getGlobalBoundingBoxes()[0].max.y;
+    position.y = maxY;
+    
+    newArrow->setGlobalPosition(position.x, position.y, position.z)->setVelocity(facingDirection.x * 100,facingDirection.y * 100,facingDirection.z * 100)->scale(0.5,0.5,0.5);
     newArrow->setRotation(player.phi, player.theta);
     
     currentScene.gameObjects.push_back(newArrow);

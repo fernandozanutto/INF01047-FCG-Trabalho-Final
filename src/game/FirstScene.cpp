@@ -30,6 +30,8 @@ FirstScene::FirstScene() {
 
     GameObject* robot = new GameObject(robotModel);
     robot->translate(3, 10, 3);
+    robot->rotateModelOnCameraChange = true;
+    robot->walkSpeed = 5;
 
     glm::vec4 p1 = glm::vec4(0.f, 12.f,  5.f, 1.f);
     glm::vec4 p2 = glm::vec4(2.f, -18.f, 5.f, 1.f);
@@ -42,16 +44,14 @@ FirstScene::FirstScene() {
     arrow->setAngularVelocity(0,3.14,0)->translate(-2,3,-2);
 
     Arrow* arrow2 = new Arrow;
-    arrow2->walkSpeed = 3;
-    arrow2->rotateModelOnCameraChange = true;
 
+    this->gameObjects.push_back(robot);
     this->gameObjects.push_back(arrow2);
     this->gameObjects.push_back(sphere);
-    this->gameObjects.push_back(arrow);
     this->gameObjects.push_back(robot2);
+    this->gameObjects.push_back(arrow);
     this->gameObjects.push_back(bunny);
     this->gameObjects.push_back(smallBunny);
-    this->gameObjects.push_back(robot);
     this->gameObjects.push_back(target);
 
     GameObject* plane = new GameObject(new Model("plane", Model::REPEAT));
