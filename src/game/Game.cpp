@@ -1,5 +1,6 @@
 #include <iostream>
-
+#include <vector>
+#include <algorithm>
 #include <glm/vec4.hpp>
 
 #include "Game.h"
@@ -16,6 +17,7 @@ Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene)
 
 bool Game::checkCollision(GameObject* object1, GameObject* object2) {
     if (!object1->hasCollision() || !object2->hasCollision()) return false;
+    std::cout << (object1->collisionType) << (object2->collisionType) << "---" << (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::OBB) << "\n";
 
     if (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::OBB) {
         return pointBoundingBoxCollision(object1->getPosition(), object2->getGlobalBoundingBoxes()[0]);
@@ -23,6 +25,8 @@ bool Game::checkCollision(GameObject* object1, GameObject* object2) {
         return pointPlaneCollision(object1->getPosition(), object2->getGlobalBoundingBoxes()[0]);
     } else if (object1->collisionType == GameObject::OBB && object2->collisionType == GameObject::Plane) {
         return boundBoxPlaneCollision(object1->getGlobalBoundingBoxes()[0], object2->getGlobalBoundingBoxes()[0]);
+    } else if (object1->collisionType == GameObject::OBB && object2->collisionType == GameObject::OBB){
+        return boundBoxCollision(object1->getGlobalBoundingBoxes()[0], object2->getGlobalBoundingBoxes()[0]);
     }
 
     return false;
@@ -47,6 +51,15 @@ void Game::update() {
             object->floorColliding = true;
         } else {
             object->floorColliding = false;
+        }
+
+        for (GameObject* target : currentScene.gameObjects) {
+          if(target->objectType == GameObject::ObjectType::Comum && object->objectType == GameObject::ObjectType::Arrow ||
+          object->objectType == GameObject::ObjectType::Comum && target->objectType == GameObject::ObjectType::Arrow) {
+            if (checkCollision(object, target)) {
+              currentScene.removeObject(target);
+            }
+          }
         }
 
         object->update();

@@ -7,8 +7,8 @@
 
 #include "BezierObject.h"
 
-BezierObject::BezierObject(Model* model, glm::vec4 p1, glm::vec4 p2, glm::vec4 p3, glm::vec4 p4, float period)
-: GameObject(model), p1(p1), p2(p2), p3(p3), p4(p4), movePeriod(period) {
+BezierObject::BezierObject(Model* model, glm::vec4 p1, glm::vec4 p2, glm::vec4 p3, glm::vec4 p4, float period, ObjectType type)
+: GameObject(model, type), p1(p1), p2(p2), p3(p3), p4(p4), movePeriod(period) {
     lastUpdate = glfwGetTime();
     startTime = lastUpdate;
     gravity = false;

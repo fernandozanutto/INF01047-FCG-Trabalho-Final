@@ -24,7 +24,7 @@ FirstScene::FirstScene() {
     smallBunny->scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 10, 0.0f);
 
     Target* target = new Target;
-    target->translate(1,10,0)->setAngularVelocity(0, .2f, .0f)->scale(0.3f, 0.3f, 0.3f);
+    target->translate(1,10,0);
 
     Model* robotModel = new Model("robot");
 
@@ -40,16 +40,10 @@ FirstScene::FirstScene() {
     BezierObject* robot2 = new BezierObject(robotModel, p1, p2, p3, p4, 3);
     robot2->scale(.5f, .5f, .5f);
 
-    Arrow* arrow = new Arrow;
-    arrow->setAngularVelocity(0,3.14,0)->translate(-2,3,-2);
-
-    Arrow* arrow2 = new Arrow;
 
     this->gameObjects.push_back(robot);
-    this->gameObjects.push_back(arrow2);
     this->gameObjects.push_back(sphere);
     this->gameObjects.push_back(robot2);
-    this->gameObjects.push_back(arrow);
     this->gameObjects.push_back(bunny);
     this->gameObjects.push_back(smallBunny);
     this->gameObjects.push_back(target);

@@ -8,9 +8,11 @@
 #include "../renderer/Matrices.h"
 
 #define PI 3.1415926f
+#define IDLIMIT 10000
 
-
-GameObject::GameObject(Model* model): model(model) {
+GameObject::GameObject(Model* model, ObjectType type): model(model) {
+    this->id = rand() % IDLIMIT;
+    this->objectType = type;
     resetMatrix();
 }
 

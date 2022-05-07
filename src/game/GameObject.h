@@ -20,8 +20,10 @@ protected:
     glm::vec4 modelRotationOffset;
     
 public:
-    GameObject(Model* model);
+    int id;
+    enum ObjectType { Arrow, Comum };
     enum CollisionType { Point, Plane, OBB, Sphere };
+    GameObject(Model* model, ObjectType type = ObjectType::Comum);
     GameObject* translate(float x, float y, float z);
     GameObject* scale(float x, float y, float z);
     GameObject* rotateX(float angle);
@@ -36,13 +38,14 @@ public:
     void setRotation(float phi, float theta);
     void setBoundingBoxes(std::vector<BoundingBox>);
 
+    ObjectType objectType;
     CollisionType collisionType = OBB;
 
     bool isWalkingForward = false;
     bool isWalkingLeft = false;
     bool isWalkingBackward = false;
     bool isWalkingRight = false;
-    bool gravity = true;
+    bool gravity = false;
 
     float theta;     // Ângulo no plano ZX em relação ao eixo Z
     float phi;       // Ângulo em relação ao eixo Y

@@ -14,7 +14,7 @@ Model* getArrowModel() {
     return arrowModel;
 }
 
-Arrow::Arrow() : GameObject(getArrowModel()) {
+Arrow::Arrow() : GameObject(getArrowModel(), GameObject::Arrow) {
     modelTranslateOffset = glm::vec4(-scaleVector.x, 0, 0, 0);
     modelRotationOffset = glm::vec4(0,-PI/2,0,0);
     collisionType = Point;
