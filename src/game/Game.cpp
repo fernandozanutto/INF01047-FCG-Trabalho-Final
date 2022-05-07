@@ -78,7 +78,7 @@ void Game::setPlayerMovingRight(bool isMoving) {
 }
 
 void Game::changePlayerFacingDirection(float x, float y) {
-    player.changePlayerFacingDirection(x, y);
+    player.changeFacingDirection(x, y);
 }
 
 glm::vec4 Game::getCameraPosition() {
@@ -94,10 +94,11 @@ void Game::pause() {
 void Game::executeMainAction() {
     std::cout << "Press left mouse " << std::endl;
 
-
     Arrow* newArrow = new Arrow;
     glm::vec4 facingDirection = player.getFacingDirection();
     glm::vec4 position = player.getPosition();
-    newArrow->setGlobalPosition(position.x, position.y, position.z)->setVelocity(facingDirection.x,facingDirection.y,facingDirection.z)->scale(0.5,0.5,0.5);
+    newArrow->setGlobalPosition(position.x, position.y, position.z)->setVelocity(facingDirection.x * 10,facingDirection.y * 10,facingDirection.z * 10)->scale(0.5,0.5,0.5);
+    newArrow->setRotation(player.phi, player.theta);
+    
     currentScene.gameObjects.push_back(newArrow);
 }

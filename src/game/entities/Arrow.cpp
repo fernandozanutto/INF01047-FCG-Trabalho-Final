@@ -2,6 +2,7 @@
 
 #include "Arrow.h"
 #include "../../renderer/Model.h"
+#define PI 3.1415926f
 
 Model* arrowModel;
 
@@ -14,6 +15,7 @@ Model* getArrowModel() {
 }
 
 Arrow::Arrow() : GameObject(getArrowModel()) {
-    modelOffset = glm::vec4(-scaleVector.x, 0, 0, 0);
+    modelTranslateOffset = glm::vec4(-scaleVector.x, 0, 0, 0);
+    modelRotationOffset = glm::vec4(0,-PI/2,0,0);
     collisionType = Point;
 }

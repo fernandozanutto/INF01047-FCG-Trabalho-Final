@@ -39,14 +39,19 @@ FirstScene::FirstScene() {
     robot2->scale(.5f, .5f, .5f);
 
     Arrow* arrow = new Arrow;
-    arrow->setAngularVelocity(0,1,0)->translate(-2,3,-2);
+    arrow->setAngularVelocity(0,3.14,0)->translate(-2,3,-2);
 
+    Arrow* arrow2 = new Arrow;
+    arrow2->walkSpeed = 3;
+    arrow2->rotateModelOnCameraChange = true;
+
+    this->gameObjects.push_back(arrow2);
     this->gameObjects.push_back(sphere);
+    this->gameObjects.push_back(arrow);
     this->gameObjects.push_back(robot2);
     this->gameObjects.push_back(bunny);
     this->gameObjects.push_back(smallBunny);
     this->gameObjects.push_back(robot);
-    this->gameObjects.push_back(arrow);
     this->gameObjects.push_back(target);
 
     GameObject* plane = new GameObject(new Model("plane", Model::REPEAT));

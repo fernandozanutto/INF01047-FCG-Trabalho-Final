@@ -14,6 +14,6 @@ Model* getTargetModel() {
 }
 
 Target::Target() : GameObject(getTargetModel()) {
-    modelOffset = glm::vec4(-scaleVector.x, 0, 0, 0);
+    modelTranslateOffset = glm::vec4(-scaleVector.x, 0, 0, 0);
     collisionType = OBB;
 }

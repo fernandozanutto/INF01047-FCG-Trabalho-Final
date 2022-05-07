@@ -15,7 +15,8 @@ GameObject::GameObject(Model* model): model(model) {
 }
 
 void GameObject::resetMatrix() {
-    modelOffset = glm::vec4(0);
+    modelTranslateOffset = glm::vec4(0);
+    modelRotationOffset = glm::vec4(0);
     positionVector = glm::vec4(0.0, 0.0, 0.0, 1.0);
     rotationVector = glm::vec4(0.0);
     scaleVector = glm::vec4(1.0);
@@ -69,11 +70,11 @@ GameObject* GameObject::setAngularVelocity(float x, float y, float z) {
 
 glm::mat4 GameObject::getModelMatrix() {
     return Matrix_Translate(positionVector.x, positionVector.y, positionVector.z)
-            * Matrix_Rotate_Z(rotationVector.z)
-            * Matrix_Rotate_X(rotationVector.x) 
-            * Matrix_Rotate_Y(rotationVector.y)
+            * Matrix_Rotate_Z(rotationVector.z + modelRotationOffset.z)
+            * Matrix_Rotate_X(rotationVector.x + modelRotationOffset.x) 
+            * Matrix_Rotate_Y(rotationVector.y + modelRotationOffset.y)
             * Matrix_Scale(scaleVector.x, scaleVector.y, scaleVector.z)
-            * Matrix_Translate(modelOffset.x, modelOffset.y, modelOffset.z);
+            * Matrix_Translate(modelTranslateOffset.x, modelTranslateOffset.y, modelTranslateOffset.z);
 }
 
 glm::mat4 GameObject::getModelMatrixWithOffset() {
@@ -160,12 +161,22 @@ void GameObject::update() {
     phi = oldPhi;
 }
 
-void GameObject::changePlayerFacingDirection(float x, float y) {
+void GameObject::changeFacingDirection(float x, float y) {
     theta -= x;
     phi -= y;
 
     if(phi > PI/2) phi = PI/2;
     if(phi < -PI/2) phi = -PI/2;
+
+    if (rotateModelOnCameraChange) {
+        rotationVector.y = theta;
+    }
+}
+
+void GameObject::setRotation(float phi, float theta) {
+    this->phi = phi;
+    this->theta = theta;
+    rotationVector.y = theta;
 }
 
 glm::vec4 GameObject::getPosition() {
@@ -184,8 +195,8 @@ std::vector<BoundingBox> GameObject::getGlobalBoundingBoxes() {
     std::vector<BoundingBox> globalBoudingBoxes;
 
     for(BoundingBox& box : model->boundingBoxes) {
-        auto min = getModelMatrix() * (box.min + modelOffset);
-        auto max = getModelMatrix() * (box.max + modelOffset);
+        auto min = getModelMatrix() * (box.min + modelTranslateOffset);
+        auto max = getModelMatrix() * (box.max + modelTranslateOffset);
         globalBoudingBoxes.push_back(BoundingBox(min, max));
     }
 

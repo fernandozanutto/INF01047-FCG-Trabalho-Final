@@ -13,10 +13,11 @@ protected:
     glm::vec4 scaleVector; 
     glm::vec4 velocityVector;
     glm::vec4 accelerationVector;
-    glm::vec4 angularVelocityVector;
+    glm::vec4 angularVelocityVector; // em radianos
     float lastUpdateTime;
     bool collision = true;
-    glm::vec4 modelOffset;
+    glm::vec4 modelTranslateOffset;
+    glm::vec4 modelRotationOffset;
     
 public:
     GameObject(Model* model);
@@ -31,7 +32,8 @@ public:
     GameObject* setAngularVelocity(float x, float y, float z);
     GameObject* setGlobalPosition(float x, float y, float z);
 
-    void changePlayerFacingDirection(float dx, float dy);
+    void changeFacingDirection(float dx, float dy);
+    void setRotation(float phi, float theta);
     void setBoundingBoxes(std::vector<BoundingBox>);
 
     CollisionType collisionType = OBB;
@@ -60,6 +62,8 @@ public:
     glm::vec4 getPosition();
     
     float walkSpeed;
+
+    bool rotateModelOnCameraChange = false;
 
     std::vector<BoundingBox> getGlobalBoundingBoxes();
 };
