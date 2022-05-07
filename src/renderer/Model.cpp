@@ -277,13 +277,13 @@ void Model::createDebugModel() {
     };
 
     std::vector<float> colors = {
-    // Cores para desenhar o eixo X
+    // Cores para desenhar o eixo X (vermelho)
         1.0f, 0.0f, 0.0f, 1.0f, // cor do vértice 0
         1.0f, 0.0f, 0.0f, 1.0f, // cor do vértice 1
-    // Cores para desenhar o eixo Y
+    // Cores para desenhar o eixo Y (verde)
         0.0f, 1.0f, 0.0f, 1.0f, // cor do vértice 2
         0.0f, 1.0f, 0.0f, 1.0f, // cor do vértice 3
-    // Cores para desenhar o eixo Z
+    // Cores para desenhar o eixo Z (azul)
         0.0f, 0.0f, 1.0f, 1.0f, // cor do vértice 4
         0.0f, 0.0f, 1.0f, 1.0f, // cor do vértice 5
     };

@@ -35,7 +35,7 @@ public:
     GameObject* setGlobalPosition(float x, float y, float z);
 
     void changeFacingDirection(float dx, float dy);
-    void setRotation(float phi, float theta);
+    void setRotation(glm::vec4 newDirection);
     void setBoundingBoxes(std::vector<BoundingBox>);
 
     ObjectType objectType;

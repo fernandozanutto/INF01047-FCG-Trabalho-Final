@@ -5,4 +5,5 @@
 class Arrow : public GameObject {
 public:
     Arrow();
+    void update() override;
 };

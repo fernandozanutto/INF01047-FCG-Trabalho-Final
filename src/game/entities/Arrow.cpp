@@ -1,7 +1,13 @@
+#include <iostream>
+
+#include <GLFW/glfw3.h>
 #include <glm/mat4x4.hpp>
+#include <glm/trigonometric.hpp>
 
 #include "Arrow.h"
 #include "../../renderer/Model.h"
+#include "../../renderer/Matrices.h"
+
 #define PI 3.1415926f
 
 Model* arrowModel;
@@ -18,5 +24,23 @@ Arrow::Arrow() : GameObject(getArrowModel(), GameObject::Arrow) {
     modelTranslateOffset = glm::vec4(-scaleVector.x, 0, 0, 0);
     modelRotationOffset = glm::vec4(0,-PI/2,0,0);
     collisionType = Point;
-    gravity = false;
+}
+
+void Arrow::update() {
+    float currentTime = glfwGetTime();
+    float delta = currentTime - lastUpdateTime;
+    lastUpdateTime = currentTime;
+
+    if (floorColliding) {
+        accelerationVector.y = 0;
+        velocityVector.y = 0;
+        phi = 0;
+    }
+
+    velocityVector += accelerationVector * delta;
+    positionVector += velocityVector * delta;
+    
+    if (norm(velocityVector) != 0.0){
+        setRotation(velocityVector);
+    }
 }

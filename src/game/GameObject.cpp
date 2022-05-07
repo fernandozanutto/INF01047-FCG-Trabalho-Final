@@ -99,7 +99,7 @@ glm::vec4 GameObject::getFacingDirection() {
             0
     );
 
-    return direction;
+    return normalize(direction);
 }
 
 void GameObject::update() {
@@ -175,10 +175,33 @@ void GameObject::changeFacingDirection(float x, float y) {
     }
 }
 
-void GameObject::setRotation(float phi, float theta) {
-    this->phi = phi;
-    this->theta = theta;
-    rotationVector.y = theta;
+void GameObject::setRotation(glm::vec4 newDirection) {
+    if (norm(newDirection) == 0.0) return;
+
+    /*std::cout << "newDirection x: " << newDirection.x;
+    std::cout << " y: " << newDirection.y;
+    std::cout << " z: " << newDirection.z << std::endl;*/
+
+    newDirection = normalize(newDirection);
+    glm::vec4 currentDirection = glm::vec4(0, 0, 1, 0);
+
+    auto axis = crossproduct(currentDirection, newDirection);
+    if (norm(axis) == 0.0) return;
+    axis = normalize(axis);
+
+    float angle = acos(dotproduct(currentDirection, newDirection));
+    
+    /*std::cout << "axis x: " << axis.x;
+    std::cout << " y: " << axis.y;
+    std::cout << " z: " << axis.z << std::endl;*/
+    /*std::cout << "angle: " << angle << std::endl;
+    std::cout << "new Y angle: " << angle * axis.y << std::endl;
+*/
+    //rotationVector = angle * axis;
+/*
+    std::cout << "newRotation x: " << rotationVector.x << std::endl;
+    std::cout << "newRotation y: " << rotationVector.y << std::endl;
+    std::cout << "newRotation z: " << rotationVector.z << std::endl;*/
 }
 
 glm::vec4 GameObject::getPosition() {
