@@ -13,6 +13,7 @@
 Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene), player(player) {
     isRunning = true;
     cameraFollowing = &player;
+    player.isPlayer = true;
 }
 
 bool applyTests(GameObject* object1, GameObject* object2) {
@@ -58,15 +59,14 @@ void Game::update() {
         for (GameObject* target : currentScene.gameObjects) {
           if(target->objectType == GameObject::ObjectType::Comum && object->objectType == GameObject::ObjectType::Arrow ||
           object->objectType == GameObject::ObjectType::Comum && target->objectType == GameObject::ObjectType::Arrow) {
-            if (checkCollision(object, target)) {
-              currentScene.removeObject(target);
+            if (checkCollision(object, target) && !target->isPlayer) {
+              target->mustDisapear = true;
             }
           }
         }
 
         object->update();
-        if (object->mustDisapear) 
-        {
+        if (object->mustDisapear) {
           currentScene.removeObject(object);
         }
     }

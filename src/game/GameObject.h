@@ -50,6 +50,7 @@ public:
     float theta;     // Ângulo no plano ZX em relação ao eixo Z
     float phi;       // Ângulo em relação ao eixo Y
 
+    bool isPlayer = false;
     bool isPlayerWalking();
     bool hasCollision();
     bool hasGravity();
