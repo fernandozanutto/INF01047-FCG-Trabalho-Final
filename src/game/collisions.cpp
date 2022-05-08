@@ -23,9 +23,9 @@ bool pointBoundingBoxCollision(glm::vec4 point, BoundingBox& bb) {
     bool xAxis = (point.x - bb.max.x) <= DELTA && (point.x - bb.min.x) >= DELTA;
     bool yAxis = (point.y - bb.max.y) <= DELTA && (point.y - bb.min.y) >= DELTA;
     bool zAxis = (point.z - bb.max.z) <= DELTA && (point.z - bb.min.z) >= DELTA;
-    std::cout << "obj coords:   " << point.y << " " << point.x << " " << point.z << std::endl;
-    std::cout << "bb coords: " << bb.min.y << " " << bb.max.y << " " << bb.min.x << " " << bb.max.x << " " << bb.min.z << " " << bb.max.z << std::endl;
-    std::cout << yAxis << " " << xAxis << " " << zAxis << std::endl;
+    //std::cout << "obj coords:   " << point.y << " " << point.x << " " << point.z << std::endl;
+    //std::cout << "bb coords: " << bb.min.y << " " << bb.max.y << " " << bb.min.x << " " << bb.max.x << " " << bb.min.z << " " << bb.max.z << std::endl;
+    //std::cout << yAxis << " " << xAxis << " " << zAxis << std::endl;
     return yAxis && xAxis && zAxis;
 }
 

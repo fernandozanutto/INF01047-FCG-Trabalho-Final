@@ -69,4 +69,7 @@ public:
     bool rotateModelOnCameraChange = false;
 
     std::vector<BoundingBox> getGlobalBoundingBoxes();
+
+    time_t disapearTime;
+    bool mustDisapear = false;
 };

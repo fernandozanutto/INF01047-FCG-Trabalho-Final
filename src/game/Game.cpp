@@ -17,7 +17,7 @@ Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene)
 
 bool Game::checkCollision(GameObject* object1, GameObject* object2) {
     if (!object1->hasCollision() || !object2->hasCollision()) return false;
-    std::cout << (object1->collisionType) << (object2->collisionType) << "---" << (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::OBB) << "\n";
+    //std::cout << (object1->collisionType) << (object2->collisionType) << "---" << (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::OBB) << "\n";
 
     if (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::OBB) {
         return pointBoundingBoxCollision(object1->getPosition(), object2->getGlobalBoundingBoxes()[0]);
@@ -56,13 +56,18 @@ void Game::update() {
         for (GameObject* target : currentScene.gameObjects) {
           if(target->objectType == GameObject::ObjectType::Comum && object->objectType == GameObject::ObjectType::Arrow ||
           object->objectType == GameObject::ObjectType::Comum && target->objectType == GameObject::ObjectType::Arrow) {
-            if (checkCollision(object, target)) {
+            if (checkCollision(object, target) || checkCollision(target, object)) {
               currentScene.removeObject(target);
             }
           }
         }
 
         object->update();
+        if (object->mustDisapear) 
+        {
+          currentScene.removeObject(object);
+        }
+        
     }
 }
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 
 #include <GLFW/glfw3.h>
 #include <glm/mat4x4.hpp>
@@ -24,9 +25,14 @@ Arrow::Arrow() : GameObject(getArrowModel(), GameObject::Arrow) {
     modelTranslateOffset = glm::vec4(-scaleVector.x, 0, 0, 0);
     modelRotationOffset = glm::vec4(0,-PI/2,0,0);
     collisionType = Point;
+    disapearTime = time(0) + 2;
 }
 
 void Arrow::update() {
+    if (difftime(time(0),disapearTime) > 0.0) {
+      mustDisapear = true;
+    }
+
     float currentTime = glfwGetTime();
     float delta = currentTime - lastUpdateTime;
     lastUpdateTime = currentTime;
