@@ -37,7 +37,7 @@ FirstScene::FirstScene() {
     Target* target4 = new Target;
     target4->translate(10,1,3);
 
-    Model* targetModel = new Model("target", Model::PLANAR);
+    Model* targetModel = new Model("dragon");
 
     glm::vec4 p1 = glm::vec4(0.f, 12.f,  5.f, 1.f);
     glm::vec4 p2 = glm::vec4(2.f, -18.f, 5.f, 1.f);

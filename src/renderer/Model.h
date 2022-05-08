@@ -16,8 +16,7 @@ private:
     void createDebugModel();
 public:
     enum RenderProjectType { SPHERIC, PLANAR, FROM_MODEL, REPEAT };
-    Model(std::string filename);
-    Model(std::string filename, RenderProjectType renderType);
+    Model(std::string filename, RenderProjectType renderType = Model::FROM_MODEL);
     std::string name;
     tinyobj::attrib_t                 attrib;
     std::vector<tinyobj::shape_t>     shapes;

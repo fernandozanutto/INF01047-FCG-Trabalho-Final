@@ -9,13 +9,6 @@
 #include "Matrices.h"
 #include "Model.h"
 
-Model::Model(std::string filename) : name(filename) {
-    renderType = Model::FROM_MODEL;
-    loadModel();
-    createDebugModel();
-    loadTexture();
-}
-
 Model::Model(std::string filename, RenderProjectType type) : name(filename), renderType(type) {
     loadModel();
     createDebugModel();
