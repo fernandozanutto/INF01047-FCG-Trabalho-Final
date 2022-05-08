@@ -99,7 +99,7 @@ int main() {
     printGPUInfo();
 
     FirstScene firstLevel;
-    Game game(firstLevel, *firstLevel.gameObjects[0]);
+    Game game(firstLevel, firstLevel.player);
     window.setGame(&game);
 
     std::vector<std::tuple<int, Command*>> commandLst = {

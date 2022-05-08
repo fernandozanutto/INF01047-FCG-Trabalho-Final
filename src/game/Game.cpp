@@ -10,10 +10,10 @@
 #include "entities/Arrow.h"
 #include "collisions.h"
 
-Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene), player(player) {
+Game::Game(BaseScene& firstScene, Player* player) : currentScene(firstScene), player(player) {
     isRunning = true;
-    cameraFollowing = &player;
-    player.isPlayer = true;
+    cameraFollowing = player->gameObject;
+    player->gameObject->isPlayer = true;
 }
 
 bool applyTests(GameObject* object1, GameObject* object2) {
@@ -37,7 +37,7 @@ bool Game::checkCollision(GameObject* object1, GameObject* object2) {
 
 void Game::reset() {
     currentScene = FirstScene();
-    player = *currentScene.gameObjects[0];
+    player = currentScene.player;
 }
 
 void Game::update() {
@@ -45,9 +45,15 @@ void Game::update() {
 
     currentScene.floor->update();
 
-    for (GameObject* object : currentScene.gameObjects) {
-        if (object->hasGravity()) {
+    std::vector<GameObject*> updateObjects = currentScene.gameObjects;
+    updateObjects.push_back(currentScene.player->gameObject);
+
+    for (GameObject* object : updateObjects) {
+        if (object->hasGravity() && object->getPosition().y > 0) {
             object->setAcceleration(0, -9.8f, 0);
+        } else {
+            object->setAcceleration(0, 0, 0);
+            object->setVelocity(0, 0, 0);
         }
 
         if (checkCollision(object, currentScene.floor)) {
@@ -81,23 +87,23 @@ BaseScene& Game::getScene() {
 }
 
 void Game::setPlayerMovingForward(bool isMoving) {
-    player.isWalkingForward = isMoving;
+    player->gameObject->isWalkingForward = isMoving;
 }
 
 void Game::setPlayerMovingLeft(bool isMoving) {
-    player.isWalkingLeft = isMoving;
+    player->gameObject->isWalkingLeft = isMoving;
 }
 
 void Game::setPlayerMovingBackward(bool isMoving) {
-    player.isWalkingBackward = isMoving;
+    player->gameObject->isWalkingBackward = isMoving;
 }
 
 void Game::setPlayerMovingRight(bool isMoving) {
-    player.isWalkingRight = isMoving;
+    player->gameObject->isWalkingRight = isMoving;
 }
 
 void Game::changePlayerFacingDirection(float x, float y) {
-    player.changeFacingDirection(x, y);
+    player->gameObject->changeFacingDirection(x, y);
 }
 
 glm::vec4 Game::getCameraPosition() {
@@ -126,10 +132,10 @@ void Game::executeMainAction() {
     std::cout << "Press left mouse " << std::endl;
 
     Arrow* newArrow = new Arrow;
-    glm::vec4 facingDirection = player.getFacingDirection();
-    glm::vec4 position = player.getPosition();
+    glm::vec4 facingDirection = player->gameObject->getFacingDirection();
+    glm::vec4 position = player->gameObject->getPosition();
 
-    float maxY = player.getGlobalBoundingBoxes()[0].max.y;
+    float maxY = player->gameObject->getGlobalBoundingBoxes()[0].max.y;
     position.y = maxY;
 
     newArrow->setGlobalPosition(position.x, position.y, position.z)->setVelocity(facingDirection.x * 15,facingDirection.y * 15,facingDirection.z * 15)->scale(0.5,0.5,0.5);

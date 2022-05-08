@@ -160,6 +160,9 @@ void GameObject::update() {
         moveVector = moveVector / normaVetor;
         positionVector += moveVector * walkSpeed * delta;
     }
+
+    if (positionVector.y < 0) positionVector.y = 0;
+    
     phi = oldPhi;
 }
 
@@ -197,7 +200,7 @@ void GameObject::setRotation(glm::vec4 newDirection) {
     /*std::cout << "angle: " << angle << std::endl;
     std::cout << "new Y angle: " << angle * axis.y << std::endl;
 */
-    //rotationVector = angle * axis;
+    rotationVector = angle * axis;
 /*
     std::cout << "newRotation x: " << rotationVector.x << std::endl;
     std::cout << "newRotation y: " << rotationVector.y << std::endl;

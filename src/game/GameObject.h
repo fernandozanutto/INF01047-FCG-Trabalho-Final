@@ -21,7 +21,7 @@ protected:
     
 public:
     int id;
-    enum ObjectType { Arrow, Comum };
+    enum ObjectType { Arrow, Comum, Player, Floor };
     enum CollisionType { Point, Plane, OBB, Sphere };
     GameObject(Model* model, ObjectType type = ObjectType::Comum);
     GameObject* translate(float x, float y, float z);
@@ -45,7 +45,7 @@ public:
     bool isWalkingLeft = false;
     bool isWalkingBackward = false;
     bool isWalkingRight = false;
-    bool gravity = false;
+    bool gravity = true;
 
     float theta;     // Ângulo no plano ZX em relação ao eixo Z
     float phi;       // Ângulo em relação ao eixo Y
@@ -60,8 +60,8 @@ public:
     Model* getModel();
     void resetMatrix();
     virtual void update();
-    glm::mat4 getModelMatrix();
-    glm::mat4 getModelMatrixWithOffset();
+    virtual glm::mat4 getModelMatrix();
+    virtual glm::mat4 getModelMatrixWithOffset();
     glm::vec4 getFacingDirection();
     glm::vec4 getPosition();
     

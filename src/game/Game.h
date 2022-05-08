@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseScene.h"
+#include "entities/Player.h"
 
 class Game {
 private:
@@ -8,8 +9,8 @@ private:
     BaseScene& currentScene;
     bool checkCollision(GameObject*, GameObject*);
 public:
-    Game(BaseScene& firstScene, GameObject& player);
-    GameObject& player;
+    Game(BaseScene& firstScene, Player* player);
+    Player* player;
     void update();
     void setScene(BaseScene& scene);
     BaseScene& getScene();

@@ -677,38 +677,44 @@
 	<inttypes.h>
 	<stdint.h>
 
-1649807354 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\main.cpp
+1652047373 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
-	<map>
-	<stack>
-	<string>
-	<vector>
-	<limits>
+	<algorithm>
 	<fstream>
+	<limits>
+	<map>
 	<sstream>
 	<stdexcept>
-	<algorithm>
+	<string>
+	<vector>
+	<iostream>
 	<glad/glad.h>
 	<GLFW/glfw3.h>
+	<glm/gtc/type_ptr.hpp>
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
-	<glm/gtc/type_ptr.hpp>
-	<tiny_obj_loader.h>
 	<stb_image.h>
+	<tiny_obj_loader.h>
 	"utils.h"
-	"matrices.h"
-	"ObjModel.cpp"
+	"renderer/Model.h"
+	"renderer/matrices.h"
+	"renderer/Window.h"
+	"renderer/Renderer.h"
+	"input/Command.h"
+	"input/MoveCommand.h"
+	"input/EscCommand.h"
+	"input/PrimaryActionCommand.h"
+	"input/ReloadShadersCommand.h"
+	"input/InputManager.h"
+	"game/FirstScene.h"
+	"game/Game.h"
 
-1649722744 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\include\glfw\glfw3.h
+1647788635 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\include\glfw\glfw3.h
 	<stddef.h>
 	<stdint.h>
-	<OpenGL/gl3.h>
-	<OpenGL/gl3ext.h>
-	<OpenGL/gl.h>
-	<OpenGL/glu.h>
-	<GL/glcorearb.h>
+	<vulkan/vulkan.h>
 	<GLES/gl.h>
 	<GLES/glext.h>
 	<GLES2/gl2.h>
@@ -717,10 +723,17 @@
 	<GLES2/gl2ext.h>
 	<GLES3/gl31.h>
 	<GLES2/gl2ext.h>
-	<vulkan/vulkan.h>
+	<GLES3/gl32.h>
+	<GLES2/gl2ext.h>
+	<OpenGL/gl3.h>
+	<OpenGL/gl3ext.h>
+	<GL/glcorearb.h>
+	<GL/glext.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+	<OpenGL/gl.h>
 	<GL/gl.h>
 	<GL/glext.h>
-	<GL/glu.h>
 
 1649722745 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\include\glm\mat4x4.hpp
 	"./ext/matrix_double4x4.hpp"
@@ -1579,7 +1592,7 @@
 1649722745 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\stb_image.cpp
 	"stb_image.h"
 
-1649722745 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\textrendering.cpp
+1651448965 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\textrendering.cpp
 	<string>
 	<glad/glad.h>
 	<GLFW/glfw3.h>
@@ -1627,4 +1640,235 @@
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
 	"matrices.h"
+
+1652046504 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\basescene.cpp
+	"BaseScene.h"
+	<iostream>
+
+1652047270 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\basescene.h
+	<vector>
+	"GameObject.h"
+	"entities/Player.h"
+
+1652048888 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\gameobject.h
+	<glm/mat4x4.hpp>
+	"../renderer/Model.h"
+
+1651790875 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\model.h
+	<vector>
+	<string>
+	<tiny_obj_loader.h>
+	"BoundingBox.h"
+
+1650822139 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\boundingbox.h
+	<vector>
+
+1652047196 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\player.h
+	"../GameObject.h"
+
+1651952956 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\bezierobject.cpp
+	<cmath>
+	<iostream>
+	<GLFW/glfw3.h>
+	"BezierObject.h"
+
+1651952956 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\bezierobject.h
+	<glm/vec4.hpp>
+	"GameObject.h"
+
+1652046573 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\collisions.cpp
+	"collisions.h"
+	<iostream>
+	"GameObject.h"
+	"../renderer/BoundingBox.h"
+
+1651952956 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\collisions.h
+	"GameObject.h"
+	"../renderer/BoundingBox.h"
+
+1652048768 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\arrow.cpp
+	<iostream>
+	<time.h>
+	<GLFW/glfw3.h>
+	<glm/mat4x4.hpp>
+	<glm/trigonometric.hpp>
+	"Arrow.h"
+	"../../renderer/Model.h"
+	"../../renderer/Matrices.h"
+
+1652046504 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\arrow.h
+	"../GameObject.h"
+
+1649992273 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\matrices.h
+	<glm/mat4x4.hpp>
+
+1652047707 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\player.cpp
+	<iostream>
+	<time.h>
+	<GLFW/glfw3.h>
+	<glm/mat4x4.hpp>
+	<glm/trigonometric.hpp>
+	"Player.h"
+	"../../renderer/Model.h"
+	"../../renderer/Matrices.h"
+
+1652048304 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\target.cpp
+	<glm/mat4x4.hpp>
+	"Target.h"
+	"../../renderer/Model.h"
+
+1651788042 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\target.h
+	"../GameObject.h"
+
+1652048967 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\firstscene.cpp
+	<cstdlib>
+	<cmath>
+	<vector>
+	<iostream>
+	"FirstScene.h"
+	"GameObject.h"
+	"BezierObject.h"
+	"entities/Arrow.h"
+	"entities/Target.h"
+	"entities/Player.h"
+	"../renderer/Model.h"
+
+1650415173 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\firstscene.h
+	"BaseScene.h"
+
+1652049004 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\game.cpp
+	<iostream>
+	<vector>
+	<algorithm>
+	<glm/vec4.hpp>
+	"Game.h"
+	"BaseScene.h"
+	"GameObject.h"
+	"FirstScene.h"
+	"entities/Arrow.h"
+	"collisions.h"
+
+1652047456 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\game.h
+	"BaseScene.h"
+	"entities/Player.h"
+
+1652046504 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\gameobject.cpp
+	<GLFW/glfw3.h>
+	<glm/mat4x4.hpp>
+	<glm/trigonometric.hpp>
+	<iostream>
+	"GameObject.h"
+	"../renderer/Matrices.h"
+
+1650555370 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\esccommand.cpp
+	"EscCommand.h"
+	"../game/Game.h"
+
+1650555357 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\esccommand.h
+	"Command.h"
+	"../game/Game.h"
+
+1650555457 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\command.h
+
+1650553781 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\inputmanager.cpp
+	<map>
+	<iterator>
+	"InputManager.h"
+	<GLFW/glfw3.h>
+	<iostream>
+
+1650502041 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\inputmanager.h
+	<map>
+	<tuple>
+	<vector>
+	"Command.h"
+	<GLFW/glfw3.h>
+	"../game/Game.h"
+
+1650509242 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\movecommand.cpp
+	<iostream>
+	"MoveCommand.h"
+	"../game/Game.h"
+
+1651624296 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\movecommand.h
+	"Command.h"
+	"../game/Game.h"
+
+1651875034 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\primaryactioncommand.cpp
+	<iostream>
+	"PrimaryActionCommand.h"
+
+1651455001 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\primaryactioncommand.h
+	"Command.h"
+	"../game/Game.h"
+
+1651874406 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\reloadshaderscommand.cpp
+	"ReloadShadersCommand.h"
+	"../renderer/Renderer.h"
+
+1651794650 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\reloadshaderscommand.h
+	"Command.h"
+	"../renderer/Renderer.h"
+
+1650934492 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\renderer.h
+	<map>
+	<string>
+	<glad/glad.h>
+	<glm/mat4x4.hpp>
+	"Model.h"
+	"../game/BaseScene.h"
+	"../game/Game.h"
+
+1650555104 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\window.h
+	<GLFW/glfw3.h>
+	"../input/InputManager.h"
+
+1650823439 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\boundingbox.cpp
+	<glm/vec4.hpp>
+	"BoundingBox.h"
+
+1651877549 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\matrices.cpp
+	<cstdio>
+	<cstdlib>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	"Matrices.h"
+
+1651952957 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\model.cpp
+	<iostream>
+	<tiny_obj_loader.h>
+	<stb_image.h>
+	<glad/glad.h>
+	<glm/vec4.hpp>
+	<glm/mat4x4.hpp>
+	"Matrices.h"
+	"Model.h"
+
+1651874205 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\renderer.cpp
+	"Renderer.h"
+	<string>
+	<sstream>
+	<fstream>
+	<map>
+	<iostream>
+	<glad/glad.h>
+	<glm/vec4.hpp>
+	<glm/mat4x4.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<GLFW/glfw3.h>
+	"Matrices.h"
+	"Model.h"
+	"../game/GameObject.h"
+	"../game/BaseScene.h"
+	"../game/Game.h"
+
+1651791806 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\window.cpp
+	<cstdlib>
+	<cstdio>
+	<iostream>
+	<glad/glad.h>
+	<GLFW/glfw3.h>
+	"Window.h"
+	"../input/InputManager.h"
 
