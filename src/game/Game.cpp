@@ -15,21 +15,23 @@ Game::Game(BaseScene& firstScene, GameObject& player) : currentScene(firstScene)
     cameraFollowing = &player;
 }
 
+bool applyTests(GameObject* object1, GameObject* object2) {
+  if (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::OBB) {
+      return pointBoundingBoxCollision(object1->getPosition(), object2->getGlobalBoundingBoxes()[0]);
+  } else if (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::Plane) {
+      return pointPlaneCollision(object1->getPosition(), object2->getGlobalBoundingBoxes()[0]);
+  } else if (object1->collisionType == GameObject::OBB && object2->collisionType == GameObject::Plane) {
+      return boundBoxPlaneCollision(object1->getGlobalBoundingBoxes()[0], object2->getGlobalBoundingBoxes()[0]);
+  } else if (object1->collisionType == GameObject::OBB && object2->collisionType == GameObject::OBB) {
+      return boundBoxCollision(object1->getGlobalBoundingBoxes()[0], object2->getGlobalBoundingBoxes()[0]);
+  }
+
+  return false;
+}
+
 bool Game::checkCollision(GameObject* object1, GameObject* object2) {
     if (!object1->hasCollision() || !object2->hasCollision()) return false;
-    //std::cout << (object1->collisionType) << (object2->collisionType) << "---" << (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::OBB) << "\n";
-
-    if (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::OBB) {
-        return pointBoundingBoxCollision(object1->getPosition(), object2->getGlobalBoundingBoxes()[0]);
-    } else if (object1->collisionType == GameObject::Point && object2->collisionType == GameObject::Plane) {
-        return pointPlaneCollision(object1->getPosition(), object2->getGlobalBoundingBoxes()[0]);
-    } else if (object1->collisionType == GameObject::OBB && object2->collisionType == GameObject::Plane) {
-        return boundBoxPlaneCollision(object1->getGlobalBoundingBoxes()[0], object2->getGlobalBoundingBoxes()[0]);
-    } else if (object1->collisionType == GameObject::OBB && object2->collisionType == GameObject::OBB){
-        return boundBoxCollision(object1->getGlobalBoundingBoxes()[0], object2->getGlobalBoundingBoxes()[0]);
-    }
-
-    return false;
+    return (applyTests(object1, object2) || applyTests(object2, object1));
 }
 
 void Game::reset() {
@@ -56,7 +58,7 @@ void Game::update() {
         for (GameObject* target : currentScene.gameObjects) {
           if(target->objectType == GameObject::ObjectType::Comum && object->objectType == GameObject::ObjectType::Arrow ||
           object->objectType == GameObject::ObjectType::Comum && target->objectType == GameObject::ObjectType::Arrow) {
-            if (checkCollision(object, target) || checkCollision(target, object)) {
+            if (checkCollision(object, target)) {
               currentScene.removeObject(target);
             }
           }
@@ -67,7 +69,6 @@ void Game::update() {
         {
           currentScene.removeObject(object);
         }
-        
     }
 }
 
