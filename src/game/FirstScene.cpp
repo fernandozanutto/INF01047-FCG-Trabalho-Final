@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include <cmath>
+#include <math.h>       /* atan2 */
 #include <vector>
 #include <iostream>
 
@@ -12,6 +12,8 @@
 #include "../renderer/Model.h"
 
 #define PI 3.1415926f
+#define LIMIT 30
+#define NUMBER_TARGETS 10
 
 FirstScene::FirstScene() {
     Model* bunnyModel = new Model("bunny", Model::PLANAR);
@@ -25,17 +27,15 @@ FirstScene::FirstScene() {
     GameObject* smallBunny = new GameObject(bunnyModel);
     smallBunny->scale(0.3f, 0.3f, 0.3f)->translate(0.0f, 10, 0.0f);
 
-    Target* target = new Target;
-    target->translate(1,10,0);
+    for (int i = 0; i < NUMBER_TARGETS; i++) {
+      Target* target = new Target;
+      int x = rand() % ((LIMIT * 2) -1) + (-LIMIT);
+      int y = rand() % ((LIMIT * 2) -1) + (-LIMIT);
+      int z = rand() % ((LIMIT * 2) -1) + (-LIMIT);
 
-    Target* target2 = new Target;
-    target2->translate(1,1,5);
-
-    Target* target3 = new Target;
-    target3->translate(4,1,4);
-
-    Target* target4 = new Target;
-    target4->translate(10,1,3);
+      target->translate(x,y,z);
+      this->gameObjects.push_back(target);
+    }
 
     Model* targetModel = new Model("dragon");
 
@@ -50,13 +50,9 @@ FirstScene::FirstScene() {
     this->gameObjects.push_back(robot2);
     this->gameObjects.push_back(bunny);
     this->gameObjects.push_back(smallBunny);
-    this->gameObjects.push_back(target);
-    this->gameObjects.push_back(target2);
-    this->gameObjects.push_back(target3);
-    this->gameObjects.push_back(target4);
 
     GameObject* plane = new GameObject(new Model("plane", Model::REPEAT));
-    plane->scale(10.0f, 2.0f, 20.0f);
+    plane->scale(50.0f, 2.0f, 50.0f);
     plane->collisionType = GameObject::Plane;
     plane->objectType == GameObject::Floor;
     this->floor = plane;
