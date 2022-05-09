@@ -113,16 +113,16 @@ void Game::changePlayerFacingDirection(float x, float y) {
 }
 
 glm::vec4 Game::getCameraPosition() {
-    bool firstPerson = false;
+    bool firstPerson = true;
     auto maxY = cameraFollowing->getGlobalBoundingBoxes()[0].max.y;
 
     auto headPosition = cameraFollowing->getPosition();
     headPosition.y = maxY;
-    glm::vec4 cameraPos;
+    glm::vec4 cameraPos = headPosition;
     
-    if (firstPerson && !lookAtCamera) {
-        cameraPos = headPosition;
-    } else {
+    if (lookAtCamera) {
+        cameraPos = headPosition + (cameraFollowing->getFacingDirection() * 5.0f);
+    } else if (!firstPerson) {
         cameraPos = headPosition - (cameraFollowing->getFacingDirection() * 5.0f);
     }
     

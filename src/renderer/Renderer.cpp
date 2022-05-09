@@ -101,6 +101,8 @@ void Renderer::draw(Game& game) {
     GameObject* floor = game.getScene().floor;
     drawObject(floor);
 
+    drawObject(game.getScene().player->gameObject);
+
     for (unsigned int i=0; i < game.getScene().gameObjects.size(); i++) {
         GameObject* object = game.getScene().gameObjects[i];
         drawObject(object);
