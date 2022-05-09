@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 #include "Model.h"
+#include "CrossHairModel.h"
 #include "../game/BaseScene.h"
 #include "../game/Game.h"
 
@@ -15,6 +16,7 @@ public:
     ~Renderer();
     void draw(Game& game);
     void loadShaders();
+    CrossHairModel* crossHair;
 private:
     float screenWidth;
     float screenHeight;

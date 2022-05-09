@@ -1,7 +1,7 @@
 #pragma once
 
-
 #include <vector>
+#include <glm/vec4.hpp>
 
 class BoundingBox {
 public:

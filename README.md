@@ -3,7 +3,7 @@ Trabalho final da disciplina de FCG da UFRGS do semestre 2021/2
 
 ### Obrigatórios
 
-- [ ] No mínimo dois modelos geométricos complexos.
+- [X] No mínimo dois modelos geométricos complexos.
 - [ ] Transformações geométricas de objetos virtuais por meio de interação com mouse/teclado.
 - [ ] Câmera look-at e câmera livre.
 - [X] No mínimo um objecto virtuais copiado com duas ou mais instâncias.

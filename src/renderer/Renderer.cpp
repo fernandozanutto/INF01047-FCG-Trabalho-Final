@@ -26,6 +26,7 @@ Renderer::Renderer(unsigned int screenWidth, unsigned int screenHeight) {
     this->screenHeight = screenHeight;
 
     this->fov = FOV;
+    this->crossHair = new CrossHairModel();
 
     loadShaders();
 }
@@ -38,20 +39,24 @@ Renderer::~Renderer() {
 void Renderer::loadShaders() {
     std::cout << "Carregando shaders" << std::endl;
 
+    unsigned int vertexShader2dId     = LoadVertexShader("ui_shader_vertex.glsl");
+    unsigned int fragmentShader2dId   = LoadFragmentShader("ui_shader_fragment.glsl");
+    
+    this->shader2dId                  = CreateGpuProgram(vertexShader2dId, fragmentShader2dId);
+    this->modelUniform2dId            = glGetUniformLocation(this->shader2dId, "model"); 
+    
     unsigned int vertexShader3dId     = LoadVertexShader("shader_vertex.glsl");
     unsigned int fragmentShader3dId   = LoadFragmentShader("shader_fragment.glsl");
-    unsigned int vertexShader2dId     = LoadVertexShader("shader_vertex.glsl");
-    unsigned int fragmentShader2dId   = LoadFragmentShader("shader_fragment.glsl");
-    this->shader3dId = CreateGpuProgram(vertexShader3dId, fragmentShader3dId);
-    this->shader2dId = CreateGpuProgram(vertexShader2dId, fragmentShader2dId);
-    this->modelUniformId      = glGetUniformLocation(this->shader3dId, "model"); 
-    this->viewUniformId       = glGetUniformLocation(this->shader3dId, "view"); 
-    this->projectionUniformId = glGetUniformLocation(this->shader3dId, "projection"); 
-    this->object_id_uniform = glGetUniformLocation(this->shader3dId, "object_id");    // Variável "object_id" em shader_fragment.glsl
-    this->isDrawingAxis = glGetUniformLocation(this->shader3dId, "is_drawing_axis"); 
-    this->modelUniform2dId      = glGetUniformLocation(this->shader2dId, "model"); 
-    this->bbox_min_uniform = glGetUniformLocation(this->shader3dId, "bbox_min");
-    this->bbox_max_uniform = glGetUniformLocation(this->shader3dId, "bbox_max");
+    
+    this->shader3dId                  = CreateGpuProgram(vertexShader3dId, fragmentShader3dId);
+    
+    this->modelUniformId              = glGetUniformLocation(this->shader3dId, "model"); 
+    this->viewUniformId               = glGetUniformLocation(this->shader3dId, "view"); 
+    this->projectionUniformId         = glGetUniformLocation(this->shader3dId, "projection"); 
+    this->object_id_uniform           = glGetUniformLocation(this->shader3dId, "object_id");    // Variável "object_id" em shader_fragment.glsl
+    this->isDrawingAxis               = glGetUniformLocation(this->shader3dId, "is_drawing_axis"); 
+    this->bbox_min_uniform            = glGetUniformLocation(this->shader3dId, "bbox_min");
+    this->bbox_max_uniform            = glGetUniformLocation(this->shader3dId, "bbox_max");
 }
 
 void Renderer::draw(Game& game) {
@@ -90,6 +95,8 @@ void Renderer::draw(Game& game) {
         GameObject* object = game.getScene().gameObjects[i];
         drawObject(object);
     }
+
+    renderTextureToScreen();
 }
 
 void Renderer::drawObject(GameObject* object) {
@@ -120,7 +127,7 @@ void Renderer::drawObject(GameObject* object) {
         glBindVertexArray(model->vaoDebugId);
         glUniform1i(isDrawingAxis, true);
         glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object->getModelMatrixWithOffset()));
-        glLineWidth(10.0f);
+        glLineWidth(5.0f);
         glDrawElements(
             model->debugRenderingMode,
             model->debugNumIndexes,
@@ -134,14 +141,34 @@ void Renderer::drawObject(GameObject* object) {
 
 
 void Renderer::renderTextureToScreen() {
-    (glUseProgram(this->shader2dId));
-    glm::mat4 model = Matrix_Scale(3.0/4.0, 1.0, 1.0);
-    (glUniformMatrix4fv(this->modelUniform2dId, 1, GL_FALSE, glm::value_ptr(model)));
-    (glBindFramebuffer(GL_FRAMEBUFFER, 0));
-    (glDisable(GL_DEPTH_TEST));
-    (glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-    (glClear(GL_COLOR_BUFFER_BIT));
-    //drawModel(*screenQuad);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glDepthFunc(GL_ALWAYS);
+
+
+    glUseProgram(this->shader2dId);
+
+    glBindVertexArray(crossHair->vaoId);
+
+    glBindTexture(GL_TEXTURE_2D, crossHair->textureId);
+
+    glm::mat4 model = Matrix_Scale(0.02f,(screenWidth/screenHeight)*0.02f,1);
+    glUniformMatrix4fv(this->modelUniform2dId, 1, GL_FALSE, glm::value_ptr(model));
+    glLineWidth(1.0f);
+    glDrawElements(
+            crossHair->renderingMode[0],
+            crossHair->numIndexes[0],
+            GL_UNSIGNED_INT,
+            (void*) (crossHair->firstIndex[0] * sizeof(GLuint))
+    );
+
+
+
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glDepthFunc(GL_LESS);
+    glDisable(GL_BLEND);
 }
 
 

@@ -6,7 +6,7 @@
 #include "BoundingBox.h"
 
 class Model {
-private:
+protected:
     void computeNormals();
     void buildTriangles();
     void loadModel();
@@ -16,6 +16,7 @@ private:
     void createDebugModel();
 public:
     enum RenderProjectType { SPHERIC, PLANAR, FROM_MODEL, REPEAT };
+    Model();
     Model(std::string filename, RenderProjectType renderType = Model::FROM_MODEL);
     std::string name;
     tinyobj::attrib_t                 attrib;
