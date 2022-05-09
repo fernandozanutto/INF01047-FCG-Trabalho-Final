@@ -87,7 +87,6 @@ void Renderer::draw(Game& game) {
     glm::vec4 cameraPosition = game.getCameraPosition();
 
     if (game.lookAtCamera) {
-        std::cout << "look at camera" << std::endl;
         viewVector = game.cameraFollowing->getPosition() - game.getCameraPosition();
     } else {
         viewVector = game.cameraFollowing->getFacingDirection();

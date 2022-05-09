@@ -142,7 +142,7 @@ void Game::executeMainAction() {
     float maxY = player->gameObject->getGlobalBoundingBoxes()[0].max.y;
     position.y = maxY;
 
-    newArrow->setGlobalPosition(position.x, position.y, position.z)->setVelocity(facingDirection.x * 15,facingDirection.y * 15,facingDirection.z * 15)->scale(0.5,0.5,0.5);
+    newArrow->setGlobalPosition(position.x, position.y, position.z)->setVelocity(facingDirection.x * 60.0f,facingDirection.y * 60.0f,facingDirection.z * 60.0f)->scale(0.5,0.5,0.5);
     newArrow->setRotation(facingDirection);
     
     currentScene.gameObjects.push_back(newArrow);

@@ -2,7 +2,9 @@
 #include "../game/Game.h"
 #include <iostream>
 
-RotateTarget::RotateTarget(Game& game, Side side) : game(game), side(side) { }
+RotateTarget::RotateTarget(Game& game, Side side) : game(game), side(side) {
+    repeatable = false;
+}
 
 void rotate(bool side, Game& game) {
   for (GameObject* obj : game.getScene().gameObjects) {

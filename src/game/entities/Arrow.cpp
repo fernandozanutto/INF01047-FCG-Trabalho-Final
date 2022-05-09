@@ -44,7 +44,7 @@ void Arrow::update() {
     }
 
     velocityVector += accelerationVector * delta;
-    positionVector += velocityVector * delta * 4.0f;
+    positionVector += velocityVector * delta;
     
     if (norm(velocityVector) != 0.0){
         setRotation(velocityVector);

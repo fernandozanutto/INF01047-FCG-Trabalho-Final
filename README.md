@@ -5,7 +5,7 @@ Trabalho final da disciplina de FCG da UFRGS do semestre 2021/2
 
 - [X] No mínimo dois modelos geométricos complexos.
 - [ ] Transformações geométricas de objetos virtuais por meio de interação com mouse/teclado.
-- [ ] Câmera look-at e câmera livre.
+- [X] Câmera look-at e câmera livre.
 - [X] No mínimo um objecto virtuais copiado com duas ou mais instâncias.
 - [X] Testes de intersecção entre objetos virtuais.
 - [ ] Modelos de iluminação.
