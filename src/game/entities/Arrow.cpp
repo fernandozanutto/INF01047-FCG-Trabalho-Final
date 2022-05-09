@@ -25,7 +25,7 @@ Arrow::Arrow() : GameObject(getArrowModel(), GameObject::Arrow) {
     modelTranslateOffset = glm::vec4(-scaleVector.x, 0, 0, 0);
     modelRotationOffset = glm::vec4(0,-PI/2,0,0);
     collisionType = Point;
-    disapearTime = time(0) + 2;
+    disapearTime = time(0) + 15;
 }
 
 void Arrow::update() {

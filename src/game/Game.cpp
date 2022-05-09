@@ -48,6 +48,7 @@ void Game::update() {
     std::vector<GameObject*> updateObjects = currentScene.gameObjects;
     updateObjects.push_back(currentScene.player->gameObject);
 
+    bool destroyedTarget = false;
     for (GameObject* object : updateObjects) {
         if (object->hasGravity() && object->getPosition().y > 0) {
             object->setAcceleration(0, -9.8f, 0);
@@ -67,6 +68,7 @@ void Game::update() {
           object->objectType == GameObject::ObjectType::Comum && target->objectType == GameObject::ObjectType::Arrow) {
             if (checkCollision(object, target) && !target->isPlayer) {
               target->mustDisapear = true;
+              destroyedTarget = true;
             }
           }
         }
@@ -75,6 +77,10 @@ void Game::update() {
         if (object->mustDisapear) {
           currentScene.removeObject(object);
         }
+    }
+
+    if (destroyedTarget) {
+        currentScene.spawnNewTarget();
     }
 }
 
@@ -107,7 +113,7 @@ void Game::changePlayerFacingDirection(float x, float y) {
 }
 
 glm::vec4 Game::getCameraPosition() {
-    bool firstPerson = true;
+    bool firstPerson = false;
     auto maxY = cameraFollowing->getGlobalBoundingBoxes()[0].max.y;
 
     auto headPosition = cameraFollowing->getPosition();
@@ -129,8 +135,6 @@ void Game::pause() {
 }
 
 void Game::executeMainAction() {
-    std::cout << "Press left mouse " << std::endl;
-
     Arrow* newArrow = new Arrow;
     glm::vec4 facingDirection = player->gameObject->getFacingDirection();
     glm::vec4 position = player->gameObject->getPosition();

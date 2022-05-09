@@ -11,4 +11,5 @@ public:
     GameObject* floor;
     Player* player;
     void removeObject(GameObject* object);
+    void spawnNewTarget();
 };

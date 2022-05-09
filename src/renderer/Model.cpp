@@ -66,7 +66,7 @@ void Model::loadTexture() {
     unsigned char* data = findPossiblesTextures(name, &width, &height, &channels);
     
     if (data == NULL) {
-        std::cout << "Não foi possível carregar. Usando textura padrão.\n";
+        std::cout << "Nao foi possivel carregar. Usando textura padrao.\n";
         data = stbi_load("data/missing_textures.png", &width, &height, &channels, 3);
     }
 
