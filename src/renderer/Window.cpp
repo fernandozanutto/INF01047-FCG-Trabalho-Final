@@ -9,7 +9,7 @@
 #include "../input/InputManager.h"
 
 Window::Window() {
-    bool isFullscreen = false;
+    bool isFullscreen = true;
 
     if (!glfwInit()) {
         fprintf(stderr, "ERROR: glfwInit() failed.\n");
@@ -23,12 +23,12 @@ Window::Window() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    //glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     //https://www.glfw.org/docs/latest/monitor_guide.html#monitor_monitors
     int monitorCount;
     GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
-    GLFWmonitor* monitor = monitors[monitorCount - 1];
+    GLFWmonitor* monitor = monitors[0];
 
     std::cout << "Monitores detectados: " << monitorCount << std::endl;
 

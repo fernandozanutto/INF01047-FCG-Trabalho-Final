@@ -50,7 +50,7 @@ void InputManager::cursorCallback(double xpos, double ypos) {
     lastCursorPosX = xpos;
     lastCursorPosY = ypos;
 
-    float sensibility = 0.01;
+    float sensibility = 0.008;
 
     game.changePlayerFacingDirection(dx * sensibility, dy * sensibility);
 }

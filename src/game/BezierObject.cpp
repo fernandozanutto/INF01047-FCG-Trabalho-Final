@@ -1,5 +1,3 @@
-
-
 #include <cmath>
 #include <iostream>
 
@@ -29,7 +27,7 @@ void BezierObject::update() {
 
     float currentT = cycleTime / movePeriod;
     if (currentCycle % 2 == 1) {
-        currentT = (1 - currentT);
+        currentT = (1.0f - currentT);
     }
 
     float b03 = pow(1.0f - currentT, 3);
@@ -39,6 +37,5 @@ void BezierObject::update() {
 
     glm::vec4 c = b03 * p1 + b13 * p2 + b23 * p3 + b33 * p4;
 
-    //std::cout << "X: " << c.x << " Y: " << c.y << " Z: " << c.z << " t: " << currentT << " currentCycle: " << currentCycle << std::endl;
     this->positionVector = c;
 }
