@@ -21,7 +21,7 @@ protected:
     
 public:
     int id;
-    enum ObjectType { Arrow, Comum, Player, Floor };
+    enum ObjectType { Arrow, Comum, Player, Floor, Target };
     enum CollisionType { Point, Plane, OBB, Sphere };
     GameObject(Model* model, ObjectType type = ObjectType::Comum);
     GameObject* translate(float x, float y, float z);

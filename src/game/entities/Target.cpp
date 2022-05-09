@@ -16,4 +16,5 @@ Model* getTargetModel() {
 Target::Target() : GameObject(getTargetModel()) {
     gravity = false;
     collisionType = OBB;
+    objectType = GameObject::ObjectType::Target;
 }

@@ -42,6 +42,7 @@
 #include "input/SecondaryActionCommand.h"
 #include "input/ReloadShadersCommand.h"
 #include "input/InputManager.h"
+#include "input/RotateTarget.h"
 
 #include "game/FirstScene.h"
 #include "game/Game.h"
@@ -84,7 +85,9 @@ int main() {
         std::make_tuple(GLFW_KEY_ESCAPE, new EscCommand(game)),
         std::make_tuple(GLFW_KEY_R,      new ReloadShadersCommand(renderer, game)),
         std::make_tuple(GLFW_MOUSE_BUTTON_LEFT, new PrimaryActionCommand(game)),
-        std::make_tuple(GLFW_MOUSE_BUTTON_RIGHT, new SecondaryActionCommand(game))
+        std::make_tuple(GLFW_MOUSE_BUTTON_RIGHT, new SecondaryActionCommand(game)),
+        std::make_tuple(GLFW_KEY_O,      new RotateTarget(game, RotateTarget::LEFT)),
+        std::make_tuple(GLFW_KEY_P,      new RotateTarget(game, RotateTarget::RIGHT))
         //std::make_tuple(GLFW_MOUSE_BUTTON_MIDLE)
     };
 
