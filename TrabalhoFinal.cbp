@@ -7,8 +7,8 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/main" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin/Debug/" />
+				<Option output="src/main" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="src" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -21,11 +21,12 @@
 					<Add option="-static-libstdc++" />
 					<Add option="-static-libgcc" />
 					<Add option="-static" />
+					<Add option="lib\libglfw3.a -lgdi32 -lopengl32" />
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/main" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin/Release/" />
+				<Option output="src/main" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="src" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -58,8 +59,8 @@
 				</Linker>
 			</Target>
 			<Target title="Debug (CBlocks 17.12 32-bit)">
-				<Option output="bin/Debug/main" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin/Debug/" />
+				<Option output="src/main" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="src" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -73,8 +74,8 @@
 				</Linker>
 			</Target>
 			<Target title="Release (CBlocks 17.12 32-bit)">
-				<Option output="bin/Release/main" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin/Release/" />
+				<Option output="src/main" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="src" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -369,15 +370,57 @@
 		<Unit filename="include/stb_image.h" />
 		<Unit filename="include/tiny_obj_loader.h" />
 		<Unit filename="include/utils.h" />
-		<Unit filename="src/ObjModel.cpp">
-			<Option compilerVar="CC" />
-		</Unit>
+		<Unit filename="src/game/BaseScene.cpp" />
+		<Unit filename="src/game/BaseScene.h" />
+		<Unit filename="src/game/BezierObject.cpp" />
+		<Unit filename="src/game/BezierObject.h" />
+		<Unit filename="src/game/FirstScene.cpp" />
+		<Unit filename="src/game/FirstScene.h" />
+		<Unit filename="src/game/Game.cpp" />
+		<Unit filename="src/game/Game.h" />
+		<Unit filename="src/game/GameObject.cpp" />
+		<Unit filename="src/game/GameObject.h" />
+		<Unit filename="src/game/collisions.cpp" />
+		<Unit filename="src/game/collisions.h" />
+		<Unit filename="src/game/entities/Arrow.cpp" />
+		<Unit filename="src/game/entities/Arrow.h" />
+		<Unit filename="src/game/entities/Player.cpp" />
+		<Unit filename="src/game/entities/Player.h" />
+		<Unit filename="src/game/entities/Target.cpp" />
+		<Unit filename="src/game/entities/Target.h" />
 		<Unit filename="src/glad.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/input/Command.h" />
+		<Unit filename="src/input/EscCommand.cpp" />
+		<Unit filename="src/input/EscCommand.h" />
+		<Unit filename="src/input/InputManager.cpp" />
+		<Unit filename="src/input/InputManager.h" />
+		<Unit filename="src/input/MoveCommand.cpp" />
+		<Unit filename="src/input/MoveCommand.h" />
+		<Unit filename="src/input/PrimaryActionCommand.cpp" />
+		<Unit filename="src/input/PrimaryActionCommand.h" />
+		<Unit filename="src/input/ReloadShadersCommand.cpp" />
+		<Unit filename="src/input/ReloadShadersCommand.h" />
+		<Unit filename="src/input/RotateTarget.cpp" />
+		<Unit filename="src/input/RotateTarget.h" />
+		<Unit filename="src/input/SecondaryActionCommand.cpp" />
+		<Unit filename="src/input/SecondaryActionCommand.h" />
 		<Unit filename="src/main.cpp" />
-		<Unit filename="src/shader_fragment.glsl" />
-		<Unit filename="src/shader_vertex.glsl" />
+		<Unit filename="src/renderer/BoundingBox.cpp" />
+		<Unit filename="src/renderer/BoundingBox.h" />
+		<Unit filename="src/renderer/CrossHairModel.cpp" />
+		<Unit filename="src/renderer/CrossHairModel.h" />
+		<Unit filename="src/renderer/Matrices.cpp" />
+		<Unit filename="src/renderer/Matrices.h" />
+		<Unit filename="src/renderer/Model.cpp" />
+		<Unit filename="src/renderer/Model.h" />
+		<Unit filename="src/renderer/Renderer.cpp" />
+		<Unit filename="src/renderer/Renderer.h" />
+		<Unit filename="src/renderer/Window.cpp" />
+		<Unit filename="src/renderer/Window.h" />
+		<Unit filename="src/shaders/shader_fragment.glsl" />
+		<Unit filename="src/shaders/shader_vertex.glsl" />
 		<Unit filename="src/stb_image.cpp" />
 		<Unit filename="src/textrendering.cpp" />
 		<Unit filename="src/tiny_obj_loader.cpp" />

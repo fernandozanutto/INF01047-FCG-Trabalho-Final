@@ -677,7 +677,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1652047373 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\main.cpp
+1652059649 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -706,8 +706,10 @@
 	"input/MoveCommand.h"
 	"input/EscCommand.h"
 	"input/PrimaryActionCommand.h"
+	"input/SecondaryActionCommand.h"
 	"input/ReloadShadersCommand.h"
 	"input/InputManager.h"
+	"input/RotateTarget.h"
 	"game/FirstScene.h"
 	"game/Game.h"
 
@@ -1641,32 +1643,34 @@
 	<glm/vec4.hpp>
 	"matrices.h"
 
-1652046504 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\basescene.cpp
-	"BaseScene.h"
+1652057308 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\basescene.cpp
 	<iostream>
+	"BaseScene.h"
+	"entities/Target.h"
 
-1652047270 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\basescene.h
+1652056991 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\basescene.h
 	<vector>
 	"GameObject.h"
 	"entities/Player.h"
 
-1652048888 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\gameobject.h
+1652059649 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\gameobject.h
 	<glm/mat4x4.hpp>
 	"../renderer/Model.h"
 
-1651790875 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\model.h
+1652055560 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\model.h
 	<vector>
 	<string>
 	<tiny_obj_loader.h>
 	"BoundingBox.h"
 
-1650822139 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\boundingbox.h
+1652055560 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\boundingbox.h
 	<vector>
+	<glm/vec4.hpp>
 
-1652047196 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\player.h
+1652049754 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\player.h
 	"../GameObject.h"
 
-1651952956 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\bezierobject.cpp
+1652055887 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\bezierobject.cpp
 	<cmath>
 	<iostream>
 	<GLFW/glfw3.h>
@@ -1676,17 +1680,17 @@
 	<glm/vec4.hpp>
 	"GameObject.h"
 
-1652046573 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\collisions.cpp
+1652058032 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\collisions.cpp
 	"collisions.h"
 	<iostream>
 	"GameObject.h"
 	"../renderer/BoundingBox.h"
 
-1651952956 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\collisions.h
+1652058027 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\collisions.h
 	"GameObject.h"
 	"../renderer/BoundingBox.h"
 
-1652048768 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\arrow.cpp
+1652060262 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\arrow.cpp
 	<iostream>
 	<time.h>
 	<GLFW/glfw3.h>
@@ -1696,13 +1700,13 @@
 	"../../renderer/Model.h"
 	"../../renderer/Matrices.h"
 
-1652046504 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\arrow.h
+1652057572 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\arrow.h
 	"../GameObject.h"
 
 1649992273 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\matrices.h
 	<glm/mat4x4.hpp>
 
-1652047707 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\player.cpp
+1652049754 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\player.cpp
 	<iostream>
 	<time.h>
 	<GLFW/glfw3.h>
@@ -1712,7 +1716,7 @@
 	"../../renderer/Model.h"
 	"../../renderer/Matrices.h"
 
-1652048304 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\target.cpp
+1652059649 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\target.cpp
 	<glm/mat4x4.hpp>
 	"Target.h"
 	"../../renderer/Model.h"
@@ -1720,9 +1724,9 @@
 1651788042 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\entities\target.h
 	"../GameObject.h"
 
-1652048967 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\firstscene.cpp
+1652059045 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\firstscene.cpp
 	<cstdlib>
-	<cmath>
+	<math.h>
 	<vector>
 	<iostream>
 	"FirstScene.h"
@@ -1736,7 +1740,7 @@
 1650415173 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\firstscene.h
 	"BaseScene.h"
 
-1652049004 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\game.cpp
+1652060262 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\game.cpp
 	<iostream>
 	<vector>
 	<algorithm>
@@ -1748,11 +1752,11 @@
 	"entities/Arrow.h"
 	"collisions.h"
 
-1652047456 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\game.h
+1652058303 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\game.h
 	"BaseScene.h"
 	"entities/Player.h"
 
-1652046504 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\gameobject.cpp
+1652049754 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\game\gameobject.cpp
 	<GLFW/glfw3.h>
 	<glm/mat4x4.hpp>
 	<glm/trigonometric.hpp>
@@ -1770,7 +1774,7 @@
 
 1650555457 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\command.h
 
-1650553781 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\inputmanager.cpp
+1652055919 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\inputmanager.cpp
 	<map>
 	<iterator>
 	"InputManager.h"
@@ -1810,12 +1814,13 @@
 	"Command.h"
 	"../renderer/Renderer.h"
 
-1650934492 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\renderer.h
+1652055560 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\renderer.h
 	<map>
 	<string>
 	<glad/glad.h>
 	<glm/mat4x4.hpp>
 	"Model.h"
+	"CrossHairModel.h"
 	"../game/BaseScene.h"
 	"../game/Game.h"
 
@@ -1835,7 +1840,7 @@
 	<glm/gtc/matrix_transform.hpp>
 	"Matrices.h"
 
-1651952957 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\model.cpp
+1652057695 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\model.cpp
 	<iostream>
 	<tiny_obj_loader.h>
 	<stb_image.h>
@@ -1845,7 +1850,7 @@
 	"Matrices.h"
 	"Model.h"
 
-1651874205 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\renderer.cpp
+1652060262 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\renderer.cpp
 	"Renderer.h"
 	<string>
 	<sstream>
@@ -1863,7 +1868,7 @@
 	"../game/BaseScene.h"
 	"../game/Game.h"
 
-1651791806 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\window.cpp
+1652056826 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\window.cpp
 	<cstdlib>
 	<cstdio>
 	<iostream>
@@ -1871,4 +1876,30 @@
 	<GLFW/glfw3.h>
 	"Window.h"
 	"../input/InputManager.h"
+
+1652055560 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\crosshairmodel.h
+	"Model.h"
+
+1652058228 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\secondaryactioncommand.h
+	"Command.h"
+	"../game/Game.h"
+
+1652058800 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\secondaryactioncommand.cpp
+	<iostream>
+	"SecondaryActionCommand.h"
+
+1652055560 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\renderer\crosshairmodel.cpp
+	"CrossHairModel.h"
+	<tiny_obj_loader.h>
+	<stb_image.h>
+	<glad/glad.h>
+
+1652060301 source:c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\rotatetarget.cpp
+	"RotateTarget.h"
+	"../game/Game.h"
+	<iostream>
+
+1652059649 c:\users\ferna\documents\github\inf01047-fcg-trabalho-final\src\input\rotatetarget.h
+	"../game/Game.h"
+	"Command.h"
 
