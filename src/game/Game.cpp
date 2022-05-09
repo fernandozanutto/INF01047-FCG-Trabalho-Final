@@ -120,7 +120,7 @@ glm::vec4 Game::getCameraPosition() {
     headPosition.y = maxY;
     glm::vec4 cameraPos;
     
-    if (firstPerson) {
+    if (firstPerson && !lookAtCamera) {
         cameraPos = headPosition;
     } else {
         cameraPos = headPosition - (cameraFollowing->getFacingDirection() * 5.0f);

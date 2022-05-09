@@ -39,6 +39,7 @@
 #include "input/MoveCommand.h"
 #include "input/EscCommand.h"
 #include "input/PrimaryActionCommand.h"
+#include "input/SecondaryActionCommand.h"
 #include "input/ReloadShadersCommand.h"
 #include "input/InputManager.h"
 
@@ -82,8 +83,8 @@ int main() {
         std::make_tuple(GLFW_KEY_D,      new MoveCommand(game, MoveCommand::RIGHT)),
         std::make_tuple(GLFW_KEY_ESCAPE, new EscCommand(game)),
         std::make_tuple(GLFW_KEY_R,      new ReloadShadersCommand(renderer, game)),
-        std::make_tuple(GLFW_MOUSE_BUTTON_LEFT, new PrimaryActionCommand(game))
-        //std::make_tuple(GLFW_MOUSE_BUTTON_RIGHT)
+        std::make_tuple(GLFW_MOUSE_BUTTON_LEFT, new PrimaryActionCommand(game)),
+        std::make_tuple(GLFW_MOUSE_BUTTON_RIGHT, new SecondaryActionCommand(game))
         //std::make_tuple(GLFW_MOUSE_BUTTON_MIDLE)
     };
 

@@ -83,7 +83,17 @@ void Renderer::draw(Game& game) {
 
     glm::mat4 projection = Matrix_Perspective(fov, screenRatio, NEARPLANE, FARPLANE);
     glm::vec4 upVector = glm::vec4(0,1,0,0);
-    glm::mat4 cameraView = Matrix_Camera_View(game.getCameraPosition(), game.cameraFollowing->getFacingDirection(), upVector);
+    glm::vec4 viewVector;
+    glm::vec4 cameraPosition = game.getCameraPosition();
+
+    if (game.lookAtCamera) {
+        std::cout << "look at camera" << std::endl;
+        viewVector = game.cameraFollowing->getPosition() - game.getCameraPosition();
+    } else {
+        viewVector = game.cameraFollowing->getFacingDirection();
+    }
+
+    glm::mat4 cameraView = Matrix_Camera_View(cameraPosition, viewVector, upVector);
 
     glUniformMatrix4fv(viewUniformId, 1 , GL_FALSE , glm::value_ptr(cameraView));
     glUniformMatrix4fv(projectionUniformId, 1 , GL_FALSE , glm::value_ptr(projection));

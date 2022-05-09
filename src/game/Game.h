@@ -25,4 +25,5 @@ public:
     void pause();
     bool hasFinished = false;
     void reset();
+    bool lookAtCamera = false;
 };
