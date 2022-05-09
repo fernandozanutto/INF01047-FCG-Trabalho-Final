@@ -6,7 +6,7 @@ RotateTarget::RotateTarget(Game& game, Side side) : game(game), side(side) { }
 
 void rotate(bool side, Game& game) {
   for (GameObject* obj : game.getScene().gameObjects) {
-    if (obj->objectType == GameObject::ObjectType::Comum) {
+    if (obj->objectType == GameObject::ObjectType::Target) {
       if (side && !obj->isPlayer)
       {
         obj->setAngularVelocity(0, -.5f, .0f);
@@ -18,7 +18,6 @@ void rotate(bool side, Game& game) {
 }
 
 void RotateTarget::onPress() {
-    std::cout << "Vrau";
     switch(side) {
       case(LEFT):
           rotate(true, game);

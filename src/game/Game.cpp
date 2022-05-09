@@ -64,8 +64,8 @@ void Game::update() {
         }
 
         for (GameObject* target : currentScene.gameObjects) {
-          if(target->objectType == GameObject::ObjectType::Comum && object->objectType == GameObject::ObjectType::Arrow ||
-          object->objectType == GameObject::ObjectType::Comum && target->objectType == GameObject::ObjectType::Arrow) {
+          if(target->objectType == GameObject::ObjectType::Target && object->objectType == GameObject::ObjectType::Arrow ||
+          object->objectType == GameObject::ObjectType::Target && target->objectType == GameObject::ObjectType::Arrow) {
             if (checkCollision(object, target) && !target->isPlayer) {
               target->mustDisapear = true;
               destroyedTarget = true;
