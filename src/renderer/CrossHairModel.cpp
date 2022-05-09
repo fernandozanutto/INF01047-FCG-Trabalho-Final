@@ -17,13 +17,6 @@ CrossHairModel::CrossHairModel() {
          0.0f, -.5f
     };
 
-    float texture[] = {
-         0.0f,  1.0f,  
-         0.0f,  0.0f,  
-         1.0f,  1.0f,  
-         1.0f,  0.0f
-    };
-
     std::vector<float> colors = {
         0.0f, 1.0f, 0.0f, 1.0f, // cor do vértice 0
         0.0f, 1.0f, 0.0f, 1.0f, // cor do vértice 1

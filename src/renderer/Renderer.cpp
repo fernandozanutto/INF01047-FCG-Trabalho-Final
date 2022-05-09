@@ -135,17 +135,18 @@ void Renderer::drawObject(GameObject* object) {
             (void*)(model->firstIndex[i] * sizeof(GLuint))
         );
 
-        glBindVertexArray(model->vaoDebugId);
-        glUniform1i(isDrawingAxis, true);
-        glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object->getModelMatrixWithOffset()));
-        glLineWidth(5.0f);
-        glDrawElements(
-            model->debugRenderingMode,
-            model->debugNumIndexes,
-            GL_UNSIGNED_INT,
-            (void*)(model->debugFirstIndex * sizeof(GLuint))
-        );
-        glUniform1i(isDrawingAxis, false);
+        // glBindVertexArray(model->vaoDebugId);
+        // glUniform1i(isDrawingAxis, true);
+        // glUniformMatrix4fv(modelUniformId, 1, GL_FALSE, glm::value_ptr(object->getModelMatrixWithOffset()));
+        // glLineWidth(5.0f);
+        // glDrawElements(
+        //     model->debugRenderingMode,
+        //     model->debugNumIndexes,
+        //     GL_UNSIGNED_INT,
+        //     (void*)(model->debugFirstIndex * sizeof(GLuint))
+        // );
+        // glUniform1i(isDrawingAxis, false);
+        
         glBindVertexArray(0);
     }
 }

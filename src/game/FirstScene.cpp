@@ -63,7 +63,7 @@ FirstScene::FirstScene() {
     GameObject* plane = new GameObject(new Model("plane", Model::REPEAT));
     plane->scale(50.0f, 2.0f, 50.0f);
     plane->collisionType = GameObject::Plane;
-    plane->objectType == GameObject::Floor;
+    plane->objectType = GameObject::Floor;
     this->floor = plane;
 
 
